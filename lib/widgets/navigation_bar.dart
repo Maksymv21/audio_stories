@@ -1,9 +1,21 @@
-import 'package:audio_stories/Widgets/foot_button.dart';
+import 'package:audio_stories/resources/app_colors.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/widgets/foot_button.dart';
+import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MyNavigationBar extends StatelessWidget {
-  const MyNavigationBar({Key? key}) : super(key: key);
+class MyNavigationBar extends StatefulWidget {
+
+  const MyNavigationBar({Key? key,}) : super(key: key);
+
+  @override
+  State<MyNavigationBar> createState() => _MyNavigationBarState();
+}
+
+class _MyNavigationBarState extends State<MyNavigationBar> {
+  final ColorActive _colorIcon = ColorActive();
+
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +37,28 @@ class MyNavigationBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          const FootButton(
+          FootButton(
             icon: AppIcons.home,
             title: 'Главная',
+            color: _colorIcon.colorHome,
+            onPressed: () {
+              setState(() {
+                Utils.globalKey.currentState!.pushReplacementNamed('/');
+                _colorIcon.homeActive();
+              });
+
+            },
           ),
-          const FootButton(
+          FootButton(
             icon: AppIcons.category,
             title: 'Подборки',
+            color: _colorIcon.colorCategory,
+            onPressed: () {
+              setState(() {
+                Utils.globalKey.currentState!.pushReplacementNamed('/category');
+                _colorIcon.categoryActive();
+              });
+            },
           ),
           GestureDetector(
             onTap: () {},
@@ -47,13 +74,27 @@ class MyNavigationBar extends StatelessWidget {
               ),
             ),
           ),
-          const FootButton(
+          FootButton(
             icon: AppIcons.paper,
             title: 'Ауидозаписи',
+            color: _colorIcon.colorAudio,
+            onPressed: () {
+              setState(() {
+                Utils.globalKey.currentState!.pushReplacementNamed('/paper');
+                _colorIcon.audioActive();
+              });
+            },
           ),
-          const FootButton(
+          FootButton(
             icon: AppIcons.profile,
             title: 'Профиль',
+            color: _colorIcon.colorProfile,
+            onPressed: () {
+              setState(() {
+                Utils.globalKey.currentState!.pushReplacementNamed('/profile');
+                _colorIcon.profileActive();
+              });
+            },
           ),
         ],
       ),

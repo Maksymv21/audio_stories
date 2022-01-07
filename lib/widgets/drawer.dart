@@ -1,10 +1,19 @@
-import 'package:audio_stories/Widgets/burger_button.dart';
+import 'package:audio_stories/resources/app_colors.dart';
+import 'package:audio_stories/resources/utils.dart';
+import 'package:audio_stories/widgets/burger_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:flutter/material.dart';
 
-class BurgerMenu extends StatelessWidget {
+class BurgerMenu extends StatefulWidget {
   const BurgerMenu({Key? key}) : super(key: key);
-  
+
+  @override
+  State<BurgerMenu> createState() => _BurgerMenuState();
+}
+
+class _BurgerMenuState extends State<BurgerMenu> {
+  final ColorActive _colorIcon = ColorActive();
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -39,45 +48,59 @@ class BurgerMenu extends StatelessWidget {
             height: 70.0,
           ),
           Column(
-            children: const [
+            children: [
               BurgerButton(
                 icon: AppIcons.home,
                 title: 'Главная',
+                onTap: () {},
               ),
               BurgerButton(
                 icon: AppIcons.profile,
                 title: 'Профиль',
+                onTap: () {
+                  setState(() {
+                    Utils.globalKey.currentState!.pushReplacementNamed('/profile');
+                    Scaffold.of(context).openEndDrawer();
+                    _colorIcon.profileActive();
+                  });
+                },
               ),
               BurgerButton(
                 icon: AppIcons.category,
                 title: 'Подборки',
+                onTap: () {},
               ),
               BurgerButton(
                 icon: AppIcons.paper,
                 title: 'Все аудиофайлы',
+                onTap: () {},
               ),
               BurgerButton(
                 icon: AppIcons.search,
                 title: 'Поиск',
+                onTap: () {},
               ),
               BurgerButton(
                 icon: AppIcons.delete,
                 title: 'Недавно удаленные',
+                onTap: () {},
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30.0,
               ),
               BurgerButton(
                 icon: AppIcons.wallet,
                 title: 'Подписка',
+                onTap: () {},
               ),
-              SizedBox(
+              const SizedBox(
                 height: 30.0,
               ),
               BurgerButton(
                 icon: AppIcons.edit,
                 title: 'Написать в '
                     '\nподдержку',
+                onTap: () {},
               ),
             ],
           ),

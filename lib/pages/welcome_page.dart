@@ -1,7 +1,8 @@
 import 'package:audio_stories/Pages/registration_page.dart';
-import 'package:audio_stories/Widgets/background.dart';
-import 'package:audio_stories/Widgets/continue_button.dart';
+import 'package:audio_stories/widgets/background.dart';
+import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -70,12 +71,16 @@ class WelcomePage extends StatelessWidget {
           ),
           ContinueButton(
             onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const RegistrationPage()),
+              Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+                '/registration',
                 (Route<dynamic> route) => false,
               );
+              // Navigator.pushAndRemoveUntil(
+              //   context,
+              //   MaterialPageRoute(
+              //       builder: (context) => const RegistrationPage()),
+              //   (Route<dynamic> route) => false,
+              // );
             },
           ),
         ],

@@ -1,5 +1,7 @@
 import 'package:audio_stories/Pages/welcome_page.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/pages/registration_page.dart';
+import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
 
 // import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,7 +17,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'TTNorms',
       ),
-      home: const WelcomePage(),
+      navigatorKey: Utils.firstKey,
+      initialRoute: '/welcome',
+      routes: {
+        '/welcome': (context) => const WelcomePage(),
+        '/registration': (context) => const RegistrationPage(),
+        '/main': (context) => const MainPage(),
+      },
+      // home: const WelcomePage(),
     );
   }
 }

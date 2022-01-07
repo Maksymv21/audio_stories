@@ -1,7 +1,9 @@
 import 'package:audio_stories/Widgets/background.dart';
 import 'package:audio_stories/Widgets/continue_button.dart';
 import 'package:audio_stories/pages/home_page.dart';
+import 'package:audio_stories/pages/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationPage extends StatelessWidget {
@@ -61,7 +63,6 @@ class RegistrationPage extends StatelessWidget {
               ),
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
-
                 border: InputBorder.none,
                 constraints: BoxConstraints(
                   maxWidth: 309.0,
@@ -88,12 +89,13 @@ class RegistrationPage extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const HomePage(),
-                ),
-              );
+              Utils.firstKey.currentState!.pushNamed('/main');
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) => const MainPage(),
+              //   ),
+              // );
             },
             child: const Text(
               'Позже',
