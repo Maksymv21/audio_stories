@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class BurgerButton extends StatefulWidget {
+class BurgerButton extends StatelessWidget {
   final String icon;
   final String title;
   final void Function() onTap;
@@ -12,11 +12,6 @@ class BurgerButton extends StatefulWidget {
     required this.title,
   }) : super(key: key);
 
-  @override
-  State<BurgerButton> createState() => _BurgerButtonState();
-}
-
-class _BurgerButtonState extends State<BurgerButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -30,14 +25,14 @@ class _BurgerButtonState extends State<BurgerButton> {
             splashColor: Colors.transparent,
           ),
           child: ListTile(
-            onTap: widget.onTap,
+            onTap: onTap,
             minLeadingWidth: 0.0,
             leading: ImageIcon(
-              Image.asset(widget.icon).image,
+              Image.asset(icon).image,
               color: Colors.black,
             ),
             title: Text(
-              widget.title,
+              title,
               style: const TextStyle(
                 fontSize: 18.0,
               ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class FootButton extends StatefulWidget {
+class FootButton extends StatelessWidget {
   final String icon;
   final String title;
   final Color color;
@@ -15,33 +15,26 @@ class FootButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<FootButton> createState() => _FootButtonState();
-}
-
-class _FootButtonState extends State<FootButton> {
-  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         IconButton(
-          // color: const Color.fromRGBO(58, 58,85, 0.8),
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
-          onPressed: widget.onPressed,
+          onPressed: onPressed,
           icon: Image.asset(
-            widget.icon,
-            color: widget.color,
-            // color: const Color.fromRGBO(140, 132, 226, 1),
+            icon,
+            color: color,
           ),
           iconSize: 20.0,
         ),
         Align(
           heightFactor: 0.0,
           child: Text(
-            widget.title,
-            style: const TextStyle(
+            title,
+            style: TextStyle(
               fontSize: 10.0,
-              color: Color.fromRGBO(58, 58, 85, 1.0),
+              color: color,
             ),
           ),
         ),

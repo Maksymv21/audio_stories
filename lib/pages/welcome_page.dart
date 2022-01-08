@@ -1,4 +1,3 @@
-import 'package:audio_stories/Pages/registration_page.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';

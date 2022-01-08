@@ -1,7 +1,5 @@
 import 'package:audio_stories/Widgets/background.dart';
 import 'package:audio_stories/Widgets/continue_button.dart';
-import 'package:audio_stories/pages/home_page.dart';
-import 'package:audio_stories/pages/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';

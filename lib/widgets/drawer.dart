@@ -1,21 +1,16 @@
-import 'package:audio_stories/resources/app_colors.dart';
+import 'package:audio_stories/bloc/bloc_icon_color.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/burger_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class BurgerMenu extends StatefulWidget {
+class BurgerMenu extends StatelessWidget {
   const BurgerMenu({Key? key}) : super(key: key);
 
   @override
-  State<BurgerMenu> createState() => _BurgerMenuState();
-}
-
-class _BurgerMenuState extends State<BurgerMenu> {
-  final ColorActive _colorIcon = ColorActive();
-
-  @override
   Widget build(BuildContext context) {
+    ColorBloc _bloc = BlocProvider.of<ColorBloc>(context);
     return Drawer(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -52,17 +47,20 @@ class _BurgerMenuState extends State<BurgerMenu> {
               BurgerButton(
                 icon: AppIcons.home,
                 title: 'Главная',
-                onTap: () {},
+                onTap: () {
+                  Utils.globalKey.currentState!.pushReplacementNamed('/');
+                  Scaffold.of(context).openEndDrawer();
+                  _bloc.add(ColorHome());
+                },
               ),
               BurgerButton(
                 icon: AppIcons.profile,
                 title: 'Профиль',
                 onTap: () {
-                  setState(() {
-                    Utils.globalKey.currentState!.pushReplacementNamed('/profile');
-                    Scaffold.of(context).openEndDrawer();
-                    _colorIcon.profileActive();
-                  });
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed('/profile');
+                  Scaffold.of(context).openEndDrawer();
+                  _bloc.add(ColorProfile());
                 },
               ),
               BurgerButton(

@@ -1,24 +1,18 @@
-import 'package:audio_stories/resources/app_colors.dart';
+import 'package:audio_stories/bloc/bloc_icon_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/foot_button.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MyNavigationBar extends StatefulWidget {
-
-  const MyNavigationBar({Key? key,}) : super(key: key);
-
-  @override
-  State<MyNavigationBar> createState() => _MyNavigationBarState();
-}
-
-class _MyNavigationBarState extends State<MyNavigationBar> {
-  final ColorActive _colorIcon = ColorActive();
-
+class MyNavigationBar extends StatelessWidget {
+  const MyNavigationBar({
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    ColorBloc _bloc = BlocProvider.of<ColorBloc>(context);
     return Container(
       height: 70.0,
       decoration: const BoxDecoration(
@@ -34,69 +28,62 @@ class _MyNavigationBarState extends State<MyNavigationBar> {
           topRight: Radius.circular(20.0),
         ),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          FootButton(
-            icon: AppIcons.home,
-            title: 'Главная',
-            color: _colorIcon.colorHome,
-            onPressed: () {
-              setState(() {
+      child: BlocBuilder<ColorBloc, List<Color>>(
+        builder: (context, color) => Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            FootButton(
+              icon: AppIcons.home,
+              title: 'Главная',
+              color: color[0],
+              onPressed: () {
                 Utils.globalKey.currentState!.pushReplacementNamed('/');
-                _colorIcon.homeActive();
-              });
-
-            },
-          ),
-          FootButton(
-            icon: AppIcons.category,
-            title: 'Подборки',
-            color: _colorIcon.colorCategory,
-            onPressed: () {
-              setState(() {
+                _bloc.add(ColorHome());
+              },
+            ),
+            FootButton(
+              icon: AppIcons.category,
+              title: 'Подборки',
+              color: color[1],
+              onPressed: () {
                 Utils.globalKey.currentState!.pushReplacementNamed('/category');
-                _colorIcon.categoryActive();
-              });
-            },
-          ),
-          GestureDetector(
-            onTap: () {},
-            child: Container(
-              width: 53.0,
-              height: 57.0,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    AppIcons.record,
+                _bloc.add(ColorCategory());
+              },
+            ),
+            GestureDetector(
+              onTap: () {},
+              child: Container(
+                width: 53.0,
+                height: 57.0,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      AppIcons.record,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          FootButton(
-            icon: AppIcons.paper,
-            title: 'Ауидозаписи',
-            color: _colorIcon.colorAudio,
-            onPressed: () {
-              setState(() {
+            FootButton(
+              icon: AppIcons.paper,
+              title: 'Ауидозаписи',
+              color: color[2],
+              onPressed: () {
                 Utils.globalKey.currentState!.pushReplacementNamed('/paper');
-                _colorIcon.audioActive();
-              });
-            },
-          ),
-          FootButton(
-            icon: AppIcons.profile,
-            title: 'Профиль',
-            color: _colorIcon.colorProfile,
-            onPressed: () {
-              setState(() {
+                _bloc.add(ColorAudio());
+              },
+            ),
+            FootButton(
+              icon: AppIcons.profile,
+              title: 'Профиль',
+              color: color[3],
+              onPressed: () {
                 Utils.globalKey.currentState!.pushReplacementNamed('/profile');
-                _colorIcon.profileActive();
-              });
-            },
-          ),
-        ],
+                _bloc.add(ColorProfile());
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
