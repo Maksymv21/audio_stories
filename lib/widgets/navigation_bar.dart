@@ -69,7 +69,7 @@ class MyNavigationBar extends StatelessWidget {
               title: 'Ауидозаписи',
               color: color[2],
               onPressed: () {
-                Utils.globalKey.currentState!.pushReplacementNamed('/paper');
+                Utils.globalKey.currentState!.pushReplacementNamed('/audio');
                 _bloc.add(ColorAudio());
               },
             ),

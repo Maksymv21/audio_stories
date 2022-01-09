@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "293913433241",
+    "project_id": "audio-stories-76aa5",
+    "storage_bucket": "audio-stories-76aa5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:293913433241:android:b8d29fdf918db1f7ea5408",
+        "android_client_info": {
+          "package_name": "com.example.audio_stories"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "293913433241-7u6p9cnndljku4400p7vm3u6oj0l7fq8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfOlW2akbCc2K7BvUb2NKIuuXlYmVPSKA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "293913433241-7u6p9cnndljku4400p7vm3u6oj0l7fq8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

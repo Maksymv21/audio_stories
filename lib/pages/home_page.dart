@@ -65,7 +65,6 @@ class HomePage extends StatelessWidget {
                   ),
                   width: 183.0,
                   height: 240.0,
-                  //color: const Color.fromRGBO(113, 165, 159, 0.75),
                   child: Column(
                     children: [
                       const SizedBox(

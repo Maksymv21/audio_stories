@@ -14,4 +14,5 @@ class AppIcons {
   static const String record = '$_path/record.png';
   static const String search = '$_path/search.png';
   static const String wallet = '$_path/wallet.png';
+
 }

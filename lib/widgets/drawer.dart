@@ -66,22 +66,40 @@ class BurgerMenu extends StatelessWidget {
               BurgerButton(
                 icon: AppIcons.category,
                 title: 'Подборки',
-                onTap: () {},
+                onTap: () {
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed('/category');
+                  Scaffold.of(context).openEndDrawer();
+                  _bloc.add(ColorCategory());
+                },
               ),
               BurgerButton(
                 icon: AppIcons.paper,
                 title: 'Все аудиофайлы',
-                onTap: () {},
+                onTap: () {
+                  Utils.globalKey.currentState!.pushReplacementNamed('/audio');
+                  Scaffold.of(context).openEndDrawer();
+                  _bloc.add(ColorAudio());
+                },
               ),
               BurgerButton(
                 icon: AppIcons.search,
                 title: 'Поиск',
-                onTap: () {},
+                onTap: () {
+                  Utils.globalKey.currentState!.pushReplacementNamed('/search');
+                  Scaffold.of(context).openEndDrawer();
+                  _bloc.add(NoColor());
+                },
               ),
               BurgerButton(
                 icon: AppIcons.delete,
                 title: 'Недавно удаленные',
-                onTap: () {},
+                onTap: () {
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed('/deleted');
+                  Scaffold.of(context).openEndDrawer();
+                  _bloc.add(NoColor());
+                },
               ),
               const SizedBox(
                 height: 30.0,
@@ -89,7 +107,12 @@ class BurgerMenu extends StatelessWidget {
               BurgerButton(
                 icon: AppIcons.wallet,
                 title: 'Подписка',
-                onTap: () {},
+                onTap: () {
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed('/subscription');
+                  Scaffold.of(context).openEndDrawer();
+                  _bloc.add(NoColor());
+                },
               ),
               const SizedBox(
                 height: 30.0,

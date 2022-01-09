@@ -3,6 +3,10 @@ import 'package:audio_stories/pages/category_page.dart';
 import 'package:audio_stories/pages/home_page.dart';
 import 'package:audio_stories/pages/audio_page.dart';
 import 'package:audio_stories/pages/profile_page.dart';
+import 'package:audio_stories/pages/recently_deleted_page.dart';
+import 'package:audio_stories/pages/search_page.dart';
+import 'package:audio_stories/pages/subscription_page.dart';
+import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/drawer.dart';
 import 'package:audio_stories/widgets/navigation_bar.dart';
@@ -16,7 +20,12 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ColorBloc(
-        [Colors.red, Colors.grey, Colors.grey, Colors.grey],
+        [
+          AppColor.active,
+          AppColor.disActive,
+          AppColor.disActive,
+          AppColor.disActive,
+        ],
       ),
       child: Scaffold(
         body: Navigator(
@@ -29,7 +38,7 @@ class MainPage extends StatelessWidget {
               case '/':
                 page = const HomePage();
                 break;
-              case '/paper':
+              case '/audio':
                 page = const AudioPage();
                 break;
               case '/category':
@@ -37,6 +46,15 @@ class MainPage extends StatelessWidget {
                 break;
               case '/profile':
                 page = const ProfilePage();
+                break;
+              case '/search':
+                page = const SearchPage();
+                break;
+              case '/deleted':
+                page = const RecentlyDeletedPage();
+                break;
+              case '/subscription':
+                page = const SubscriptionPage();
                 break;
               default:
                 page = const HomePage();

@@ -44,6 +44,7 @@ class RegistrationPage extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.0,
               fontFamily: 'TTNormsL',
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(

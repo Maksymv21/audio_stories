@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -63,6 +65,7 @@ class WelcomePage extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.0,
               fontFamily: 'TTNormsL',
+              fontWeight: FontWeight.w600,
             ),
           ),
           const SizedBox(
