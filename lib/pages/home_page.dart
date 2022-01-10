@@ -1,5 +1,6 @@
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/widgets/button_menu.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -14,25 +15,9 @@ class HomePage extends StatelessWidget {
           image: AppIcons.up,
           child: Stack(
             children: [
-              Align(
-                alignment: const AlignmentDirectional(-1.1, -0.7),
-                child: Builder(
-                  builder: (BuildContext context) {
-                    return IconButton(
-                      icon: const Icon(
-                        Icons.menu_rounded,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      tooltip: MaterialLocalizations
-                          .of(context)
-                          .openAppDrawerTooltip,
-                    );
-                  },
-                ),
+              const Align(
+                alignment: AlignmentDirectional(-1.1, -0.7),
+                child: ButtonMenu(),
               ),
               const Align(
                 alignment: AlignmentDirectional(-1.0, -0.3),
@@ -47,6 +32,9 @@ class HomePage extends StatelessWidget {
               Align(
                 alignment: const AlignmentDirectional(1.1, -0.3),
                 child: TextButton(
+                  style: const ButtonStyle(
+                    splashFactory: NoSplash.splashFactory,
+                  ),
                   onPressed: () {},
                   child: const Text(
                     'Открыть все',
@@ -72,8 +60,8 @@ class HomePage extends StatelessWidget {
                       ),
                       const Text(
                         'Здесь будет'
-                            '\nтвой набор '
-                            '\nсказок',
+                        '\nтвой набор '
+                        '\nсказок',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Colors.white,
@@ -84,6 +72,9 @@ class HomePage extends StatelessWidget {
                         height: 40.0,
                       ),
                       TextButton(
+                        style: const ButtonStyle(
+                          splashFactory: NoSplash.splashFactory,
+                        ),
                         onPressed: () {},
                         child: const Text(
                           'Добавить',
@@ -144,5 +135,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-

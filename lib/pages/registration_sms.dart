@@ -1,11 +1,10 @@
 import 'package:audio_stories/Widgets/background.dart';
 import 'package:audio_stories/Widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
 
-class RegistrationPage extends StatelessWidget {
-  const RegistrationPage({Key? key}) : super(key: key);
+class RegistrationSMSPage extends StatelessWidget {
+  const RegistrationSMSPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,10 +35,11 @@ class RegistrationPage extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 15.0,
+            height: 5.0,
           ),
           const Text(
-            'Введи номер телефона',
+            'Введи код из смс, чтобы мы'
+            '\nтебя запомнили',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16.0,
@@ -81,31 +81,10 @@ class RegistrationPage extends StatelessWidget {
             height: 80.0,
           ),
           ContinueButton(
-            onPressed: () {
-              Utils.firstKey.currentState!.pushNamed('/sms');
-            },
+            onPressed: () {},
           ),
           const SizedBox(
-            height: 15.0,
-          ),
-          TextButton(
-            style: const ButtonStyle(
-              splashFactory: NoSplash.splashFactory,
-            ),
-            onPressed: () {
-              Utils.firstKey.currentState!.pushNamed('/main');
-            },
-            child: const Text(
-              'Позже',
-              style: TextStyle(
-                fontSize: 24.0,
-                color: Colors.black,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15.0,
+            height: 60.0,
           ),
           PhysicalModel(
             color: Colors.white,
@@ -125,8 +104,8 @@ class RegistrationPage extends StatelessWidget {
               child: const Center(
                 child: Text(
                   'Регистрация привяжет твои сказки'
-                  '\nк облаку, после чего они всегда '
-                  '\nбудут с тобой',
+                      '\nк облаку, после чего они всегда '
+                      '\nбудут с тобой',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16.0,

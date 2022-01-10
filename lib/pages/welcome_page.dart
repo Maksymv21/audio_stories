@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -77,12 +75,6 @@ class WelcomePage extends StatelessWidget {
                 '/registration',
                 (Route<dynamic> route) => false,
               );
-              // Navigator.pushAndRemoveUntil(
-              //   context,
-              //   MaterialPageRoute(
-              //       builder: (context) => const RegistrationPage()),
-              //   (Route<dynamic> route) => false,
-              // );
             },
           ),
         ],
