@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class AppColor {
   AppColor._();
 
-  static const Color disActive = Color.fromRGBO(58, 58, 85, 0.8);
-  static const Color active = Color.fromRGBO(140, 132, 226, 1);
-  static const Color purple = Color.fromRGBO(140, 132, 226, 1);
-  static const Color grey = Color.fromRGBO(246, 246, 246, 0.5);
+  static Color disActive = const Color(0xff3A3A55).withOpacity(0.8);
+  static const Color active = Color(0xff8C84E2);
+  static Color greyDisActive = const Color(0xffF6F6F6).withOpacity(0.5);
 }

@@ -5,6 +5,8 @@ import 'package:audio_stories/widgets/button_menu.dart';
 import 'package:flutter/material.dart';
 
 class AudioPage extends StatelessWidget {
+  static const routName = '/audio';
+
   const AudioPage({Key? key}) : super(key: key);
 
   @override
@@ -75,7 +77,7 @@ class AudioPage extends StatelessWidget {
                 alignment: const AlignmentDirectional(1.0, 0.475),
                 child: OutlinedButton(
                   style: OutlinedButton.styleFrom(
-                    backgroundColor: AppColor.grey,
+                    backgroundColor: AppColor.greyDisActive,
                     minimumSize: const Size(100.0, 46.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
@@ -115,7 +117,7 @@ class AudioPage extends StatelessWidget {
                           textAlign: TextAlign.end,
                           style: TextStyle(
                             fontFamily: 'TTNormsL',
-                            color: AppColor.purple,
+                            color: AppColor.active,
                             fontSize: 14.0,
                             fontWeight: FontWeight.w600,
                             letterSpacing: 0.5,

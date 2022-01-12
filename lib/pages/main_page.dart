@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPage extends StatelessWidget {
+  static const routName = '/main';
   const MainPage({Key? key}) : super(key: key);
 
   @override
@@ -30,30 +31,30 @@ class MainPage extends StatelessWidget {
       child: Scaffold(
         body: Navigator(
           key: Utils.globalKey,
-          initialRoute: '/',
+          initialRoute: MainPage.routName,
           onGenerateRoute: (RouteSettings settings) {
             Widget page;
 
             switch (settings.name) {
-              case '/':
+              case HomePage.routName:
                 page = const HomePage();
                 break;
-              case '/audio':
+              case AudioPage.routName:
                 page = const AudioPage();
                 break;
-              case '/category':
+              case CategoryPage.routName:
                 page = const CategoryPage();
                 break;
-              case '/profile':
+              case ProfilePage.routName:
                 page = const ProfilePage();
                 break;
-              case '/search':
+              case SearchPage.routName:
                 page = const SearchPage();
                 break;
-              case '/deleted':
+              case RecentlyDeletedPage.routName:
                 page = const RecentlyDeletedPage();
                 break;
-              case '/subscription':
+              case SubscriptionPage.routName:
                 page = const SubscriptionPage();
                 break;
               default:

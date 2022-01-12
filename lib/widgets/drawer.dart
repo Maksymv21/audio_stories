@@ -1,4 +1,11 @@
 import 'package:audio_stories/bloc/bloc_icon_color.dart';
+import 'package:audio_stories/pages/audio_page.dart';
+import 'package:audio_stories/pages/category_page.dart';
+import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/pages/profile_page.dart';
+import 'package:audio_stories/pages/recently_deleted_page.dart';
+import 'package:audio_stories/pages/search_page.dart';
+import 'package:audio_stories/pages/subscription_page.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/burger_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -10,7 +17,6 @@ class BurgerMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ColorBloc _bloc = BlocProvider.of<ColorBloc>(context);
     return Drawer(
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -48,9 +54,12 @@ class BurgerMenu extends StatelessWidget {
                 icon: AppIcons.home,
                 title: 'Главная',
                 onTap: () {
-                  Utils.globalKey.currentState!.pushReplacementNamed('/');
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed(MainPage.routName);
                   Scaffold.of(context).openEndDrawer();
-                  _bloc.add(ColorHome());
+                  context.read<ColorBloc>().add(
+                    ColorHome(),
+                  );
                 },
               ),
               BurgerButton(
@@ -58,9 +67,11 @@ class BurgerMenu extends StatelessWidget {
                 title: 'Профиль',
                 onTap: () {
                   Utils.globalKey.currentState!
-                      .pushReplacementNamed('/profile');
+                      .pushReplacementNamed(ProfilePage.routName);
                   Scaffold.of(context).openEndDrawer();
-                  _bloc.add(ColorProfile());
+                  context.read<ColorBloc>().add(
+                    ColorProfile(),
+                  );
                 },
               ),
               BurgerButton(
@@ -68,27 +79,35 @@ class BurgerMenu extends StatelessWidget {
                 title: 'Подборки',
                 onTap: () {
                   Utils.globalKey.currentState!
-                      .pushReplacementNamed('/category');
+                      .pushReplacementNamed(CategoryPage.routName);
                   Scaffold.of(context).openEndDrawer();
-                  _bloc.add(ColorCategory());
+                  context.read<ColorBloc>().add(
+                    ColorCategory(),
+                  );
                 },
               ),
               BurgerButton(
                 icon: AppIcons.paper,
                 title: 'Все аудиофайлы',
                 onTap: () {
-                  Utils.globalKey.currentState!.pushReplacementNamed('/audio');
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed(AudioPage.routName);
                   Scaffold.of(context).openEndDrawer();
-                  _bloc.add(ColorAudio());
+                  context.read<ColorBloc>().add(
+                    ColorAudio(),
+                  );
                 },
               ),
               BurgerButton(
                 icon: AppIcons.search,
                 title: 'Поиск',
                 onTap: () {
-                  Utils.globalKey.currentState!.pushReplacementNamed('/search');
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed(SearchPage.routName);
                   Scaffold.of(context).openEndDrawer();
-                  _bloc.add(NoColor());
+                  context.read<ColorBloc>().add(
+                    NoColor(),
+                  );
                 },
               ),
               BurgerButton(
@@ -96,9 +115,11 @@ class BurgerMenu extends StatelessWidget {
                 title: 'Недавно удаленные',
                 onTap: () {
                   Utils.globalKey.currentState!
-                      .pushReplacementNamed('/deleted');
+                      .pushReplacementNamed(RecentlyDeletedPage.routName);
                   Scaffold.of(context).openEndDrawer();
-                  _bloc.add(NoColor());
+                  context.read<ColorBloc>().add(
+                    NoColor(),
+                  );
                 },
               ),
               const SizedBox(
@@ -109,9 +130,11 @@ class BurgerMenu extends StatelessWidget {
                 title: 'Подписка',
                 onTap: () {
                   Utils.globalKey.currentState!
-                      .pushReplacementNamed('/subscription');
+                      .pushReplacementNamed(SubscriptionPage.routName);
                   Scaffold.of(context).openEndDrawer();
-                  _bloc.add(NoColor());
+                  context.read<ColorBloc>().add(
+                    NoColor(),
+                  );
                 },
               ),
               const SizedBox(

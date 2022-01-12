@@ -4,6 +4,8 @@ import 'package:audio_stories/widgets/button_menu.dart';
 import 'package:flutter/material.dart';
 
 class RecentlyDeletedPage extends StatelessWidget {
+  static const routName = '/deleted';
+
   const RecentlyDeletedPage({Key? key}) : super(key: key);
 
   @override

@@ -4,6 +4,8 @@ import 'package:audio_stories/widgets/button_menu.dart';
 import 'package:flutter/material.dart';
 
 class SearchPage extends StatelessWidget {
+  static const routName = '/search';
+
   const SearchPage({Key? key}) : super(key: key);
 
   @override

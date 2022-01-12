@@ -1,11 +1,24 @@
-import 'package:audio_stories/Widgets/background.dart';
-import 'package:audio_stories/Widgets/continue_button.dart';
+import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/widgets/background.dart';
+import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationPage extends StatelessWidget {
-  const RegistrationPage({Key? key}) : super(key: key);
+  static const routName = '/registration';
+
+  RegistrationPage({Key? key}) : super(key: key);
+
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
+
+  FirebaseAuth auth = FirebaseAuth.instance;
+
+  String verificationIdReceived = '';
+
+  bool otpCodeVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +68,7 @@ class RegistrationPage extends StatelessWidget {
             elevation: 6.0,
             borderRadius: BorderRadius.circular(45.0),
             child: TextFormField(
+              controller: phoneController,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 20.0,
@@ -77,12 +91,20 @@ class RegistrationPage extends StatelessWidget {
               ),
             ),
           ),
+          // TextFormField(
+          //   controller: otpController,
+          // ),
           const SizedBox(
             height: 80.0,
           ),
           ContinueButton(
-            onPressed: () {
-              Utils.firstKey.currentState!.pushNamed('/sms');
+            onPressed: () async{
+              if (otpCodeVisible) {
+                verifyOtp();
+              } else {
+                verifyNumber();
+              }
+              // Utils.firstKey.currentState!.pushNamed('/sms');
             },
           ),
           const SizedBox(
@@ -93,7 +115,7 @@ class RegistrationPage extends StatelessWidget {
               splashFactory: NoSplash.splashFactory,
             ),
             onPressed: () {
-              Utils.firstKey.currentState!.pushNamed('/main');
+              Utils.firstKey.currentState!.pushNamed(MainPage.routName);
             },
             child: const Text(
               'Позже',
@@ -140,5 +162,28 @@ class RegistrationPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void verifyNumber() {
+    auth.verifyPhoneNumber(
+      phoneNumber: phoneController.text,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        await auth.signInWithCredential(credential);
+      },
+      verificationFailed: (FirebaseAuthException exception) {},
+      codeSent: (String verificationId, int? resendToken) {
+        verificationIdReceived = verificationId;
+        otpCodeVisible = true;
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {},
+    );
+  }
+
+  void verifyOtp() async {
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: verificationIdReceived,
+      smsCode: otpController.text,
+    );
+    await auth.signInWithCredential(credential);
   }
 }

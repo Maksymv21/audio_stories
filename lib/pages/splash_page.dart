@@ -1,10 +1,14 @@
+import 'package:audio_stories/pages/main_page.dart';
 import 'package:audio_stories/pages/welcome_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatelessWidget {
+  static const routName = '/';
+
   final int duration;
 
   const SplashPage({
@@ -17,14 +21,30 @@ class SplashPage extends StatelessWidget {
     Future.delayed(
       Duration(seconds: duration),
       () async {
-        // await for the Firebase initialization to occur
-        // FirebaseApp app = await Firebase.initializeApp();
+        WidgetsFlutterBinding.ensureInitialized();
+        await Firebase.initializeApp();
+
+        // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+        // User? user;
+        //
+        // void getCurrentUser() async {
+        //   User? _user = _firebaseAuth.currentUser;
+        //   user = _user;
+        // }
+        //
+        // getCurrentUser();
 
         Navigator.push(
           context,
           PageRouteBuilder(
-            pageBuilder: (_, __, ___) => const WelcomePage(),
-            transitionDuration:const Duration(seconds: 0),
+            pageBuilder: (_, __, ___) {
+              // if (user != null) {
+              //   return const MainPage();
+              // } else {
+                return const WelcomePage();
+              // }
+            },
+            transitionDuration: const Duration(seconds: 0),
           ),
         );
       },

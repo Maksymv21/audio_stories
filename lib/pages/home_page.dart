@@ -4,6 +4,8 @@ import 'package:audio_stories/widgets/button_menu.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
+  static const routName = '/home';
+
   const HomePage({Key? key}) : super(key: key);
 
   @override

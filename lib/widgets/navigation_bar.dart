@@ -1,4 +1,8 @@
 import 'package:audio_stories/bloc/bloc_icon_color.dart';
+import 'package:audio_stories/pages/audio_page.dart';
+import 'package:audio_stories/pages/category_page.dart';
+import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/pages/profile_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/foot_button.dart';
 import 'package:audio_stories/resources/utils.dart';
@@ -12,7 +16,6 @@ class MyNavigationBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ColorBloc _bloc = BlocProvider.of<ColorBloc>(context);
     return Container(
       height: 70.0,
       decoration: const BoxDecoration(
@@ -37,8 +40,11 @@ class MyNavigationBar extends StatelessWidget {
               title: 'Главная',
               color: color[0],
               onPressed: () {
-                Utils.globalKey.currentState!.pushReplacementNamed('/');
-                _bloc.add(ColorHome());
+                Utils.globalKey.currentState!
+                    .pushReplacementNamed(MainPage.routName);
+                context.read<ColorBloc>().add(
+                      ColorHome(),
+                    );
               },
             ),
             FootButton(
@@ -46,8 +52,11 @@ class MyNavigationBar extends StatelessWidget {
               title: 'Подборки',
               color: color[1],
               onPressed: () {
-                Utils.globalKey.currentState!.pushReplacementNamed('/category');
-                _bloc.add(ColorCategory());
+                Utils.globalKey.currentState!
+                    .pushReplacementNamed(CategoryPage.routName);
+                context.read<ColorBloc>().add(
+                  ColorCategory(),
+                );
               },
             ),
             GestureDetector(
@@ -69,8 +78,11 @@ class MyNavigationBar extends StatelessWidget {
               title: 'Ауидозаписи',
               color: color[2],
               onPressed: () {
-                Utils.globalKey.currentState!.pushReplacementNamed('/audio');
-                _bloc.add(ColorAudio());
+                Utils.globalKey.currentState!
+                    .pushReplacementNamed(AudioPage.routName);
+                context.read<ColorBloc>().add(
+                  ColorAudio(),
+                );
               },
             ),
             FootButton(
@@ -78,8 +90,11 @@ class MyNavigationBar extends StatelessWidget {
               title: 'Профиль',
               color: color[3],
               onPressed: () {
-                Utils.globalKey.currentState!.pushReplacementNamed('/profile');
-                _bloc.add(ColorProfile());
+                Utils.globalKey.currentState!
+                    .pushReplacementNamed(ProfilePage.routName);
+                context.read<ColorBloc>().add(
+                  ColorProfile(),
+                );
               },
             ),
           ],

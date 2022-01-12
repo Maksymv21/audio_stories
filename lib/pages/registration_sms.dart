@@ -1,9 +1,12 @@
-import 'package:audio_stories/Widgets/background.dart';
-import 'package:audio_stories/Widgets/continue_button.dart';
+import 'package:audio_stories/widgets/background.dart';
+import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationSMSPage extends StatelessWidget {
+  static const routName = '/sms';
+
   const RegistrationSMSPage({Key? key}) : super(key: key);
 
   @override
@@ -81,7 +84,8 @@ class RegistrationSMSPage extends StatelessWidget {
             height: 80.0,
           ),
           ContinueButton(
-            onPressed: () {},
+            onPressed: () async{
+            },
           ),
           const SizedBox(
             height: 60.0,
@@ -121,3 +125,4 @@ class RegistrationSMSPage extends StatelessWidget {
     );
   }
 }
+

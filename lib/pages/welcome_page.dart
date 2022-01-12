@@ -1,3 +1,4 @@
+import 'package:audio_stories/pages/registration_page.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -5,6 +6,8 @@ import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
 
 class WelcomePage extends StatelessWidget {
+  static const routName = '/welcome';
+
   const WelcomePage({Key? key}) : super(key: key);
 
   @override
@@ -72,7 +75,7 @@ class WelcomePage extends StatelessWidget {
           ContinueButton(
             onPressed: () {
               Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
-                '/registration',
+                RegistrationPage.routName,
                 (Route<dynamic> route) => false,
               );
             },

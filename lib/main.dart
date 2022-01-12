@@ -20,15 +20,15 @@ class MyApp extends StatelessWidget {
         fontFamily: 'TTNorms',
       ),
       navigatorKey: Utils.firstKey,
-      initialRoute: '/',
+      initialRoute: SplashPage.routName,
       routes: {
-        '/': (context) => const SplashPage(
-              duration: 3,
+        SplashPage.routName: (context) => const SplashPage(
+              duration: 4,
             ),
-        '/welcome': (context) => const WelcomePage(),
-        '/registration': (context) => const RegistrationPage(),
-        '/main': (context) => const MainPage(),
-        '/sms': (context) => const RegistrationSMSPage(),
+        WelcomePage.routName: (context) => const WelcomePage(),
+        RegistrationPage.routName: (context) => RegistrationPage(),
+        MainPage.routName: (context) => const MainPage(),
+        RegistrationSMSPage.routName: (context) => const RegistrationSMSPage(),
       },
     );
   }

@@ -3,6 +3,8 @@ import 'package:audio_stories/widgets/background.dart';
 import 'package:flutter/material.dart';
 
 class CategoryPage extends StatelessWidget {
+  static const routName = '/category';
+
   const CategoryPage({Key? key}) : super(key: key);
 
   @override
