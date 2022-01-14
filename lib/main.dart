@@ -1,12 +1,12 @@
-import 'package:audio_stories/bloc/bloc_auth.dart';
-import 'package:audio_stories/pages/auth_page.dart';
-import 'package:audio_stories/pages/glad_to_see_page.dart';
-import 'package:audio_stories/pages/welcome_page.dart';
-import 'package:audio_stories/pages/main_page.dart';
-import 'package:audio_stories/pages/splash_page.dart';
-import 'package:audio_stories/provider/auth_provider.dart';
+import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
+import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
+import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
+import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
+import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/splash_pages/splash_page/splash_page.dart';
+import 'package:audio_stories/pages/auth_pages/auth_provider/auth_provider.dart';
+import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/resources/utils.dart';
-import 'package:audio_stories/repository/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           WelcomePage.routName: (context) => const WelcomePage(),
           AuthPage.routName: (context) => AuthPage(),
           MainPage.routName: (context) => const MainPage(),
-          GladPage.routName: (context) => const GladPage(),
+          SplashGladPage.routName: (context) => const SplashGladPage(),
         },
       ),
     );

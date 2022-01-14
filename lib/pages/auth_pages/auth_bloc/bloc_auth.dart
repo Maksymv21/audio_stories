@@ -1,11 +1,11 @@
 import 'dart:async';
-
-import 'package:audio_stories/bloc/bloc_auth_event.dart';
-import 'package:audio_stories/bloc/bloc_auth_state.dart';
-import 'package:audio_stories/model/auth_model.dart';
-import 'package:audio_stories/repository/auth_repository.dart';
+import 'package:audio_stories/pages/auth_pages/auth_model/auth_model.dart';
+import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import 'bloc_auth_event.dart';
+import 'bloc_auth_state.dart';
 
 class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
   final PhoneAuthRepository _phoneAuthRepository;

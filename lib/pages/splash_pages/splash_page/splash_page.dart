@@ -1,5 +1,5 @@
-import 'package:audio_stories/pages/glad_to_see_page.dart';
-import 'package:audio_stories/pages/welcome_page.dart';
+import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
+import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,7 +30,7 @@ class SplashPage extends StatelessWidget {
               User? _user = _firebaseAuth.currentUser;
               print(_user);
               if (_user != null) {
-                return const GladPage();
+                return const SplashGladPage();
               } else {
                 return const WelcomePage();
               }

@@ -1,10 +1,10 @@
-import 'package:audio_stories/bloc/bloc_icon_color.dart';
-import 'package:audio_stories/pages/audio_page.dart';
-import 'package:audio_stories/pages/category_page.dart';
-import 'package:audio_stories/pages/main_page.dart';
-import 'package:audio_stories/pages/profile_page.dart';
+import 'package:audio_stories/pages/main_pages/main_blocs/color_icon_bloc/color_icon_bloc.dart';
+import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
+import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
+import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/widgets/foot_button.dart';
+import 'package:audio_stories/pages/main_pages/main_widgets/foot_button.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

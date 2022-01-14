@@ -1,7 +1,7 @@
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
-import 'package:audio_stories/widgets/button_menu.dart';
+import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
 import 'package:flutter/material.dart';
 
 class AudioPage extends StatelessWidget {

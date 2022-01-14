@@ -1,8 +1,4 @@
-import 'package:audio_stories/bloc/bloc_auth.dart';
-import 'package:audio_stories/bloc/bloc_auth_event.dart';
-import 'package:audio_stories/main.dart';
-import 'package:audio_stories/pages/auth_page.dart';
-import 'package:audio_stories/pages/welcome_page.dart';
+import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

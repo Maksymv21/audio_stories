@@ -1,13 +1,13 @@
-import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/welcome_container.dart';
 import 'package:flutter/material.dart';
 
-class GladPage extends StatelessWidget {
+class SplashGladPage extends StatelessWidget {
   static const routName = '/glad';
 
-  const GladPage({Key? key}) : super(key: key);
+  const SplashGladPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

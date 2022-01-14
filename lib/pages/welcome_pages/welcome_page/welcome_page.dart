@@ -1,16 +1,16 @@
-import 'package:audio_stories/bloc/bloc_auth_event.dart';
-import 'package:audio_stories/bloc/bloc_auth_state.dart';
-import 'package:audio_stories/pages/auth_page.dart';
-import 'package:audio_stories/provider/auth_provider.dart';
-import 'package:audio_stories/repository/auth_repository.dart';
+import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
+import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_state.dart';
+import 'package:audio_stories/pages/auth_pages/auth_provider/auth_provider.dart';
+import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/utils.dart';
-import 'package:audio_stories/bloc/bloc_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../auth_pages/auth_page/auth_page.dart';
 
 class WelcomePage extends StatelessWidget {
   static const routName = '/welcome';
