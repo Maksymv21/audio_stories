@@ -46,7 +46,7 @@ class MainPage extends StatelessWidget {
                 page = const CategoryPage();
                 break;
               case ProfilePage.routName:
-                page = const ProfilePage();
+                page = ProfilePage();
                 break;
               case SearchPage.routName:
                 page = const SearchPage();

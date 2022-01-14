@@ -1,24 +1,27 @@
-import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
-import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/resources/utils.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:audio_stories/widgets/number_form.dart';
+import 'package:audio_stories/widgets/welcome_container.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationPage extends StatelessWidget {
-  static const routName = '/registration';
+  final String text;
+  final String hintText;
+  final Widget widget;
+  final TextEditingController controller;
+  final Function() onPressed;
+  final double height;
 
-  RegistrationPage({Key? key}) : super(key: key);
-
-  TextEditingController phoneController = TextEditingController();
-  TextEditingController otpController = TextEditingController();
-
-  FirebaseAuth auth = FirebaseAuth.instance;
-
-  String verificationIdReceived = '';
-
-  bool otpCodeVisible = false;
+  const RegistrationPage({
+    Key? key,
+    required this.widget,
+    required this.text,
+    required this.controller,
+    required this.onPressed,
+    required this.height,
+    required this.hintText,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -49,12 +52,12 @@ class RegistrationPage extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 15.0,
+            height: 5.0,
           ),
-          const Text(
-            'Введи номер телефона',
+          Text(
+            text,
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 16.0,
               fontFamily: 'TTNormsL',
               fontWeight: FontWeight.w600,
@@ -63,127 +66,30 @@ class RegistrationPage extends StatelessWidget {
           const SizedBox(
             height: 20.0,
           ),
-          PhysicalModel(
-            color: Colors.white,
-            elevation: 6.0,
-            borderRadius: BorderRadius.circular(45.0),
-            child: TextFormField(
-              controller: phoneController,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 20.0,
-                letterSpacing: 1.0,
-              ),
-              keyboardType: TextInputType.number,
-              decoration: const InputDecoration(
-                border: InputBorder.none,
-                constraints: BoxConstraints(
-                  maxWidth: 309.0,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(45.0),
-                  ),
-                ),
-              ),
-            ),
+          NumberForm(
+            controller: controller,
+            hintText: hintText,
           ),
-          // TextFormField(
-          //   controller: otpController,
-          // ),
           const SizedBox(
             height: 80.0,
           ),
           ContinueButton(
-            onPressed: () async{
-              if (otpCodeVisible) {
-                verifyOtp();
-              } else {
-                verifyNumber();
-              }
-              // Utils.firstKey.currentState!.pushNamed('/sms');
-            },
+            onPressed: onPressed,
           ),
-          const SizedBox(
-            height: 15.0,
+          SizedBox(
+            height: height,
           ),
-          TextButton(
-            style: const ButtonStyle(
-              splashFactory: NoSplash.splashFactory,
-            ),
-            onPressed: () {
-              Utils.firstKey.currentState!.pushNamed(MainPage.routName);
-            },
-            child: const Text(
-              'Позже',
-              style: TextStyle(
-                fontSize: 24.0,
-                color: Colors.black,
-                letterSpacing: 1.5,
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15.0,
-          ),
-          PhysicalModel(
-            color: Colors.white,
-            elevation: 4.0,
-            borderRadius: BorderRadius.circular(20.0),
-            child: Container(
-              width: 280.0,
-              height: 110.0,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15.0),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.white,
-                  ),
-                ],
-              ),
-              child: const Center(
-                child: Text(
-                  'Регистрация привяжет твои сказки'
-                  '\nк облаку, после чего они всегда '
-                  '\nбудут с тобой',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontFamily: 'TTNormsL',
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
+          widget,
+          const WelcomeContainer(
+            text: 'Регистрация привяжет твои сказки'
+                '\nк облаку, после чего они всегда '
+                '\nбудут с тобой',
+            width: 280.0,
+            height: 110.0,
+            fontSize: 16.0,
           ),
         ],
       ),
     );
-  }
-
-  void verifyNumber() {
-    auth.verifyPhoneNumber(
-      phoneNumber: phoneController.text,
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        await auth.signInWithCredential(credential);
-      },
-      verificationFailed: (FirebaseAuthException exception) {},
-      codeSent: (String verificationId, int? resendToken) {
-        verificationIdReceived = verificationId;
-        otpCodeVisible = true;
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {},
-    );
-  }
-
-  void verifyOtp() async {
-    PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: verificationIdReceived,
-      smsCode: otpController.text,
-    );
-    await auth.signInWithCredential(credential);
   }
 }

@@ -1,7 +1,12 @@
+import 'package:audio_stories/bloc/bloc_icon_color.dart';
+import 'package:audio_stories/pages/audio_page.dart';
+import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/button_menu.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 
 class HomePage extends StatelessWidget {
   static const routName = '/home';
@@ -37,7 +42,13 @@ class HomePage extends StatelessWidget {
                   style: const ButtonStyle(
                     splashFactory: NoSplash.splashFactory,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Utils.globalKey.currentState!
+                        .pushReplacementNamed(AudioPage.routName);
+                    context.read<ColorBloc>().add(
+                          ColorAudio(),
+                        );
+                  },
                   child: const Text(
                     'Открыть все',
                     style: TextStyle(

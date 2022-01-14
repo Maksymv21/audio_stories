@@ -1,9 +1,8 @@
-import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/pages/glad_to_see_page.dart';
 import 'package:audio_stories/pages/welcome_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatelessWidget {
@@ -11,41 +10,34 @@ class SplashPage extends StatelessWidget {
 
   final int duration;
 
-  const SplashPage({
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+
+  SplashPage({
     Key? key,
     required this.duration,
   }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
     Future.delayed(
       Duration(seconds: duration),
-      () async {
-        WidgetsFlutterBinding.ensureInitialized();
-        await Firebase.initializeApp();
-
-        // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-        // User? user;
-        //
-        // void getCurrentUser() async {
-        //   User? _user = _firebaseAuth.currentUser;
-        //   user = _user;
-        // }
-        //
-        // getCurrentUser();
-
-        Navigator.push(
+      () {
+        Navigator.pushAndRemoveUntil(
           context,
           PageRouteBuilder(
             pageBuilder: (_, __, ___) {
-              // if (user != null) {
-              //   return const MainPage();
-              // } else {
+              User? _user = _firebaseAuth.currentUser;
+              print(_user);
+              if (_user != null) {
+                return const GladPage();
+              } else {
                 return const WelcomePage();
-              // }
+              }
             },
             transitionDuration: const Duration(seconds: 0),
           ),
+          (Route<dynamic> route) => false,
         );
       },
     );
