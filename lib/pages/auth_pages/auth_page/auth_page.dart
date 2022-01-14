@@ -1,6 +1,6 @@
-import 'package:audio_stories/pages/auth_bloc/bloc_auth.dart';
-import 'package:audio_stories/pages/auth_bloc/bloc_auth_event.dart';
-import 'package:audio_stories/pages/auth_bloc/bloc_auth_state.dart';
+import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
+import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_event.dart';
+import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_state.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/resources/utils.dart';
