@@ -23,20 +23,6 @@ class AuthPage extends StatelessWidget {
           Utils.firstKey.currentState!.pushReplacementNamed(
             MainPage.routName,
           );
-        } else if (current is PhoneAuthCodeVerificationFailure) {
-          _showSnackBarWithText(context: context, textValue: current.message);
-        } else if (current is PhoneAuthError) {
-          _showSnackBarWithText(
-              context: context, textValue: 'Expected error occurred.');
-        } else if (current is PhoneAuthNumberVerificationFailure) {
-          _showSnackBarWithText(context: context, textValue: current.message);
-        } else if (current is PhoneAuthNumberVerificationSuccess) {
-          _showSnackBarWithText(
-              context: context,
-              textValue: 'SMS code is sent to your mobile number.');
-        } else if (current is PhoneAuthCodeAutoReturnTimeoutComplete) {
-          _showSnackBarWithText(
-              context: context, textValue: 'Time out for auto retrieval');
         }
       },
       builder: (context, state) {
@@ -117,11 +103,5 @@ class AuthPage extends StatelessWidget {
   void _verifySMS(BuildContext context, String verificationCode) {
     context.read<PhoneAuthBloc>().add(PhoneAuthCodeVerified(
         verificationId: verificationCode, smsCode: _codeNumberController.text));
-  }
-
-  void _showSnackBarWithText(
-      {required BuildContext context, required String textValue}) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(textValue)));
   }
 }
