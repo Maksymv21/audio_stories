@@ -29,6 +29,7 @@ class MainPage extends StatelessWidget {
         ],
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         body: Navigator(
           key: Utils.globalKey,
           initialRoute: MainPage.routName,
@@ -46,7 +47,7 @@ class MainPage extends StatelessWidget {
                 page = const CategoryPage();
                 break;
               case ProfilePage.routName:
-                page = ProfilePage();
+                page = const ProfilePage();
                 break;
               case SearchPage.routName:
                 page = const SearchPage();

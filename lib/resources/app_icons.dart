@@ -23,4 +23,6 @@ class AppIcons {
   static const String more = '$_path/more.png';
   static const String play = '$_path/play.png';
   static const String heart = '$_path/heart.png';
+  static const String arrow = '$_path/arrow.png';
+  static const String owl = '$_path/owl.jpg';
 }
