@@ -1,6 +1,8 @@
+import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
 import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +19,6 @@ class SplashPage extends StatelessWidget {
     required this.duration,
   }) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
     Future.delayed(
@@ -30,7 +31,7 @@ class SplashPage extends StatelessWidget {
               User? _user = _firebaseAuth.currentUser;
               print(_user);
               if (_user != null) {
-                return const SplashGladPage();
+                return SplashGladPage();
               } else {
                 return const WelcomePage();
               }

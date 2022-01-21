@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class NumberForm extends StatelessWidget {
   final TextEditingController controller;
-  final String hintText;
+  final String? hintText;
 
   const NumberForm({
     Key? key,
     required this.controller,
-    required this.hintText,
+    this.hintText,
   }) : super(key: key);
 
   @override

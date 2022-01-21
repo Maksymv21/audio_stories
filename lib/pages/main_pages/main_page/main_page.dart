@@ -2,7 +2,9 @@ import 'package:audio_stories/pages/main_pages/main_blocs/color_icon_bloc/color_
 import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
+import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
+import 'package:audio_stories/pages/profile_pages/profile_page/test_rieastore_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
@@ -15,6 +17,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MainPage extends StatelessWidget {
   static const routName = '/main';
+
   const MainPage({Key? key}) : super(key: key);
 
   @override
@@ -57,6 +60,12 @@ class MainPage extends StatelessWidget {
                 break;
               case SubscriptionPage.routName:
                 page = const SubscriptionPage();
+                break;
+              case EditProfilePage.routName:
+                page = EditProfilePage();
+                break;
+              case TestPage.routName:
+                page = TestPage();
                 break;
               default:
                 page = const HomePage();

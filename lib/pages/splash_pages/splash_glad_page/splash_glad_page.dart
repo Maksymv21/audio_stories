@@ -1,13 +1,17 @@
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/welcome_container.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SplashGladPage extends StatelessWidget {
   static const routName = '/glad';
 
-  const SplashGladPage({Key? key}) : super(key: key);
+  SplashGladPage({Key? key}) : super(key: key);
+
+  final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +23,9 @@ class SplashGladPage extends StatelessWidget {
         context,
         PageRouteBuilder(
           pageBuilder: (_, __, ___) {
+            ModelUser.uid = _user?.uid;
+            ModelUser.phoneNumber = _user?.phoneNumber;
+            ModelUser.createUser();
             return const MainPage();
           },
           transitionDuration: const Duration(seconds: 0),

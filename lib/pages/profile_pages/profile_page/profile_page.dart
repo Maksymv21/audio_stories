@@ -1,16 +1,39 @@
+import 'dart:io';
+
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
+import 'package:audio_stories/pages/main_pages/models/model_user.dart';
+import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
+import 'package:audio_stories/pages/profile_pages/profile_page/test_rieastore_page.dart';
 import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   static const routName = '/profile';
 
   const ProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  File? image;
+
+  Future pickImage() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    final imageTemporary = File(image.path);
+    setState(() => this.image = imageTemporary);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +86,13 @@ class ProfilePage extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24.0),
                   image: DecorationImage(
-                    image: Image.asset(AppIcons.owl).image,
+                    image: image != null
+                        ? Image
+                        .file(image!)
+                        .image
+                        : Image
+                        .asset(AppIcons.owl)
+                        .image,
                     fit: BoxFit.cover,
                   ),
                   boxShadow: const [
@@ -77,9 +106,11 @@ class ProfilePage extends StatelessWidget {
               const SizedBox(
                 height: 10.0,
               ),
-              const Text(
-                'Name',
-                style: TextStyle(
+              Text(
+                ModelUser.name != null
+                ? ModelUser.name!
+                : 'Name',
+                style: const TextStyle(
                   fontSize: 24.0,
                 ),
               ),
@@ -90,13 +121,13 @@ class ProfilePage extends StatelessWidget {
                 color: Colors.white,
                 elevation: 6.0,
                 borderRadius: BorderRadius.circular(45.0),
-                child: const SizedBox(
+                child: SizedBox(
                   width: 319.0,
                   height: 62.0,
                   child: Center(
                     child: Text(
-                      '+38 (066) 666 66 66',
-                      style: TextStyle(
+                      ModelUser.profilePhoneNumber,
+                      style: const TextStyle(
                         fontSize: 20.0,
                       ),
                     ),
@@ -107,7 +138,10 @@ class ProfilePage extends StatelessWidget {
                 height: 5.0,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Utils.globalKey.currentState!
+                      .pushReplacementNamed(EditProfilePage.routName);
+                },
                 child: const Text(
                   'Редактировать',
                   style: TextStyle(
@@ -120,7 +154,10 @@ class ProfilePage extends StatelessWidget {
                 height: 10.0,
               ),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Utils.globalKey.currentState!.pushReplacementNamed(
+                      TestPage.routName);
+                },
                 child: const Text(
                   'Подписка',
                   style: TextStyle(
@@ -187,28 +224,9 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-// Column(
-// mainAxisAlignment: MainAxisAlignment.center,
-// children: [
-// TextButton(
-// onPressed: () async {
-// User? user = _firebaseAuth.currentUser;
-// print(user);
-// await user?.delete();
-// Utils.firstKey.currentState!
-// .pushReplacementNamed(WelcomePage.routName);
-// },
-// child: const Text('delete user'),
-// ),
-// const SizedBox(
-// height: 30,
-// ),
-// TextButton(
-// onPressed: () {
-// Utils.firstKey.currentState!
-//     .pushReplacementNamed(AuthPage.routName);
-// },
-// child: const Text('authorization'),
-// ),
-// ],
-// ),
+Future<void> imageSetup(File image) async {
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
+  users.add({
+    'image': image,
+  });
+}

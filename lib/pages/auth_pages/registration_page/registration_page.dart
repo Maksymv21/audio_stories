@@ -1,7 +1,7 @@
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
-import 'package:audio_stories/pages/auth_pages/auth_widgets/number_form.dart';
+import 'package:audio_stories/widgets/number_form.dart';
 import 'package:audio_stories/widgets/welcome_container.dart';
 import 'package:flutter/material.dart';
 

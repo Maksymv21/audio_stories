@@ -44,7 +44,7 @@ class MyApp extends StatelessWidget {
           WelcomePage.routName: (context) => const WelcomePage(),
           AuthPage.routName: (context) => AuthPage(),
           MainPage.routName: (context) => const MainPage(),
-          SplashGladPage.routName: (context) => const SplashGladPage(),
+          SplashGladPage.routName: (context) => SplashGladPage(),
         },
       ),
     );
