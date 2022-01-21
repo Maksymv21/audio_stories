@@ -1,6 +1,9 @@
 import 'package:audio_stories/utils/database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ModelUser {
+  static Stream user = FirebaseFirestore.instance.collection('users').doc(ModelUser.uid).snapshots();
+
   static String? uid;
   static String? phoneNumber;
   static String profilePhoneNumber = '+380...';
@@ -27,7 +30,7 @@ class ModelUser {
   }
 
   static void setName(String n) {
-    Database.create(uid: uid, map: {'name': n});
+    Database.update(uid: uid, map: {'name': n});
     name = n;
   }
 

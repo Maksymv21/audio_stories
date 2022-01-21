@@ -7,10 +7,20 @@ class Database {
     required uid,
     required map,
   }) async {
-    _user.doc(uid).update(map);
+    _user.doc(uid).set(
+          map,
+          SetOptions(
+            merge: true,
+          ),
+        );
   }
 
-
+  static Future<void> update({
+    required uid,
+    required map,
+  }) async {
+    _user.doc(uid).update(map);
+  }
 
   static Map<String, dynamic>? read({
     required uid,

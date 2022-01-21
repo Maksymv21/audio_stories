@@ -26,6 +26,7 @@ class SplashGladPage extends StatelessWidget {
             ModelUser.uid = _user?.uid;
             ModelUser.phoneNumber = _user?.phoneNumber;
             ModelUser.createUser();
+            // ModelUser.readName();
             return const MainPage();
           },
           transitionDuration: const Duration(seconds: 0),
