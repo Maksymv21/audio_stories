@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -5,14 +7,41 @@ import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/number_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-class EditProfilePage extends StatelessWidget {
+class EditProfilePage extends StatefulWidget {
   static const routName = '/editProfile';
 
-  EditProfilePage({Key? key}) : super(key: key);
+  const EditProfilePage({Key? key}) : super(key: key);
+
+  @override
+  State<EditProfilePage> createState() => _EditProfilePageState();
+}
+
+class _EditProfilePageState extends State<EditProfilePage> {
   final TextEditingController _editNumberController = TextEditingController();
   final TextEditingController _editNameController = TextEditingController();
+
+  File? _image;
+  String? url;
+
+  Future pickImage() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    setState(() => _image = File(image.path));
+  }
+
+  Future uploadImage(File _image) async {
+    Reference reference = FirebaseStorage.instance.ref().child('image');
+
+    await reference.putFile(_image);
+    String downloadUrl = await reference.getDownloadURL();
+
+    await ModelUser.createPhoto(downloadUrl);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +73,7 @@ class EditProfilePage extends StatelessWidget {
                 .snapshots(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                String? url = snapshot.data.data()['photo'];
                 return Center(
                   child: Column(
                     children: [
@@ -79,7 +109,19 @@ class EditProfilePage extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.0),
                           image: DecorationImage(
-                            image: Image.asset(AppIcons.owl).image,
+                            colorFilter: const ColorFilter.srgbToLinearGamma(),
+                            image: (() {
+                              if (url == null) {
+                                return Image.asset(AppIcons.photo).image;
+                              } else if (_image == null) {
+                                return Image.network(url).image;
+                              } else {
+                                return Image.file(_image!).image;
+                              }
+                            }()),
+                            // _image == null
+                            //     ? Image.asset(AppIcons.photo).image
+                            //     : Image.file(_image!).image,
                             fit: BoxFit.cover,
                           ),
                           boxShadow: const [
@@ -88,6 +130,12 @@ class EditProfilePage extends StatelessWidget {
                               blurRadius: 5.0,
                             ),
                           ],
+                        ),
+                        child: IconButton(
+                          icon: Image.asset(AppIcons.camera),
+                          onPressed: () {
+                            pickImage();
+                          },
                         ),
                       ),
                       const SizedBox(
@@ -124,6 +172,9 @@ class EditProfilePage extends StatelessWidget {
                           }
                           Utils.globalKey.currentState!
                               .pushReplacementNamed(ProfilePage.routName);
+                          if (_image != null) {
+                            uploadImage(_image!);
+                          }
                         },
                         child: const Text(
                           'Сохранить',

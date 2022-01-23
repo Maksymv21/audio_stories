@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
 import 'package:audio_stories/pages/main_pages/models/model_user.dart';
@@ -9,29 +7,24 @@ import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+// import 'package:image_picker/image_picker.dart';
 
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   static const routName = '/profile';
 
   const ProfilePage({Key? key}) : super(key: key);
 
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
+  // File? image;
 
-class _ProfilePageState extends State<ProfilePage> {
-  File? image;
-
-  Future pickImage() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (image == null) return;
-
-    final imageTemporary = File(image.path);
-    setState(() => this.image = imageTemporary);
-  }
+  // Future pickImage() async {
+  //   final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   if (image == null) return;
+  //
+  //   // setState(() => this.image = File(image.path));
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +43,13 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
         StreamBuilder(
-            stream: ModelUser.user,
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(ModelUser.uid)
+                .snapshots(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
+                String? url = snapshot.data.data()['photo'];
                 return Center(
                   child: Column(
                     children: [
@@ -88,9 +85,12 @@ class _ProfilePageState extends State<ProfilePage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.0),
                           image: DecorationImage(
-                            image: image != null
-                                ? Image.file(image!).image
-                                : Image.asset(AppIcons.owl).image,
+                            image: url == null
+                                ? Image.asset(AppIcons.photo).image
+                                : Image.network(url).image,
+                            // image != null
+                            //     ? Image.file(image!).image
+                            //     : Image.asset(AppIcons.owl).image,
                             fit: BoxFit.cover,
                           ),
                           boxShadow: const [
@@ -151,8 +151,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Utils.globalKey.currentState!
-                              .pushReplacementNamed(TestPage.routName);
+                          // Utils.globalKey.currentState!
+                          //     .pushReplacementNamed(TestPage.routName);
+                          print(url);
                         },
                         child: const Text(
                           'Подписка',
@@ -225,5 +226,3 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 }
-
-

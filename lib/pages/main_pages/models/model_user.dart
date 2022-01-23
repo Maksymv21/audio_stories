@@ -7,7 +7,7 @@ class ModelUser {
   static String? uid;
   static String? phoneNumber;
   static String profilePhoneNumber = '+380...';
-  static String? name;
+  static String name = 'Ваше имя';
 
   // ? photo;
 
@@ -29,15 +29,19 @@ class ModelUser {
     }
   }
 
+  static Future<void> createPhoto(String url) async {
+    Database.create(uid: uid, map: {'photo' : url});
+  }
+
   static void setName(String n) {
     Database.update(uid: uid, map: {'name': n});
     name = n;
   }
 
-  static String? readName() {
-    name = Database.read(uid: uid)!['name'].toString();
-    return name;
-  }
+  // static String? readName() {
+  //   name = Database.read(uid: uid)!['name'].toString();
+  //   return name;
+  // }
 }
 
 
