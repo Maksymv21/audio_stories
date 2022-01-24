@@ -9,7 +9,7 @@ import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
-import 'package:audio_stories/resources/utils.dart';
+import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/drawer.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/navigation_bar.dart';
 import 'package:flutter/material.dart';

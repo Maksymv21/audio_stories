@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/resources/utils.dart';
+import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/number_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,12 +35,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
   }
 
   Future uploadImage(File _image) async {
-    Reference reference = FirebaseStorage.instance.ref().child('image');
+    Reference reference = FirebaseStorage.instance.ref().child(
+          ModelUser.uid.toString(),
+        );
 
     await reference.putFile(_image);
     String downloadUrl = await reference.getDownloadURL();
 
-    await ModelUser.createPhoto(downloadUrl);
+    await ModelUser.createData('photo', downloadUrl);
   }
 
   @override
@@ -74,6 +76,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               if (snapshot.hasData) {
                 String? url = snapshot.data.data()['photo'];
+                String? name = snapshot.data.data()['name'];
                 return Center(
                   child: Column(
                     children: [
@@ -119,9 +122,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 return Image.file(_image!).image;
                               }
                             }()),
-                            // _image == null
-                            //     ? Image.asset(AppIcons.photo).image
-                            //     : Image.file(_image!).image,
                             fit: BoxFit.cover,
                           ),
                           boxShadow: const [
@@ -151,7 +151,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             fontSize: 24.0,
                           ),
                           decoration: InputDecoration(
-                            hintText: snapshot.data.data()['name'],
+                            hintText: name == null
+                                ? 'Ваше имя'
+                                : snapshot.data.data()['name'],
                           ),
                         ),
                       ),
@@ -168,7 +170,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       TextButton(
                         onPressed: () {
                           if (_editNameController.text != '') {
-                            ModelUser.setName(_editNameController.text);
+                            ModelUser.createData(
+                                'name', _editNameController.text);
                           }
                           Utils.globalKey.currentState!
                               .pushReplacementNamed(ProfilePage.routName);

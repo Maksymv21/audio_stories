@@ -5,7 +5,7 @@ import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
-import 'package:audio_stories/resources/utils.dart';
+import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

@@ -6,7 +6,7 @@ import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/foot_button.dart';
-import 'package:audio_stories/resources/utils.dart';
+import 'package:audio_stories/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

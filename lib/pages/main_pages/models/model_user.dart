@@ -1,15 +1,14 @@
 import 'package:audio_stories/utils/database.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ModelUser {
-  static Stream user = FirebaseFirestore.instance.collection('users').doc(ModelUser.uid).snapshots();
+  // static Stream user = FirebaseFirestore.instance
+  //     .collection('users')
+  //     .doc(ModelUser.uid)
+  //     .snapshots();
 
   static String? uid;
   static String? phoneNumber;
   static String profilePhoneNumber = '+380...';
-  static String name = 'Ваше имя';
-
-  // ? photo;
 
   static void createUser() {
     Database.create(
@@ -29,30 +28,21 @@ class ModelUser {
     }
   }
 
-  static Future<void> createPhoto(String url) async {
-    Database.create(uid: uid, map: {'photo' : url});
+  static Future<void> createData(String title, String info) async {
+    Database.create(uid: uid, map: {title: info});
   }
 
-  static void setName(String n) {
-    Database.update(uid: uid, map: {'name': n});
-    name = n;
-  }
-
-  // static String? readName() {
-  //   name = Database.read(uid: uid)!['name'].toString();
-  //   return name;
-  // }
+// static String? readName() {
+//   name = Database.read(uid: uid)!['name'].toString();
+//   return name;
+// }
 }
 
-
-
-
-  // static String loh() {
-  //   Database.readItem(uid: uid, item: "name");
-  //   return Database.text!;
-  // }
-  // static void readName () {
-  //   Database.read('name');
-  //   print(Database.phone);
-  // }
-
+// static String loh() {
+//   Database.readItem(uid: uid, item: "name");
+//   return Database.text!;
+// }
+// static void readName () {
+//   Database.read('name');
+//   print(Database.phone);
+// }

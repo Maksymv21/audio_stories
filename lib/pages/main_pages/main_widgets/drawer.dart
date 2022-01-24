@@ -6,7 +6,7 @@ import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
-import 'package:audio_stories/resources/utils.dart';
+import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/burger_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:flutter/material.dart';
