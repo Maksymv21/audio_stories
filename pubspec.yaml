@@ -41,6 +41,8 @@ dependencies:
   firebase_storage: ^10.2.5
   equatable: ^2.0.3
   image_picker: ^0.8.4+4
+  flutter_sound: ^8.5.0
+  noise_meter: ^3.0.3
 
 
 dev_dependencies:

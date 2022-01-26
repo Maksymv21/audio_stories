@@ -51,42 +51,53 @@ class RegistrationPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
-            height: 5.0,
-          ),
-          Text(
-            text,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16.0,
-              fontFamily: 'TTNormsL',
-              fontWeight: FontWeight.w600,
+          Expanded(
+            flex: 2,
+            child: Text(
+              text,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16.0,
+                fontFamily: 'TTNormsL',
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
-          const SizedBox(
-            height: 20.0,
+          const Spacer(),
+          Expanded(
+            flex: 3,
+            child: NumberForm(
+              controller: controller,
+              hintText: hintText,
+            ),
           ),
-          NumberForm(
-            controller: controller,
-            hintText: hintText,
+          const Spacer(
+            flex: 4,
           ),
-          const SizedBox(
-            height: 80.0,
+          Expanded(
+            flex: 3,
+            child: ContinueButton(
+              onPressed: onPressed,
+            ),
           ),
-          ContinueButton(
-            onPressed: onPressed,
+          const Spacer(),
+          Expanded(
+            flex: 3,
+            child: widget,
           ),
-          SizedBox(
-            height: height,
+          const Spacer(),
+          const Expanded(
+            flex: 5,
+            child: WelcomeContainer(
+              text: 'Регистрация привяжет твои сказки'
+                  '\nк облаку, после чего они всегда '
+                  '\nбудут с тобой',
+              width: 280.0,
+              fontSize: 16.0,
+            ),
           ),
-          widget,
-          const WelcomeContainer(
-            text: 'Регистрация привяжет твои сказки'
-                '\nк облаку, после чего они всегда '
-                '\nбудут с тобой',
-            width: 280.0,
-            height: 110.0,
-            fontSize: 16.0,
+          const Spacer(
+            flex: 3,
           ),
         ],
       ),

@@ -26,127 +26,139 @@ class BurgerMenu extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const SizedBox(
-            height: 100.0,
+          const Spacer(
+            flex: 3,
           ),
-          const Text(
-            'Аудиосказки',
-            style: TextStyle(
-              fontSize: 26.0,
+          const Expanded(
+            flex: 2,
+            child: Text(
+              'Аудиосказки',
+              style: TextStyle(
+                fontSize: 26.0,
+              ),
             ),
           ),
-          const SizedBox(
-            height: 30.0,
-          ),
-          const Text(
-            'Меню',
-            style: TextStyle(
-              fontSize: 22.0,
-              color: Color.fromRGBO(58, 58, 85, 0.5),
+          const Spacer(),
+          const Expanded(
+            flex: 2,
+            child: Text(
+              'Меню',
+              style: TextStyle(
+                fontSize: 22.0,
+                color: Color.fromRGBO(58, 58, 85, 0.5),
+              ),
             ),
           ),
-          const SizedBox(
-            height: 70.0,
+          const Spacer(
+            flex: 2,
           ),
-          Column(
-            children: [
-              BurgerButton(
-                icon: AppIcons.home,
-                title: 'Главная',
-                onTap: () {
-                  Utils.globalKey.currentState!
-                      .pushReplacementNamed(MainPage.routName);
-                  Scaffold.of(context).openEndDrawer();
-                  context.read<ColorBloc>().add(
-                    ColorHome(),
-                  );
-                },
-              ),
-              BurgerButton(
-                icon: AppIcons.profile,
-                title: 'Профиль',
-                onTap: () {
-                  Utils.globalKey.currentState!
-                      .pushReplacementNamed(ProfilePage.routName);
-                  Scaffold.of(context).openEndDrawer();
-                  context.read<ColorBloc>().add(
-                    ColorProfile(),
-                  );
-                },
-              ),
-              BurgerButton(
-                icon: AppIcons.category,
-                title: 'Подборки',
-                onTap: () {
-                  Utils.globalKey.currentState!
-                      .pushReplacementNamed(CategoryPage.routName);
-                  Scaffold.of(context).openEndDrawer();
-                  context.read<ColorBloc>().add(
-                    ColorCategory(),
-                  );
-                },
-              ),
-              BurgerButton(
-                icon: AppIcons.paper,
-                title: 'Все аудиофайлы',
-                onTap: () {
-                  Utils.globalKey.currentState!
-                      .pushReplacementNamed(AudioPage.routName);
-                  Scaffold.of(context).openEndDrawer();
-                  context.read<ColorBloc>().add(
-                    ColorAudio(),
-                  );
-                },
-              ),
-              BurgerButton(
-                icon: AppIcons.search,
-                title: 'Поиск',
-                onTap: () {
-                  Utils.globalKey.currentState!
-                      .pushReplacementNamed(SearchPage.routName);
-                  Scaffold.of(context).openEndDrawer();
-                  context.read<ColorBloc>().add(
-                    NoColor(),
-                  );
-                },
-              ),
-              BurgerButton(
-                icon: AppIcons.delete,
-                title: 'Недавно удаленные',
-                onTap: () {
-                  Utils.globalKey.currentState!
-                      .pushReplacementNamed(RecentlyDeletedPage.routName);
-                  Scaffold.of(context).openEndDrawer();
-                  context.read<ColorBloc>().add(
-                    NoColor(),
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 30.0,
-              ),
-              BurgerButton(
-                icon: AppIcons.wallet,
-                title: 'Подписка',
-                onTap: () {
-                  Utils.globalKey.currentState!
-                      .pushReplacementNamed(SubscriptionPage.routName);
-                  Scaffold.of(context).openEndDrawer();
-                  context.read<ColorBloc>().add(
-                    NoColor(),
-                  );
-                },
-              ),
-              const SizedBox(
-                height: 30.0,
-              ),
-              BurgerButton(
-                icon: AppIcons.edit,
-                title: 'Написать в '
-                    '\nподдержку',
-                onTap: () {},
-              ),
-            ],
+          Expanded(
+            flex: 13,
+            child: Column(
+              children: [
+                BurgerButton(
+                  icon: AppIcons.home,
+                  title: 'Главная',
+                  onTap: () {
+                    Utils.globalKey.currentState!
+                        .pushReplacementNamed(MainPage.routName);
+                    Scaffold.of(context).openEndDrawer();
+                    context.read<ColorBloc>().add(
+                          ColorHome(),
+                        );
+                  },
+                ),
+                BurgerButton(
+                  icon: AppIcons.profile,
+                  title: 'Профиль',
+                  onTap: () {
+                    Utils.globalKey.currentState!
+                        .pushReplacementNamed(ProfilePage.routName);
+                    Scaffold.of(context).openEndDrawer();
+                    context.read<ColorBloc>().add(
+                          ColorProfile(),
+                        );
+                  },
+                ),
+                BurgerButton(
+                  icon: AppIcons.category,
+                  title: 'Подборки',
+                  onTap: () {
+                    Utils.globalKey.currentState!
+                        .pushReplacementNamed(CategoryPage.routName);
+                    Scaffold.of(context).openEndDrawer();
+                    context.read<ColorBloc>().add(
+                          ColorCategory(),
+                        );
+                  },
+                ),
+                BurgerButton(
+                  icon: AppIcons.paper,
+                  title: 'Все аудиофайлы',
+                  onTap: () {
+                    Utils.globalKey.currentState!
+                        .pushReplacementNamed(AudioPage.routName);
+                    Scaffold.of(context).openEndDrawer();
+                    context.read<ColorBloc>().add(
+                          ColorAudio(),
+                        );
+                  },
+                ),
+                BurgerButton(
+                  icon: AppIcons.search,
+                  title: 'Поиск',
+                  onTap: () {
+                    Utils.globalKey.currentState!
+                        .pushReplacementNamed(SearchPage.routName);
+                    Scaffold.of(context).openEndDrawer();
+                    context.read<ColorBloc>().add(
+                          NoColor(),
+                        );
+                  },
+                ),
+                BurgerButton(
+                  icon: AppIcons.delete,
+                  title: 'Недавно удаленные',
+                  onTap: () {
+                    Utils.globalKey.currentState!
+                        .pushReplacementNamed(RecentlyDeletedPage.routName);
+                    Scaffold.of(context).openEndDrawer();
+                    context.read<ColorBloc>().add(
+                          NoColor(),
+                        );
+                  },
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          Expanded(
+            flex: 2,
+            child: BurgerButton(
+              icon: AppIcons.wallet,
+              title: 'Подписка',
+              onTap: () {
+                Utils.globalKey.currentState!
+                    .pushReplacementNamed(SubscriptionPage.routName);
+                Scaffold.of(context).openEndDrawer();
+                context.read<ColorBloc>().add(
+                      NoColor(),
+                    );
+              },
+            ),
+          ),
+          const Spacer(),
+          Expanded(
+            flex: 2,
+            child: BurgerButton(
+              icon: AppIcons.edit,
+              title: 'Написать в '
+                  '\nподдержку',
+              onTap: () {},
+            ),
+          ),
+          const Spacer(
+            flex: 4,
           ),
         ],
       ),

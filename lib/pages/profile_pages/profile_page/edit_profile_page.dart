@@ -51,21 +51,24 @@ class _EditProfilePageState extends State<EditProfilePage> {
       children: [
         Column(
           children: [
-            Background(
-              height: 375.0,
-              image: AppIcons.up,
-              child: Align(
-                alignment: const AlignmentDirectional(-1.1, -0.7),
-                child: IconButton(
-                  onPressed: () {
-                    Utils.globalKey.currentState!
-                        .pushReplacementNamed(ProfilePage.routName);
-                  },
-                  icon: Image.asset(AppIcons.back),
-                  iconSize: 60.0,
+            Expanded(
+              child: Background(
+                height: 375.0,
+                image: AppIcons.up,
+                child: Align(
+                  alignment: const AlignmentDirectional(-1.1, -0.9),
+                  child: IconButton(
+                    onPressed: () {
+                      Utils.globalKey.currentState!
+                          .pushReplacementNamed(ProfilePage.routName);
+                    },
+                    icon: Image.asset(AppIcons.back),
+                    iconSize: 60.0,
+                  ),
                 ),
               ),
             ),
+            const Spacer(),
           ],
         ),
         StreamBuilder(
@@ -80,31 +83,34 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 return Center(
                   child: Column(
                     children: [
-                      const SizedBox(
-                        height: 60.0,
+                      const Spacer(
+                        flex: 3,
                       ),
-                      const Text(
-                        'Профиль',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 36.0,
-                          letterSpacing: 3.0,
+                      const Expanded(
+                        flex: 4,
+                        child: Text(
+                          'Профиль',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 36.0,
+                            letterSpacing: 3.0,
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      const Text(
-                        'Твоя частичка',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          letterSpacing: 1.0,
+                      const Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Твоя частичка',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            letterSpacing: 1.0,
+                          ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 45.0,
+                      const Spacer(
+                        flex: 4,
                       ),
                       Container(
                         width: 228.0,
@@ -138,54 +144,66 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           },
                         ),
                       ),
-                      const SizedBox(
-                        height: 20.0,
+                      const Spacer(
+                        flex: 3,
                       ),
-                      Padding(
-                        padding:
-                            const EdgeInsets.fromLTRB(70.0, 0.0, 70.0, 0.0),
-                        child: TextFormField(
-                          controller: _editNameController,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 24.0,
+                      Expanded(
+                        flex: 3,
+                        child: Padding(
+                          padding:
+                              const EdgeInsets.fromLTRB(70.0, 0.0, 70.0, 0.0),
+                          child: TextFormField(
+                            controller: _editNameController,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 24.0,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: name == null
+                                  ? 'Ваше имя'
+                                  : snapshot.data.data()['name'],
+                            ),
                           ),
-                          decoration: InputDecoration(
-                            hintText: name == null
-                                ? 'Ваше имя'
-                                : snapshot.data.data()['name'],
+                        ),
+                      ),
+                      const Spacer(
+                        flex: 4,
+                      ),
+                      Expanded(
+                        flex: 6,
+                        child: NumberForm(
+                          controller: _editNumberController,
+                          hintText: ModelUser.profilePhoneNumber,
+                        ),
+                      ),
+                      const Spacer(
+                        flex: 2,
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: TextButton(
+                          onPressed: () {
+                            if (_editNameController.text != '') {
+                              ModelUser.createData(
+                                  'name', _editNameController.text);
+                            }
+                            Utils.globalKey.currentState!
+                                .pushReplacementNamed(ProfilePage.routName);
+                            if (_image != null) {
+                              uploadImage(_image!);
+                            }
+                          },
+                          child: const Text(
+                            'Сохранить',
+                            style: TextStyle(
+                              fontSize: 14.0,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        height: 50.0,
-                      ),
-                      NumberForm(
-                        controller: _editNumberController,
-                        hintText: ModelUser.profilePhoneNumber,
-                      ),
-                      const SizedBox(
-                        height: 20.0,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          if (_editNameController.text != '') {
-                            ModelUser.createData(
-                                'name', _editNameController.text);
-                          }
-                          Utils.globalKey.currentState!
-                              .pushReplacementNamed(ProfilePage.routName);
-                          if (_image != null) {
-                            uploadImage(_image!);
-                          }
-                        },
-                        child: const Text(
-                          'Сохранить',
-                          style: TextStyle(
-                            fontSize: 14.0,
-                            color: Colors.black,
-                          ),
-                        ),
+                      const Spacer(
+                        flex: 5,
                       ),
                     ],
                   ),
@@ -200,3 +218,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 }
+
+
+

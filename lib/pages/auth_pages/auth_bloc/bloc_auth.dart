@@ -40,7 +40,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     PhoneAuthNumberVerified event,
     Emitter<PhoneAuthState> emit,
   ) async {
-    print('1');
     emit(PhoneAuthLoading());
     await _phoneAuthRepository.verifyPhoneNumber(
       phoneNumber: event.phoneNumber,
@@ -55,7 +54,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     PhoneAuthCodeVerified event,
     Emitter<PhoneAuthState> emit,
   ) async {
-    print('2');
     emit(PhoneAuthLoading());
     PhoneAuthModel phoneAuthModel = await _phoneAuthRepository.verifySMSCode(
       smsCode: event.smsCode,
@@ -70,7 +68,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     PhoneAuthCodeAutoReturnTimeout event,
     Emitter<PhoneAuthState> emit,
   ) async {
-    print('3');
     emit(
       PhoneAuthCodeAutoReturnTimeoutComplete(event.verificationId),
     );
@@ -80,7 +77,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     PhoneAuthCodeSent event,
     Emitter<PhoneAuthState> emit,
   ) async {
-    print('4');
     emit(
       PhoneAuthNumberVerificationSuccess(verificationId: event.verificationId),
     );
@@ -90,7 +86,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     PhoneAuthVerificationFailed event,
     Emitter<PhoneAuthState> emit,
   ) async {
-    print('5');
     emit(
       PhoneAuthNumberVerificationFailure(event.message),
     );
@@ -100,7 +95,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     PhoneAuthVerificationCompleted event,
     Emitter<PhoneAuthState> emit,
   ) async {
-    print('6');
     emit(
       PhoneAuthCodeVerificationSuccess(uid: event.uid),
     );
@@ -110,7 +104,6 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     DeletedAccount event,
     Emitter<PhoneAuthState> emit,
   ) async {
-    print('7');
     emit(
       RepeatPhoneAuth(),
     );

@@ -70,30 +70,38 @@ class SplashGladPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(
-            height: 40.0,
+          const Spacer(),
+          const Expanded(
+            flex: 2,
+            child: WelcomeContainer(
+              text: 'Мы рады тебя видеть',
+              width: 305.0,
+              fontSize: 24.0,
+            ),
           ),
-          const WelcomeContainer(
-            text: 'Мы рады тебя видеть',
-            width: 305.0,
-            height: 80.0,
-            fontSize: 24.0,
+          const Spacer(
+            flex: 2,
           ),
-          const SizedBox(
-            height: 59.0,
+          Expanded(
+            flex: 2,
+            child: Image(
+              image: Image.asset(AppIcons.heart).image,
+            ),
           ),
-          Image(
-            image: Image.asset(AppIcons.heart).image,
+          const Spacer(
+            flex: 3,
           ),
-          const SizedBox(
-            height: 110.0,
+          const Expanded(
+            flex: 3,
+            child: WelcomeContainer(
+              text: 'Взрослые иногда нуждаются в'
+                  '\nсказке даже больше, чем дети',
+              width: 280.0,
+              fontSize: 16.0,
+            ),
           ),
-          const WelcomeContainer(
-            text: 'Взрослые иногда нуждаются в'
-                '\nсказке даже больше, чем дети',
-            width: 280.0,
-            height: 110.0,
-            fontSize: 16.0,
+          const Spacer(
+            flex: 2,
           ),
         ],
       ),

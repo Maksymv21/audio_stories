@@ -21,14 +21,17 @@ class ProfilePage extends StatelessWidget {
       children: [
         Column(
           children: const [
-            Background(
-              height: 375.0,
-              image: AppIcons.up,
-              child: Align(
-                alignment: AlignmentDirectional(-1.1, -0.7),
-                child: ButtonMenu(),
+            Expanded(
+              child: Background(
+                height: 375.0,
+                image: AppIcons.up,
+                child: Align(
+                  alignment: AlignmentDirectional(-1.1, -0.95),
+                  child: ButtonMenu(),
+                ),
               ),
             ),
+            Spacer(),
           ],
         ),
         StreamBuilder(
@@ -43,35 +46,38 @@ class ProfilePage extends StatelessWidget {
               return Center(
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 60.0,
+                    const Spacer(
+                      flex: 3,
                     ),
-                    const Text(
-                      'Профиль',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 36.0,
-                        letterSpacing: 3.0,
+                    const Expanded(
+                      flex: 5,
+                      child: Text(
+                        'Профиль',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 36.0,
+                          letterSpacing: 3.0,
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 5.0,
-                    ),
-                    const Text(
-                      'Твоя частичка',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        letterSpacing: 1.0,
+                    const Expanded(
+                      flex: 2,
+                      child: Text(
+                        'Твоя частичка',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          letterSpacing: 1.0,
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 20.0,
+                    const Spacer(
+                      flex: 2,
                     ),
                     Container(
-                      width: 228.0,
-                      height: 228.0,
+                      width: 230.0,
+                      height: 230.0,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24.0),
                         image: DecorationImage(
@@ -88,114 +94,128 @@ class ProfilePage extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      name == null ? 'Ваше имя' : snapshot.data.data()['name'],
-                      style: const TextStyle(
-                        fontSize: 24.0,
+                    const Spacer(),
+                    Expanded(
+                      flex: 4,
+                      child: Text(
+                        name == null
+                            ? 'Ваше имя'
+                            : snapshot.data.data()['name'],
+                        style: const TextStyle(
+                          fontSize: 24.0,
+                        ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                    PhysicalModel(
-                      color: Colors.white,
-                      elevation: 6.0,
-                      borderRadius: BorderRadius.circular(45.0),
-                      child: SizedBox(
-                        width: 319.0,
-                        height: 62.0,
-                        child: Center(
-                          child: Text(
-                            ModelUser.profilePhoneNumber,
-                            style: const TextStyle(
-                              fontSize: 20.0,
+                    const Spacer(),
+                    Expanded(
+                      flex: 6,
+                      child: PhysicalModel(
+                        color: Colors.white,
+                        elevation: 6.0,
+                        borderRadius: BorderRadius.circular(45.0),
+                        child: SizedBox(
+                          width: 319.0,
+                          height: 62.0,
+                          child: Center(
+                            child: Text(
+                              ModelUser.profilePhoneNumber,
+                              style: const TextStyle(
+                                fontSize: 20.0,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 5.0,
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Utils.globalKey.currentState!
-                            .pushReplacementNamed(EditProfilePage.routName);
-                      },
-                      child: const Text(
-                        'Редактировать',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10.0,
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'Подписка',
-                        style: TextStyle(
-                          fontSize: 14.0,
-                          decoration: TextDecoration.underline,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                    Container(
-                      width: 300.0,
-                      height: 24.0,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: Colors.black,
-                        ),
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 5.0,
-                    ),
-                    const Text(
-                      '0/500 мб',
-                      style: TextStyle(
-                        fontSize: 14.0,
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15.0,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Utils.firstKey.currentState!
-                                .pushReplacementNamed(AuthPage.routName);
-                          },
-                          child: const Text('authorization'),
-                        ),
-                        TextButton(
-                          onPressed: () async {
-                            User? user = FirebaseAuth.instance.currentUser;
-                            print(user);
-                            await user?.delete();
-                            Utils.firstKey.currentState!
-                                .pushReplacementNamed(WelcomePage.routName);
-                          },
-                          child: const Text(
-                            'Удалить аккаунт',
-                            style: TextStyle(
-                              color: Colors.red,
-                            ),
+                    const Spacer(),
+                    Expanded(
+                      flex: 4,
+                      child: TextButton(
+                        onPressed: () {
+                          Utils.globalKey.currentState!
+                              .pushReplacementNamed(EditProfilePage.routName);
+                        },
+                        child: const Text(
+                          'Редактировать',
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: Colors.black,
                           ),
                         ),
-                      ],
+                      ),
                     ),
+                    const Spacer(
+                      flex: 2,
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          'Подписка',
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            decoration: TextDecoration.underline,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Expanded(
+                      child: Container(
+                        width: 300.0,
+                        height: 24.0,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: Colors.black,
+                          ),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    const Expanded(
+                      flex: 2,
+                      child: Text(
+                        '0/500 мб',
+                        style: TextStyle(
+                          fontSize: 14.0,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Expanded(
+                      flex: 4,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Utils.firstKey.currentState!
+                                  .pushReplacementNamed(AuthPage.routName);
+                            },
+                            child: const Text('authorization'),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              User? user = FirebaseAuth.instance.currentUser;
+                              print(user);
+                              await user?.delete();
+                              Utils.firstKey.currentState!
+                                  .pushReplacementNamed(WelcomePage.routName);
+                            },
+                            child: const Text(
+                              'Удалить аккаунт',
+                              style: TextStyle(
+                                color: Colors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Spacer(),
                   ],
                 ),
               );

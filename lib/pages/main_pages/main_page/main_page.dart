@@ -4,8 +4,8 @@ import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
-import 'package:audio_stories/pages/profile_pages/profile_page/test_rieastore_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
+import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
@@ -62,10 +62,10 @@ class MainPage extends StatelessWidget {
                 page = const SubscriptionPage();
                 break;
               case EditProfilePage.routName:
-                page = EditProfilePage();
+                page = const EditProfilePage();
                 break;
-              case TestPage.routName:
-                page = TestPage();
+              case RecordPage.routName:
+                page = const RecordPage();
                 break;
               default:
                 page = const HomePage();

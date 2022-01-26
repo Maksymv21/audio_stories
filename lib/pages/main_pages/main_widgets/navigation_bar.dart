@@ -4,6 +4,7 @@ import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
+import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/foot_button.dart';
 import 'package:audio_stories/utils/utils.dart';
@@ -62,7 +63,13 @@ class MyNavigationBar extends StatelessWidget {
               },
             ),
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Utils.globalKey.currentState!
+                    .pushReplacementNamed(RecordPage.routName);
+                context.read<ColorBloc>().add(
+                  NoColor(),
+                );
+              },
               child: Container(
                 width: 53.0,
                 height: 57.0,
