@@ -1,6 +1,5 @@
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_state.dart';
-import 'package:audio_stories/pages/auth_pages/auth_provider/auth_provider.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
@@ -22,9 +21,7 @@ class WelcomePage extends StatelessWidget {
     return BlocProvider(
       create: (context) => PhoneAuthBloc(
         phoneAuthRepository: PhoneAuthRepository(
-          phoneAuthFirebaseProvider: PhoneAuthFirebaseProvider(
-            firebaseAuth: FirebaseAuth.instance,
-          ),
+          firebaseAuth: FirebaseAuth.instance,
         ),
       ),
       child: Scaffold(

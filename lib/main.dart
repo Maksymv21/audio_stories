@@ -4,7 +4,6 @@ import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_pa
 import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/splash_pages/splash_page/splash_page.dart';
-import 'package:audio_stories/pages/auth_pages/auth_provider/auth_provider.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -26,9 +25,7 @@ class MyApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => PhoneAuthBloc(
         phoneAuthRepository: PhoneAuthRepository(
-          phoneAuthFirebaseProvider: PhoneAuthFirebaseProvider(
-            firebaseAuth: FirebaseAuth.instance,
-          ),
+          firebaseAuth: FirebaseAuth.instance,
         ),
       ),
       child: MaterialApp(

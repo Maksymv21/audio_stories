@@ -1,8 +1,7 @@
-import 'dart:async';
 import 'package:audio_stories/pages/auth_pages/auth_model/auth_model.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
-import 'package:bloc/bloc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'bloc_auth_event.dart';
 import 'bloc_auth_state.dart';
@@ -13,100 +12,52 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
   PhoneAuthBloc({required PhoneAuthRepository phoneAuthRepository})
       : _phoneAuthRepository = phoneAuthRepository,
         super(PhoneAuthInitial()) {
-    on<PhoneAuthNumberVerified>(
-      _phoneAuthNumberVerifiedToState,
-    );
-    on<PhoneAuthCodeAutoReturnTimeout>(
-      _phoneAuthCodeAutoReturnTimeoutComplete,
-    );
-    on<PhoneAuthCodeSent>(
-      _phoneAuthNumberVerificationSuccess,
-    );
-    on<PhoneAuthVerificationFailed>(
-      _phoneAuthNumberVerificationFailure,
-    );
-    on<PhoneAuthVerificationCompleted>(
-      _phoneAuthCodeVerificationSuccess,
-    );
-    on<PhoneAuthCodeVerified>(
-      _phoneAuthCodeVerifiedToState,
-    );
-    on<DeletedAccount>(
-      _repeatPhoneAuth,
-    );
-  }
-
-  Future<void> _phoneAuthNumberVerifiedToState(
-    PhoneAuthNumberVerified event,
-    Emitter<PhoneAuthState> emit,
-  ) async {
-    emit(PhoneAuthLoading());
-    await _phoneAuthRepository.verifyPhoneNumber(
-      phoneNumber: event.phoneNumber,
-      onCodeAutoRetrievalTimeOut: _onCodeAutoRetrievalTimeout,
-      onCodeSent: _onCodeSent,
-      onVerificationCompleted: _onVerificationCompleted,
-      onVerificationFailed: _onVerificationFailed,
-    );
-  }
-
-  Future<void> _phoneAuthCodeVerifiedToState(
-    PhoneAuthCodeVerified event,
-    Emitter<PhoneAuthState> emit,
-  ) async {
-    emit(PhoneAuthLoading());
-    PhoneAuthModel phoneAuthModel = await _phoneAuthRepository.verifySMSCode(
-      smsCode: event.smsCode,
-      verificationId: event.verificationId,
-    );
-    emit(
-      PhoneAuthCodeVerificationSuccess(uid: phoneAuthModel.uid),
-    );
-  }
-
-  _phoneAuthCodeAutoReturnTimeoutComplete(
-    PhoneAuthCodeAutoReturnTimeout event,
-    Emitter<PhoneAuthState> emit,
-  ) async {
-    emit(
-      PhoneAuthCodeAutoReturnTimeoutComplete(event.verificationId),
-    );
-  }
-
-  _phoneAuthNumberVerificationSuccess(
-    PhoneAuthCodeSent event,
-    Emitter<PhoneAuthState> emit,
-  ) async {
-    emit(
-      PhoneAuthNumberVerificationSuccess(verificationId: event.verificationId),
-    );
-  }
-
-  _phoneAuthNumberVerificationFailure(
-    PhoneAuthVerificationFailed event,
-    Emitter<PhoneAuthState> emit,
-  ) async {
-    emit(
-      PhoneAuthNumberVerificationFailure(event.message),
-    );
-  }
-
-  _phoneAuthCodeVerificationSuccess(
-    PhoneAuthVerificationCompleted event,
-    Emitter<PhoneAuthState> emit,
-  ) async {
-    emit(
-      PhoneAuthCodeVerificationSuccess(uid: event.uid),
-    );
-  }
-
-  _repeatPhoneAuth(
-    DeletedAccount event,
-    Emitter<PhoneAuthState> emit,
-  ) async {
-    emit(
-      RepeatPhoneAuth(),
-    );
+    on<PhoneAuthNumberVerified>((event, emit) async {
+      emit(PhoneAuthLoading());
+      await _phoneAuthRepository.verifyPhoneNumber(
+        phoneNumber: event.phoneNumber,
+        onCodeAutoRetrievalTimeout: _onCodeAutoRetrievalTimeout,
+        onCodeSent: _onCodeSent,
+        onVerificationCompleted: _onVerificationCompleted,
+        onVerificationFailed: _onVerificationFailed,
+      );
+    });
+    on<PhoneAuthCodeAutoReturnTimeout>((event, emit) async {
+      emit(
+        PhoneAuthCodeAutoReturnTimeoutComplete(event.verificationId),
+      );
+    });
+    on<PhoneAuthCodeSent>((event, emit) async {
+      emit(
+        PhoneAuthNumberVerificationSuccess(
+            verificationId: event.verificationId),
+      );
+    });
+    on<PhoneAuthVerificationFailed>((event, emit) async {
+      emit(
+        PhoneAuthNumberVerificationFailure(event.message),
+      );
+    });
+    on<PhoneAuthVerificationCompleted>((event, emit) async {
+      emit(
+        PhoneAuthCodeVerificationSuccess(uid: event.uid),
+      );
+    });
+    on<PhoneAuthCodeVerified>((event, emit) async {
+      emit(PhoneAuthLoading());
+      PhoneAuthModel phoneAuthModel = await _phoneAuthRepository.verifySMSCode(
+        smsCode: event.smsCode,
+        verificationId: event.verificationId,
+      );
+      emit(
+        PhoneAuthCodeVerificationSuccess(uid: phoneAuthModel.uid),
+      );
+    });
+    on<DeletedAccount>((event, emit) async {
+      emit(
+        RepeatPhoneAuth(),
+      );
+    });
   }
 
   void _onVerificationCompleted(PhoneAuthCredential credential) async {

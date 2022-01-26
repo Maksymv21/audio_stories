@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 enum PhoneAuthModelState {
   codeSent,
   autoVerified,
@@ -20,20 +18,6 @@ class PhoneAuthModel {
     this.uid,
   });
 
-  PhoneAuthModel copyWith({
-    PhoneAuthModelState? phoneAuthModelState,
-    String? verificationId,
-    int? verificationToken,
-    String? uid,
-  }) {
-    return PhoneAuthModel(
-      phoneAuthModelState: phoneAuthModelState ?? this.phoneAuthModelState,
-      verificationId: verificationId ?? this.verificationId,
-      verificationToken: verificationToken ?? this.verificationToken,
-      uid: uid ?? this.uid,
-    );
-  }
-
   Map<String, dynamic> toMap() {
     return {
       'phoneAuthModelState': phoneAuthModelState.index,
@@ -46,21 +30,11 @@ class PhoneAuthModel {
   factory PhoneAuthModel.fromMap(Map<String, dynamic>? map) {
     return PhoneAuthModel(
       phoneAuthModelState:
-      PhoneAuthModelState.values[map?['phoneAuthModelState']],
+          PhoneAuthModelState.values[map?['phoneAuthModelState']],
       verificationId: map?['verificationId'],
       verificationToken: map?['verificationToken'],
       uid: map?['uid'],
     );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory PhoneAuthModel.fromJson(String source) =>
-      PhoneAuthModel.fromMap(json.decode(source));
-
-  @override
-  String toString() {
-    return 'PhoneAuthModel(phoneAuthModelState: $phoneAuthModelState, verificationId: $verificationId, verificationToken: $verificationToken, uid: $uid)';
   }
 
   @override
@@ -77,8 +51,8 @@ class PhoneAuthModel {
   @override
   int get hashCode {
     return phoneAuthModelState.hashCode ^
-    verificationId.hashCode ^
-    verificationToken.hashCode ^
-    uid.hashCode;
+        verificationId.hashCode ^
+        verificationToken.hashCode ^
+        uid.hashCode;
   }
 }
