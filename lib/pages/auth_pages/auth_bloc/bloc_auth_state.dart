@@ -11,21 +11,14 @@ class PhoneAuthInitial extends PhoneAuthState {}
 
 class PhoneAuthLoading extends PhoneAuthState {}
 
-class PhoneAuthError extends PhoneAuthState {}
+class PhoneAuthNumberFailure extends PhoneAuthState {}
 
-class PhoneAuthNumberVerificationFailure extends PhoneAuthState {
-  final String message;
+class PhoneAuthCodeFailure extends PhoneAuthState {}
 
-  const PhoneAuthNumberVerificationFailure(this.message);
-
-  @override
-  List<Object> get props => [props];
-}
-
-class PhoneAuthNumberVerificationSuccess extends PhoneAuthState {
+class PhoneAuthNumberSuccess extends PhoneAuthState {
   final String verificationId;
 
-  const PhoneAuthNumberVerificationSuccess({
+  const PhoneAuthNumberSuccess({
     required this.verificationId,
   });
 
@@ -33,45 +26,13 @@ class PhoneAuthNumberVerificationSuccess extends PhoneAuthState {
   List<Object> get props => [verificationId];
 }
 
-class PhoneAuthCodeSentSuccess extends PhoneAuthState {
-  final String verificationId;
-
-  const PhoneAuthCodeSentSuccess({
-    required this.verificationId,
-  });
-
-  @override
-  List<Object> get props => [verificationId];
-}
-
-class PhoneAuthCodeVerificationFailure extends PhoneAuthState {
-  final String message;
-  final String verificationId;
-
-  const PhoneAuthCodeVerificationFailure(this.message, this.verificationId);
-
-  @override
-  List<Object> get props => [message];
-}
-
-class PhoneAuthCodeVerificationSuccess extends PhoneAuthState {
+class PhoneAuthCodeSuccess extends PhoneAuthState {
   final String? uid;
 
-  const PhoneAuthCodeVerificationSuccess({
+  const PhoneAuthCodeSuccess({
     required this.uid,
   });
 
   @override
   List<Object?> get props => [uid];
 }
-
-class PhoneAuthCodeAutoReturnTimeoutComplete extends PhoneAuthState {
-  final String verificationId;
-
-  const PhoneAuthCodeAutoReturnTimeoutComplete(this.verificationId);
-
-  @override
-  List<Object> get props => [verificationId];
-}
-
-class RepeatPhoneAuth extends PhoneAuthState {}

@@ -8,13 +8,11 @@ enum PhoneAuthModelState {
 class PhoneAuthModel {
   final PhoneAuthModelState phoneAuthModelState;
   final String? verificationId;
-  final int? verificationToken;
   final String? uid;
 
   PhoneAuthModel({
     required this.phoneAuthModelState,
     this.verificationId,
-    this.verificationToken,
     this.uid,
   });
 
@@ -22,7 +20,6 @@ class PhoneAuthModel {
     return {
       'phoneAuthModelState': phoneAuthModelState.index,
       'verificationId': verificationId,
-      'verificationToken': verificationToken,
       'uid': uid,
     };
   }
@@ -32,7 +29,6 @@ class PhoneAuthModel {
       phoneAuthModelState:
           PhoneAuthModelState.values[map?['phoneAuthModelState']],
       verificationId: map?['verificationId'],
-      verificationToken: map?['verificationToken'],
       uid: map?['uid'],
     );
   }
@@ -44,7 +40,6 @@ class PhoneAuthModel {
     return other is PhoneAuthModel &&
         other.phoneAuthModelState == phoneAuthModelState &&
         other.verificationId == verificationId &&
-        other.verificationToken == verificationToken &&
         other.uid == uid;
   }
 
@@ -52,7 +47,6 @@ class PhoneAuthModel {
   int get hashCode {
     return phoneAuthModelState.hashCode ^
         verificationId.hashCode ^
-        verificationToken.hashCode ^
         uid.hashCode;
   }
 }

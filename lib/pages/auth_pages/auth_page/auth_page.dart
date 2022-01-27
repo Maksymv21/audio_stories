@@ -20,23 +20,33 @@ class AuthPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<PhoneAuthBloc, PhoneAuthState>(
       listener: (previous, current) {
-        if (current is PhoneAuthCodeVerificationSuccess) {
+        if (current is PhoneAuthCodeSuccess) {
           Utils.firstKey.currentState!.pushReplacementNamed(
             SplashGladPage.routName,
+          );
+        } else if (current is PhoneAuthNumberFailure) {
+          _showSnackBar(
+            context: context,
+            text: 'Введен недопустимый номер.'
+                '\nПроверьте номер и повторите попытку.',
+          );
+        } else if (current is PhoneAuthCodeFailure) {
+          _showSnackBar(
+            context: context,
+            text: 'Неверный код или истекло время ожидания.'
+                '\nПовторите попытку еще раз.',
           );
         }
       },
       builder: (context, state) {
         if (state is PhoneAuthInitial) {
           return _registrationNumberPage(context);
-        } else if (state is PhoneAuthNumberVerificationSuccess) {
+        } else if (state is PhoneAuthNumberSuccess) {
           return _registrationSmsPage(context, state.verificationId);
-        } else if (state is PhoneAuthNumberVerificationFailure) {
+        } else if (state is PhoneAuthNumberFailure) {
           return _registrationNumberPage(context);
-        } else if (state is PhoneAuthCodeVerificationFailure) {
-          return _registrationSmsPage(context, state.verificationId);
-        } else if (state is RepeatPhoneAuth) {
-          _registrationNumberPage(context);
+        } else if (state is PhoneAuthCodeFailure) {
+          return _registrationNumberPage(context);
         } else if (state is PhoneAuthLoading) {
           return const Scaffold(
             body: Center(
@@ -92,8 +102,14 @@ class AuthPage extends StatelessWidget {
           context,
           verificationId,
         );
+        _codeNumberController.text = '';
       },
     );
+  }
+
+  void _verifySMS(BuildContext context, String verificationCode) {
+    context.read<PhoneAuthBloc>().add(PhoneAuthCodeVerified(
+        verificationId: verificationCode, smsCode: _codeNumberController.text));
   }
 
   void _verifyPhoneNumber(BuildContext context) {
@@ -101,8 +117,14 @@ class AuthPage extends StatelessWidget {
         phoneNumber: '+' + _phoneNumberController.text));
   }
 
-  void _verifySMS(BuildContext context, String verificationCode) {
-    context.read<PhoneAuthBloc>().add(PhoneAuthCodeVerified(
-        verificationId: verificationCode, smsCode: _codeNumberController.text));
+  void _showSnackBar({required BuildContext context, required String text}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          text,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

@@ -18,6 +18,28 @@ class PhoneAuthNumberVerified extends PhoneAuthEvent {
   List<Object> get props => [phoneNumber];
 }
 
+class PhoneAuthVerificationFailed extends PhoneAuthEvent {
+  final String message;
+
+  const PhoneAuthVerificationFailed(this.message);
+
+  @override
+  List<Object> get props => [message];
+}
+
+class PhoneAuthCodeSent extends PhoneAuthEvent {
+  final String verificationId;
+  final int? token;
+
+  const PhoneAuthCodeSent({
+    required this.verificationId,
+    required this.token,
+  });
+
+  @override
+  List<Object> get props => [verificationId];
+}
+
 class PhoneAuthCodeVerified extends PhoneAuthEvent {
   final String verificationId;
   final String smsCode;
@@ -40,28 +62,6 @@ class PhoneAuthCodeAutoReturnTimeout extends PhoneAuthEvent {
   List<Object> get props => [verificationId];
 }
 
-class PhoneAuthCodeSent extends PhoneAuthEvent {
-  final String verificationId;
-  final int? token;
-
-  const PhoneAuthCodeSent({
-    required this.verificationId,
-    required this.token,
-  });
-
-  @override
-  List<Object> get props => [verificationId];
-}
-
-class PhoneAuthVerificationFailed extends PhoneAuthEvent {
-  final String message;
-
-  const PhoneAuthVerificationFailed(this.message);
-
-  @override
-  List<Object> get props => [message];
-}
-
 class PhoneAuthVerificationCompleted extends PhoneAuthEvent {
   final String? uid;
 
@@ -71,4 +71,4 @@ class PhoneAuthVerificationCompleted extends PhoneAuthEvent {
   List<Object?> get props => [uid];
 }
 
-class DeletedAccount extends PhoneAuthEvent {}
+

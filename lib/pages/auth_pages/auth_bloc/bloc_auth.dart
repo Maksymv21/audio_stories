@@ -16,31 +16,31 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
       emit(PhoneAuthLoading());
       await _phoneAuthRepository.verifyPhoneNumber(
         phoneNumber: event.phoneNumber,
-        onCodeAutoRetrievalTimeout: _onCodeAutoRetrievalTimeout,
         onCodeSent: _onCodeSent,
-        onVerificationCompleted: _onVerificationCompleted,
         onVerificationFailed: _onVerificationFailed,
+        onVerificationCompleted: _onVerificationCompleted,
+        onCodeAutoRetrievalTimeout: _onCodeAutoRetrievalTimeout,
       );
     });
     on<PhoneAuthCodeAutoReturnTimeout>((event, emit) async {
       emit(
-        PhoneAuthCodeAutoReturnTimeoutComplete(event.verificationId),
+        PhoneAuthCodeFailure(),
       );
     });
     on<PhoneAuthCodeSent>((event, emit) async {
       emit(
-        PhoneAuthNumberVerificationSuccess(
+        PhoneAuthNumberSuccess(
             verificationId: event.verificationId),
       );
     });
     on<PhoneAuthVerificationFailed>((event, emit) async {
       emit(
-        PhoneAuthNumberVerificationFailure(event.message),
+        PhoneAuthNumberFailure(),
       );
     });
     on<PhoneAuthVerificationCompleted>((event, emit) async {
       emit(
-        PhoneAuthCodeVerificationSuccess(uid: event.uid),
+        PhoneAuthCodeSuccess(uid: event.uid),
       );
     });
     on<PhoneAuthCodeVerified>((event, emit) async {
@@ -50,12 +50,7 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         verificationId: event.verificationId,
       );
       emit(
-        PhoneAuthCodeVerificationSuccess(uid: phoneAuthModel.uid),
-      );
-    });
-    on<DeletedAccount>((event, emit) async {
-      emit(
-        RepeatPhoneAuth(),
+        PhoneAuthCodeSuccess(uid: phoneAuthModel.uid),
       );
     });
   }
