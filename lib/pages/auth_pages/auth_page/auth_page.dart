@@ -47,6 +47,8 @@ class AuthPage extends StatelessWidget {
           return _registrationNumberPage(context);
         } else if (state is PhoneAuthCodeFailure) {
           return _registrationNumberPage(context);
+        } else if (state is PhoneAuthCodeSuccess) {
+          return _registrationNumberPage(context);
         } else if (state is PhoneAuthLoading) {
           return const Scaffold(
             body: Center(
