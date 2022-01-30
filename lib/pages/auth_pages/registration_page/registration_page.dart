@@ -37,10 +37,10 @@ class RegistrationPage extends StatelessWidget {
                 margin: const EdgeInsets.all(15.0),
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
-                        'Регистрация',
-                        style: TextStyle(
+                        RegistrationOrAuthText.text,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w700,
                           fontSize: 48.0,
@@ -103,4 +103,10 @@ class RegistrationPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class RegistrationOrAuthText {
+  static String text = 'Регистрация';
+
+  RegistrationOrAuthText._();
 }

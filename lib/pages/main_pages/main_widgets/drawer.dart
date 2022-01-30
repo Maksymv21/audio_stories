@@ -1,6 +1,7 @@
-import 'package:audio_stories/pages/main_pages/main_blocs/color_icon_bloc/color_icon_bloc.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
+import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
+import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
@@ -63,7 +64,7 @@ class BurgerMenu extends StatelessWidget {
                     Utils.globalKey.currentState!
                         .pushReplacementNamed(MainPage.routName);
                     Scaffold.of(context).openEndDrawer();
-                    context.read<ColorBloc>().add(
+                    context.read<BlocIndex>().add(
                           ColorHome(),
                         );
                   },
@@ -75,7 +76,7 @@ class BurgerMenu extends StatelessWidget {
                     Utils.globalKey.currentState!
                         .pushReplacementNamed(ProfilePage.routName);
                     Scaffold.of(context).openEndDrawer();
-                    context.read<ColorBloc>().add(
+                    context.read<BlocIndex>().add(
                           ColorProfile(),
                         );
                   },
@@ -87,7 +88,7 @@ class BurgerMenu extends StatelessWidget {
                     Utils.globalKey.currentState!
                         .pushReplacementNamed(CategoryPage.routName);
                     Scaffold.of(context).openEndDrawer();
-                    context.read<ColorBloc>().add(
+                    context.read<BlocIndex>().add(
                           ColorCategory(),
                         );
                   },
@@ -99,7 +100,7 @@ class BurgerMenu extends StatelessWidget {
                     Utils.globalKey.currentState!
                         .pushReplacementNamed(AudioPage.routName);
                     Scaffold.of(context).openEndDrawer();
-                    context.read<ColorBloc>().add(
+                    context.read<BlocIndex>().add(
                           ColorAudio(),
                         );
                   },
@@ -111,7 +112,7 @@ class BurgerMenu extends StatelessWidget {
                     Utils.globalKey.currentState!
                         .pushReplacementNamed(SearchPage.routName);
                     Scaffold.of(context).openEndDrawer();
-                    context.read<ColorBloc>().add(
+                    context.read<BlocIndex>().add(
                           NoColor(),
                         );
                   },
@@ -123,7 +124,7 @@ class BurgerMenu extends StatelessWidget {
                     Utils.globalKey.currentState!
                         .pushReplacementNamed(RecentlyDeletedPage.routName);
                     Scaffold.of(context).openEndDrawer();
-                    context.read<ColorBloc>().add(
+                    context.read<BlocIndex>().add(
                           NoColor(),
                         );
                   },
@@ -141,7 +142,7 @@ class BurgerMenu extends StatelessWidget {
                 Utils.globalKey.currentState!
                     .pushReplacementNamed(SubscriptionPage.routName);
                 Scaffold.of(context).openEndDrawer();
-                context.read<ColorBloc>().add(
+                context.read<BlocIndex>().add(
                       NoColor(),
                     );
               },

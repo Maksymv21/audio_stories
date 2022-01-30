@@ -1,14 +1,13 @@
-import 'package:audio_stories/pages/main_pages/main_blocs/color_icon_bloc/color_icon_bloc.dart';
 import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
+import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
-import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/drawer.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/navigation_bar.dart';
@@ -23,14 +22,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ColorBloc(
-        [
-          AppColor.active,
-          AppColor.disActive,
-          AppColor.disActive,
-          AppColor.disActive,
-        ],
-      ),
+      create: (context) => BlocIndex(0),
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Navigator(

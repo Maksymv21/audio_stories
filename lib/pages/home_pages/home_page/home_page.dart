@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
               flex: 4,
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Row(
                 children: [
                   const Spacer(),
@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
             ),
             const Spacer(),
             Expanded(
-              flex: 10,
+              flex: 12,
               child: Row(
                 children: [
                   const Spacer(),
@@ -176,64 +176,64 @@ class HomePage extends StatelessWidget {
               ),
             ),
             const Spacer(
-              flex: 2,
-            ),
-            Expanded(
-              flex: 12,
-              child: Container(
-                width: 380.0,
-                height: 300.0,
-                decoration: const BoxDecoration(
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey,
-                      blurRadius: 5.0,
-                    ),
-                  ],
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(25.0),
-                    topRight: Radius.circular(25.0),
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    const Align(
-                      alignment: AlignmentDirectional(-0.9, -0.9),
-                      child: Text(
-                        'Аудиозаписи',
-                        style: TextStyle(fontSize: 24.0),
-                      ),
-                    ),
-                    const Align(
-                      alignment: AlignmentDirectional(1.0, -0.92),
-                      child: OpenAllButton(
-                        color: Colors.black,
-                      ),
-                    ),
-                    const Align(
-                      alignment: AlignmentDirectional(0.0, -0.2),
-                      child: Text(
-                        'Как только ты запишешь'
-                        '\nаудио, она появится здесь.',
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          color: Colors.grey,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Align(
-                      alignment: const AlignmentDirectional(-0.05, 0.7),
-                      child: Image(
-                        image: Image.asset(AppIcons.arrow).image,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              flex: 17,
             ),
           ],
+        ),
+        Align(
+          alignment: const AlignmentDirectional(0.0, 1.05),
+          child: Container(
+            width: 380.0,
+            height: MediaQuery.of(context).size.height * 0.38,
+            decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 5.0,
+                ),
+              ],
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(25.0),
+                topRight: Radius.circular(25.0),
+              ),
+            ),
+            child: Stack(
+              children: [
+                const Align(
+                  alignment: AlignmentDirectional(-0.9, -0.9),
+                  child: Text(
+                    'Аудиозаписи',
+                    style: TextStyle(fontSize: 24.0),
+                  ),
+                ),
+                const Align(
+                  alignment: AlignmentDirectional(1.0, -0.92),
+                  child: OpenAllButton(
+                    color: Colors.black,
+                  ),
+                ),
+                const Align(
+                  alignment: AlignmentDirectional(0.0, -0.2),
+                  child: Text(
+                    'Как только ты запишешь'
+                    '\nаудио, она появится здесь.',
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.grey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Align(
+                  alignment: const AlignmentDirectional(-0.05, 0.7),
+                  child: Image(
+                    image: Image.asset(AppIcons.arrow).image,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     );

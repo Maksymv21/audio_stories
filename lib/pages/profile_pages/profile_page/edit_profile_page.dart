@@ -120,10 +120,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
                           image: DecorationImage(
                             colorFilter: const ColorFilter.srgbToLinearGamma(),
                             image: (() {
-                              if (url == null) {
+                              if (url == null && _image == null) {
                                 return Image.asset(AppIcons.photo).image;
-                              } else if (_image == null) {
-                                return Image.network(url).image;
+                              }
+                              if (_image == null) {
+                                return Image.network(url!).image;
                               } else {
                                 return Image.file(_image!).image;
                               }
@@ -218,6 +219,3 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 }
-
-
-

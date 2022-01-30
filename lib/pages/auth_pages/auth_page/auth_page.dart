@@ -39,17 +39,14 @@ class AuthPage extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        if (state is PhoneAuthInitial) {
+        if (state is PhoneAuthInitial ||
+            state is PhoneAuthNumberFailure ||
+            state is PhoneAuthCodeFailure ||
+            state is PhoneAuthCodeSuccess) {
           return _registrationNumberPage(context);
         } else if (state is PhoneAuthNumberSuccess) {
           return _registrationSmsPage(context, state.verificationId);
-        } else if (state is PhoneAuthNumberFailure) {
-          return _registrationNumberPage(context);
-        } else if (state is PhoneAuthCodeFailure) {
-          return _registrationNumberPage(context);
-        } else if (state is PhoneAuthCodeSuccess) {
-          return _registrationNumberPage(context);
-        } else if (state is PhoneAuthLoading) {
+        }  else if (state is PhoneAuthLoading) {
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),

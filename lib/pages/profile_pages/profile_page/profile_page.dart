@@ -1,13 +1,13 @@
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
+import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
 import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
-import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
+import 'package:audio_stories/pages/profile_pages/widgets/delete_acc_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -194,24 +194,11 @@ class ProfilePage extends StatelessWidget {
                             onPressed: () {
                               Utils.firstKey.currentState!
                                   .pushReplacementNamed(AuthPage.routName);
+                              RegistrationOrAuthText.text = 'Авторизация';
                             },
                             child: const Text('authorization'),
                           ),
-                          TextButton(
-                            onPressed: () async {
-                              User? user = FirebaseAuth.instance.currentUser;
-                              print(user);
-                              await user?.delete();
-                              Utils.firstKey.currentState!
-                                  .pushReplacementNamed(WelcomePage.routName);
-                            },
-                            child: const Text(
-                              'Удалить аккаунт',
-                              style: TextStyle(
-                                color: Colors.red,
-                              ),
-                            ),
-                          ),
+                          const DeleteAccButton(),
                         ],
                       ),
                     ),
