@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 
 class RegistrationPage extends StatelessWidget {
   final String text;
-  final String hintText;
   final Widget widget;
   final TextEditingController controller;
   final Function() onPressed;
@@ -20,7 +19,6 @@ class RegistrationPage extends StatelessWidget {
     required this.controller,
     required this.onPressed,
     required this.height,
-    required this.hintText,
   }) : super(key: key);
 
   @override
@@ -52,7 +50,7 @@ class RegistrationPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: Text(
               text,
               textAlign: TextAlign.center,
@@ -68,11 +66,10 @@ class RegistrationPage extends StatelessWidget {
             flex: 3,
             child: NumberForm(
               controller: controller,
-              hintText: hintText,
             ),
           ),
           const Spacer(
-            flex: 4,
+            flex: 3,
           ),
           Expanded(
             flex: 3,

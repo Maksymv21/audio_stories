@@ -24,13 +24,15 @@ class AuthPage extends StatelessWidget {
           Utils.firstKey.currentState!.pushReplacementNamed(
             SplashGladPage.routName,
           );
-        } else if (current is PhoneAuthNumberFailure) {
+        }
+        if (current is PhoneAuthNumberFailure) {
           _showSnackBar(
             context: context,
             text: 'Введен недопустимый номер.'
                 '\nПроверьте номер и повторите попытку.',
           );
-        } else if (current is PhoneAuthCodeFailure) {
+        }
+        if (current is PhoneAuthCodeFailure) {
           _showSnackBar(
             context: context,
             text: 'Неверный код или истекло время ожидания.'
@@ -46,7 +48,7 @@ class AuthPage extends StatelessWidget {
           return _registrationNumberPage(context);
         } else if (state is PhoneAuthNumberSuccess) {
           return _registrationSmsPage(context, state.verificationId);
-        }  else if (state is PhoneAuthLoading) {
+        } else if (state is PhoneAuthLoading) {
           return const Scaffold(
             body: Center(
               child: CircularProgressIndicator(),
@@ -59,11 +61,11 @@ class AuthPage extends StatelessWidget {
   }
 
   Widget _registrationNumberPage(context) {
+    _phoneNumberController.text = '+380';
     return RegistrationPage(
       text: 'Введи номер телефона',
       controller: _phoneNumberController,
       height: 15,
-      hintText: '380',
       onPressed: () {
         _verifyPhoneNumber(context);
       },
@@ -92,7 +94,6 @@ class AuthPage extends StatelessWidget {
           '\nтебя запомнили',
       controller: _codeNumberController,
       height: 15,
-      hintText: '',
       widget: const SizedBox(
         height: 30.0,
       ),
@@ -112,8 +113,9 @@ class AuthPage extends StatelessWidget {
   }
 
   void _verifyPhoneNumber(BuildContext context) {
-    context.read<PhoneAuthBloc>().add(PhoneAuthNumberVerified(
-        phoneNumber: '+' + _phoneNumberController.text));
+    context
+        .read<PhoneAuthBloc>()
+        .add(PhoneAuthNumberVerified(phoneNumber: _phoneNumberController.text));
   }
 
   void _showSnackBar({required BuildContext context, required String text}) {

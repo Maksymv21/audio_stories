@@ -80,6 +80,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
               if (snapshot.hasData) {
                 String? url = snapshot.data.data()['photo'];
                 String? name = snapshot.data.data()['name'];
+                _editNameController.text = name == null
+                    ? 'Ваше имя'
+                    : snapshot.data.data()['name'];
+                _editNumberController.text = '+380';
                 return Center(
                   child: Column(
                     children: [
@@ -171,14 +175,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         flex: 4,
                       ),
                       Expanded(
-                        flex: 6,
+                        flex: 5,
                         child: NumberForm(
                           controller: _editNumberController,
                           hintText: ModelUser.profilePhoneNumber,
                         ),
                       ),
                       const Spacer(
-                        flex: 2,
+                        flex: 3,
                       ),
                       Expanded(
                         flex: 3,

@@ -29,6 +29,7 @@ class NumberForm extends StatelessWidget {
           border: InputBorder.none,
           constraints: const BoxConstraints(
             maxWidth: 309.0,
+            maxHeight: 60.0,
           ),
           enabledBorder: const OutlineInputBorder(
             borderSide: BorderSide(

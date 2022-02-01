@@ -14,14 +14,17 @@ class RecordPage extends StatelessWidget {
       children: [
         Column(
           children: const [
-            Background(
-              height: 375.0,
-              image: AppIcons.up,
-              child: Align(
-                alignment: AlignmentDirectional(-1.1, -0.7),
-                child: ButtonMenu(),
+            Expanded(
+              child: Background(
+                height: 375.0,
+                image: AppIcons.up,
+                child: Align(
+                  alignment: AlignmentDirectional(-1.1, -0.7),
+                  child: ButtonMenu(),
+                ),
               ),
             ),
+            Spacer(),
           ],
         ),
         Align(
@@ -40,6 +43,32 @@ class RecordPage extends StatelessWidget {
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(25.0),
                 topRight: Radius.circular(25.0),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                right: 13.0,
+              ),
+              child: Column(
+                children: [
+                  const Spacer(
+                    flex: 8,
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: GestureDetector(
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage(
+                              AppIcons.pauseRecord,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

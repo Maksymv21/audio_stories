@@ -41,7 +41,7 @@ class MyNavigationBar extends StatelessWidget {
           children: [
             index == 2
                 ? Align(
-                    alignment: const AlignmentDirectional(-0.03, -3.5),
+                    alignment: const AlignmentDirectional(-0.035, -3.5),
                     child: Container(
                       width: 4.0,
                       height: 45.0,
@@ -59,9 +59,7 @@ class MyNavigationBar extends StatelessWidget {
                   title: 'Главная',
                   color: index == 0 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
-                    if (index == 0) {
-                      return;
-                    } else {
+                    if (index != 0) {
                       Utils.globalKey.currentState!
                           .pushReplacementNamed(MainPage.routName);
                       context.read<BlocIndex>().add(
@@ -75,9 +73,8 @@ class MyNavigationBar extends StatelessWidget {
                   title: 'Подборки',
                   color: index == 1 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
-                    if (index == 1) {
-                      return;
-                    } else {
+                    // if index != 1
+                    if (index != 1) {
                       Utils.globalKey.currentState!
                           .pushReplacementNamed(CategoryPage.routName);
                       context.read<BlocIndex>().add(
@@ -88,9 +85,7 @@ class MyNavigationBar extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    if (index == 2) {
-                      return;
-                    } else {
+                    if (index != 2) {
                       Utils.globalKey.currentState!
                           .pushReplacementNamed(RecordPage.routName);
                       context.read<BlocIndex>().add(
@@ -128,9 +123,7 @@ class MyNavigationBar extends StatelessWidget {
                   title: 'Ауидозаписи',
                   color: index == 3 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
-                    if (index == 3) {
-                      return;
-                    } else {
+                    if (index != 3) {
                       Utils.globalKey.currentState!
                           .pushReplacementNamed(AudioPage.routName);
                       context.read<BlocIndex>().add(
@@ -144,9 +137,7 @@ class MyNavigationBar extends StatelessWidget {
                   title: 'Профиль',
                   color: index == 4 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
-                    if (index == 4) {
-                      return;
-                    } else {
+                    if (index != 4) {
                       User? _user = FirebaseAuth.instance.currentUser;
                       if (_user != null) {
                         Utils.globalKey.currentState!

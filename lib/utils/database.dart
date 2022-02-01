@@ -22,15 +22,24 @@ class Database {
     _user.doc(uid).update(map);
   }
 
-  // static Map<String, dynamic>? read({
-  //   required uid,
-  // }) {
-  //   Map<String, dynamic>? map;
-  //   _user.doc(uid).snapshots().listen((snapshot) {
-  //     map = snapshot.data();
-  //   });
-  //   return map;
-  // }
+  static Future createOrUpdate(Map<String, dynamic> map) async {
+    _user.doc(map['uid']).set(
+          map,
+          SetOptions(
+            merge: true,
+          ),
+        );
+  }
+
+// static Map<String, dynamic>? read({
+//   required uid,
+// }) {
+//   Map<String, dynamic>? map;
+//   _user.doc(uid).snapshots().listen((snapshot) {
+//     map = snapshot.data();
+//   });
+//   return map;
+// }
 }
 
 // static String? text;
