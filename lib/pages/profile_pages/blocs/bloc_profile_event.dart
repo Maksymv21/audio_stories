@@ -1,21 +1,35 @@
 import 'dart:io';
 
-import 'package:image_picker/image_picker.dart';
+import 'package:equatable/equatable.dart';
 
-abstract class ProfileEvent {}
+abstract class ProfileEvent extends Equatable {
+  const ProfileEvent();
 
-class ProfileChangeImageRequest extends ProfileEvent {
-
+  @override
+  List<Object?> get props => [];
 }
 
-class ProfileOpenImagePicker extends ProfileEvent {
-  final File image;
+class ProfileOpenImagePicker extends ProfileEvent {}
 
-  ProfileOpenImagePicker({required this.image});
+class ProfileSaveChanges extends ProfileEvent {
+  final File avatar;
+
+  const ProfileSaveChanges({
+    required this.avatar,
+  });
+
+  @override
+  List<Object> get props => [avatar];
 }
 
-class ProfileProvideImagePath extends ProfileEvent {}
+// class ProfileView extends ProfileEvent {}
+//
+// class ProfileChangeImageRequest extends ProfileEvent {
+//
+// }
+//
+// class ProfileProvideImagePath extends ProfileEvent {}
+//
+// class ProfileChangeNumber extends ProfileEvent {}
+//
 
-class ProfileChangeNumber extends ProfileEvent {}
-
-class ProfileSaveChanges extends ProfileEvent {}

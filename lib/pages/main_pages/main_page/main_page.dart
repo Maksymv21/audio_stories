@@ -54,7 +54,7 @@ class MainPage extends StatelessWidget {
                 page = const SubscriptionPage();
                 break;
               case EditProfilePage.routName:
-                page = const EditProfilePage();
+                page = EditProfilePage();
                 break;
               case RecordPage.routName:
                 page = const RecordPage();

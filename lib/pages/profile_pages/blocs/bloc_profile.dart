@@ -1,5 +1,6 @@
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile_event.dart';
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile_state.dart';
+import 'package:audio_stories/pages/profile_pages/models/profile_model.dart';
 import 'package:audio_stories/pages/profile_pages/repository/profile_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,10 +9,27 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   ProfileBloc({required ProfileRepository profileRepository})
       : _profileRepository = profileRepository,
-        super(ProfileInitial()) {
-    on<ProfileOpenImagePicker> ((event, emit) async {
+        super(const ProfileInitial()) {
+    on<ProfileOpenImagePicker>((event, emit) async {
       emit(ProfileLoading());
-      await _profileRepository.uploadImage(event.image);
+      final ProfileModel profileModel = await _profileRepository.pickImage();
+      emit(
+        ProfileChangeAvatar(avatar: profileModel.avatar!),
+      );
     });
+    on<ProfileSaveChanges>((event, emit) async {
+      final ProfileModel profileModel = await _profileRepository.uploadImage(event.avatar);
+      emit(
+        ProfileInitial(url: profileModel.imageURL),
+      );
+    });
+    // on<ProfileView> ((event, emit) async {
+    //   emit(ProfilePhoto(avatar: avatar));
+    // });
+    // on<ProfileSaveChanges> ((event, emit) async {
+    //   emit(ProfileLoading());
+    //   await _profileRepository.uploadImage(event.avatar);
+    //   add(ProfileView());
+    // });
   }
 }

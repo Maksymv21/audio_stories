@@ -5,6 +5,7 @@ import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/widgets/delete_acc_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -37,12 +38,12 @@ class ProfilePage extends StatelessWidget {
         StreamBuilder(
           stream: FirebaseFirestore.instance
               .collection('users')
-              .doc(ModelUser.uid)
+              .doc(LocalDB.uid)
               .snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              String? url = snapshot.data.data()['photo'];
-              String? name = snapshot.data.data()['name'];
+              // String? url = snapshot.data.data()['photo'];
+              // String? name = snapshot.data.data()['name'];
               return Center(
                 child: Column(
                   children: [
@@ -81,9 +82,10 @@ class ProfilePage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24.0),
                         image: DecorationImage(
-                          image: url == null
-                              ? Image.asset(AppIcons.photo).image
-                              : Image.network(url).image,
+                          image: Image.asset(AppIcons.photo).image,
+                              // url == null
+                              // ? Image.asset(AppIcons.photo).image
+                              // : Image.network(url).image,
                           fit: BoxFit.cover,
                         ),
                         boxShadow: const [
@@ -95,13 +97,13 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    Expanded(
+                    const Expanded(
                       flex: 4,
-                      child: Text(
-                        name == null
-                            ? 'Ваше имя'
-                            : snapshot.data.data()['name'],
-                        style: const TextStyle(
+                      child: Text('Ваше имя',
+                            // name == null
+                            // ? 'Ваше имя'
+                            // : snapshot.data.data()['name'],
+                        style: TextStyle(
                           fontSize: 24.0,
                         ),
                       ),

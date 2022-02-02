@@ -1,7 +1,6 @@
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
-import 'package:audio_stories/pages/main_pages/models/model_user.dart';
-import 'package:audio_stories/pages/profile_pages/models/profile_model.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/welcome_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,10 +23,11 @@ class SplashGladPage extends StatelessWidget {
         context,
         PageRouteBuilder(
           pageBuilder: (_, __, ___) {
+            LocalDB.uid = _user?.uid;
+            LocalDB.phoneNumber = _user?.phoneNumber;
             // ModelUser.uid = _user?.uid;
             // ModelUser.phoneNumber = _user?.phoneNumber;
             // ModelUser.createUser();
-            ProfileModel(uid: _user?.uid,);
             return const MainPage();
           },
           transitionDuration: const Duration(seconds: 0),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audio_stories/pages/profile_pages/models/profile_model.dart';
 import 'package:audio_stories/utils/database.dart';
+import 'package:audio_stories/utils/local_db.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,23 +14,22 @@ class ProfileRepository {
     required FirebaseStorage firebaseStorage,
   }) : _firebaseStorage = firebaseStorage;
 
-  Future<File?> pickImage() async {
+  Future<ProfileModel> pickImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      return File(image.path);
-    }
+
+    return ProfileModel(avatar: File(image!.path));
   }
 
-  Future<ProfileModel> uploadImage(File _image) async {
-    Reference reference = _firebaseStorage.ref().child(
-      ProfileModel().uid.toString(),
-    );
+  Future<ProfileModel> uploadImage(File avatar) async {
+    Reference reference = _firebaseStorage.ref().child('Images').child(
+          LocalDB.uid.toString(),
+        );
 
-    await reference.putFile(_image);
+    await reference.putFile(avatar);
     String downloadUrl = await reference.getDownloadURL();
 
     Database.createOrUpdate(
-        {'uid': ProfileModel().uid, 'imageURL': downloadUrl});
+        {'uid': LocalDB.uid, 'imageURL': downloadUrl});
     return ProfileModel(imageURL: downloadUrl);
   }
 }

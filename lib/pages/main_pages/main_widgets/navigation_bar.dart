@@ -4,6 +4,7 @@ import 'package:audio_stories/pages/category_pages/category_page/category_page.d
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
@@ -141,7 +142,7 @@ class MyNavigationBar extends StatelessWidget {
                       User? _user = FirebaseAuth.instance.currentUser;
                       if (_user != null) {
                         Utils.globalKey.currentState!
-                            .pushReplacementNamed(ProfilePage.routName);
+                            .pushReplacementNamed(EditProfilePage.routName);
                         context.read<BlocIndex>().add(
                               ColorProfile(),
                             );
