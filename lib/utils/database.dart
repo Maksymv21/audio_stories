@@ -31,6 +31,10 @@ class Database {
         );
   }
 
+  static Future delete(String uid) async {
+    _user.doc(uid).delete();
+  }
+
 // static Map<String, dynamic>? read({
 //   required uid,
 // }) {

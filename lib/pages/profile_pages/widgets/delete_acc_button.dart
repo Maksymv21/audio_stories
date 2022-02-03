@@ -1,6 +1,7 @@
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
+import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class DeleteAccButton extends StatelessWidget {
           User? user = FirebaseAuth.instance.currentUser;
           print(user);
           await user?.delete();
+          await Database.delete(user!.uid);
           Utils.firstKey.currentState!
               .pushReplacementNamed(WelcomePage.routName);
           RegistrationOrAuthText.text = 'Регистрация';

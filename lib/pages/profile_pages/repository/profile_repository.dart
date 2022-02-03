@@ -32,4 +32,11 @@ class ProfileRepository {
         {'uid': LocalDB.uid, 'imageURL': downloadUrl});
     return ProfileModel(imageURL: downloadUrl);
   }
+
+  Future<ProfileModel> saveName(String name) async {
+    Database.createOrUpdate({'uid': LocalDB.uid, 'name': name});
+    return ProfileModel(name: name);
+  }
+
+
 }

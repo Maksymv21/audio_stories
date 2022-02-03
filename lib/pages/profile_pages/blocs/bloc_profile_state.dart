@@ -9,14 +9,7 @@ abstract class ProfileState extends Equatable{
   List<Object?> get props => [];
 }
 
-class ProfileInitial extends ProfileState {
-  final String? url;
-
-  const ProfileInitial({this.url});
-
-  @override
-  List<Object?> get props => [url];
-}
+class ProfileInitial extends ProfileState {}
 
 class ProfileLoading extends ProfileState {}
 

@@ -3,8 +3,9 @@ import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_event.dart';
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_state.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
-import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
+import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,7 +23,7 @@ class AuthPage extends StatelessWidget {
       listener: (previous, current) {
         if (current is PhoneAuthCodeSuccess) {
           Utils.firstKey.currentState!.pushReplacementNamed(
-            SplashGladPage.routName,
+            MainPage.routName,
           );
         }
         if (current is PhoneAuthNumberFailure) {
@@ -74,6 +75,14 @@ class AuthPage extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
         ),
         onPressed: () {
+          final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+          if (firebaseAuth.currentUser == null) {
+            firebaseAuth.signInAnonymously().then((value) {
+              final User? user = value.user;
+              LocalDB.uid = user!.uid;
+              print(LocalDB.uid);
+            });
+          }
           Utils.firstKey.currentState!.pushNamed(MainPage.routName);
         },
         child: const Text(

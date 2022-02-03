@@ -1,3 +1,4 @@
+import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
@@ -8,9 +9,11 @@ import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page
 import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
+import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/drawer.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,6 +24,13 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    User? _user = firebaseAuth.currentUser;
+    if (_user != null) {
+      LocalDB.uid = _user.uid;
+      LocalDB.phoneNumber = _user.phoneNumber;
+      PhoneAuthRepository(firebaseAuth: firebaseAuth).createUser();
+    }
     return BlocProvider(
       create: (context) => BlocIndex(0),
       child: Scaffold(

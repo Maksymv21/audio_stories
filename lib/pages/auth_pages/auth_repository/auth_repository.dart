@@ -1,4 +1,6 @@
 import 'package:audio_stories/pages/auth_pages/auth_model/auth_model.dart';
+import 'package:audio_stories/utils/database.dart';
+import 'package:audio_stories/utils/local_db.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class PhoneAuthRepository {
@@ -80,5 +82,14 @@ class PhoneAuthRepository {
     } else {
       return PhoneAuthModel(phoneAuthModelState: PhoneAuthModelState.error);
     }
+  }
+
+  Future<User?> createUser() async {
+    print('!!!');
+    final User? user = _firebaseAuth.currentUser;
+    LocalDB.uid = user?.uid;
+    LocalDB.phoneNumber = user?.phoneNumber;
+    await Database.createOrUpdate(
+        {'uid': LocalDB.uid, 'phoneNumber': LocalDB.phoneNumber});
   }
 }

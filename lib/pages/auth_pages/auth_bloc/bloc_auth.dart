@@ -29,8 +29,7 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     });
     on<PhoneAuthCodeSent>((event, emit) async {
       emit(
-        PhoneAuthNumberSuccess(
-            verificationId: event.verificationId),
+        PhoneAuthNumberSuccess(verificationId: event.verificationId),
       );
     });
     on<PhoneAuthVerificationFailed>((event, emit) async {

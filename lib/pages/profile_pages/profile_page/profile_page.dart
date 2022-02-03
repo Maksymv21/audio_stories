@@ -42,7 +42,7 @@ class ProfilePage extends StatelessWidget {
               .snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              // String? url = snapshot.data.data()['photo'];
+              String? url = snapshot.data.data()['photo'];
               // String? name = snapshot.data.data()['name'];
               return Center(
                 child: Column(

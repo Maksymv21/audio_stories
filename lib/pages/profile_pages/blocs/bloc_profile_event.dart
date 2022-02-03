@@ -12,14 +12,16 @@ abstract class ProfileEvent extends Equatable {
 class ProfileOpenImagePicker extends ProfileEvent {}
 
 class ProfileSaveChanges extends ProfileEvent {
-  final File avatar;
+  final String? name;
+  final File? avatar;
 
   const ProfileSaveChanges({
-    required this.avatar,
+    this.avatar,
+    this.name,
   });
 
   @override
-  List<Object> get props => [avatar];
+  List<Object?> get props => [avatar];
 }
 
 // class ProfileView extends ProfileEvent {}

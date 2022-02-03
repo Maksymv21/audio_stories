@@ -9,7 +9,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   ProfileBloc({required ProfileRepository profileRepository})
       : _profileRepository = profileRepository,
-        super(const ProfileInitial()) {
+        super(ProfileInitial()) {
     on<ProfileOpenImagePicker>((event, emit) async {
       emit(ProfileLoading());
       final ProfileModel profileModel = await _profileRepository.pickImage();
@@ -18,9 +18,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       );
     });
     on<ProfileSaveChanges>((event, emit) async {
-      final ProfileModel profileModel = await _profileRepository.uploadImage(event.avatar);
+      if (event.avatar != null) {
+        _profileRepository.uploadImage(event.avatar!);
+      }
+      _profileRepository.saveName(event.name!);
       emit(
-        ProfileInitial(url: profileModel.imageURL),
+        ProfileInitial(),
       );
     });
     // on<ProfileView> ((event, emit) async {
