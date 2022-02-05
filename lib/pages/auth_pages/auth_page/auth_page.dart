@@ -22,6 +22,9 @@ class AuthPage extends StatelessWidget {
     return BlocConsumer<PhoneAuthBloc, PhoneAuthState>(
       listener: (previous, current) {
         if (current is PhoneAuthCodeSuccess) {
+          User? _user = FirebaseAuth.instance.currentUser;
+          LocalDB.phoneNumber = _user?.phoneNumber;
+          LocalDB.refactorNumber();
           Utils.firstKey.currentState!.pushReplacementNamed(
             MainPage.routName,
           );
@@ -75,15 +78,10 @@ class AuthPage extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
         ),
         onPressed: () {
-          final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-          if (firebaseAuth.currentUser == null) {
-            firebaseAuth.signInAnonymously().then((value) {
-              final User? user = value.user;
-              LocalDB.uid = user!.uid;
-              print(LocalDB.uid);
-            });
-          }
-          Utils.firstKey.currentState!.pushNamed(MainPage.routName);
+          Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+            MainPage.routName,
+            (Route<dynamic> route) => false,
+          );
         },
         child: const Text(
           'Позже',
@@ -137,4 +135,10 @@ class AuthPage extends StatelessWidget {
       ),
     );
   }
+}
+
+class IsChange {
+  IsChange._();
+
+  static bool isChange = false;
 }

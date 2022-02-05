@@ -45,12 +45,36 @@ class PhoneAuthRepository {
     }
   }
 
+  Future<PhoneAuthModel> verifyChangeSMSCode({
+    required String smsCode,
+    required String verificationId,
+  }) async {
+    final User? user = await changeSMSVerificationCode(
+        verificationId: verificationId, smsVerificationCode: smsCode);
+    if (user != null) {
+      return PhoneAuthModel(
+        phoneAuthModelState: PhoneAuthModelState.verified,
+        uid: user.uid,
+      );
+    } else {
+      return PhoneAuthModel(phoneAuthModelState: PhoneAuthModelState.error);
+    }
+  }
+
   Future<User?> loginWithSMSVerificationCode(
       {required String verificationId,
       required String smsVerificationCode}) async {
     final AuthCredential credential = _getAuthCredentialFromVerificationCode(
         verificationId: verificationId, verificationCode: smsVerificationCode);
     return await authenticationWithCredential(credential: credential);
+  }
+
+  Future<User?> changeSMSVerificationCode(
+      {required String verificationId,
+        required String smsVerificationCode}) async {
+    final PhoneAuthCredential credential = _getChangeAuthCredentialFromVerificationCode(
+        verificationId: verificationId, verificationCode: smsVerificationCode);
+    return await updateNumberWithCredential(credential: credential);
   }
 
   Future<User?> authenticationWithCredential(
@@ -60,7 +84,20 @@ class PhoneAuthRepository {
     return userCredential.user;
   }
 
+  Future updateNumberWithCredential(
+      {required PhoneAuthCredential credential}) async {
+    await _firebaseAuth.currentUser!.updatePhoneNumber(credential);
+  }
+
   AuthCredential _getAuthCredentialFromVerificationCode(
+      {required String verificationId, required String verificationCode}) {
+    return PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: verificationCode,
+    );
+  }
+
+  PhoneAuthCredential _getChangeAuthCredentialFromVerificationCode(
       {required String verificationId, required String verificationCode}) {
     return PhoneAuthProvider.credential(
       verificationId: verificationId,
@@ -84,8 +121,23 @@ class PhoneAuthRepository {
     }
   }
 
+  Future<PhoneAuthModel> changeNumberWithCredential({
+    required PhoneAuthCredential credential,
+  }) async {
+    User? user = await updateNumberWithCredential(
+      credential: credential,
+    );
+    if (user != null) {
+      return PhoneAuthModel(
+        phoneAuthModelState: PhoneAuthModelState.verified,
+        uid: user.uid,
+      );
+    } else {
+      return PhoneAuthModel(phoneAuthModelState: PhoneAuthModelState.error);
+    }
+  }
+
   Future<User?> createUser() async {
-    print('!!!');
     final User? user = _firebaseAuth.currentUser;
     LocalDB.uid = user?.uid;
     LocalDB.phoneNumber = user?.phoneNumber;

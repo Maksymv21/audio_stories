@@ -25,6 +25,7 @@ class SplashGladPage extends StatelessWidget {
           pageBuilder: (_, __, ___) {
             LocalDB.uid = _user?.uid;
             LocalDB.phoneNumber = _user?.phoneNumber;
+            LocalDB.refactorNumber();
             // ModelUser.uid = _user?.uid;
             // ModelUser.phoneNumber = _user?.phoneNumber;
             // ModelUser.createUser();

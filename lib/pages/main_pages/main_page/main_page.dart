@@ -28,7 +28,7 @@ class MainPage extends StatelessWidget {
     User? _user = firebaseAuth.currentUser;
     if (_user != null) {
       LocalDB.uid = _user.uid;
-      LocalDB.phoneNumber = _user.phoneNumber;
+
       PhoneAuthRepository(firebaseAuth: firebaseAuth).createUser();
     }
     return BlocProvider(

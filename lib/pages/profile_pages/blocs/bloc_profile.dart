@@ -26,13 +26,5 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         ProfileInitial(),
       );
     });
-    // on<ProfileView> ((event, emit) async {
-    //   emit(ProfilePhoto(avatar: avatar));
-    // });
-    // on<ProfileSaveChanges> ((event, emit) async {
-    //   emit(ProfileLoading());
-    //   await _profileRepository.uploadImage(event.avatar);
-    //   add(ProfileView());
-    // });
   }
 }

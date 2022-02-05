@@ -3,24 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 final _user = FirebaseFirestore.instance.collection('users');
 
 class Database {
-  static Future<void> create({
-    required uid,
-    required map,
-  }) async {
-    _user.doc(uid).set(
-          map,
-          SetOptions(
-            merge: true,
-          ),
-        );
-  }
-
-  static Future<void> update({
-    required uid,
-    required map,
-  }) async {
-    _user.doc(uid).update(map);
-  }
 
   static Future createOrUpdate(Map<String, dynamic> map) async {
     _user.doc(map['uid']).set(
@@ -34,16 +16,6 @@ class Database {
   static Future delete(String uid) async {
     _user.doc(uid).delete();
   }
-
-// static Map<String, dynamic>? read({
-//   required uid,
-// }) {
-//   Map<String, dynamic>? map;
-//   _user.doc(uid).snapshots().listen((snapshot) {
-//     map = snapshot.data();
-//   });
-//   return map;
-// }
 }
 
 // static String? text;

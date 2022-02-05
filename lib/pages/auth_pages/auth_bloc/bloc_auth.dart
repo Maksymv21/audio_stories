@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/auth_pages/auth_model/auth_model.dart';
+import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +19,8 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
         phoneNumber: event.phoneNumber,
         onCodeSent: _onCodeSent,
         onVerificationFailed: _onVerificationFailed,
-        onVerificationCompleted: _onVerificationCompleted,
+        onVerificationCompleted:
+            IsChange.isChange ? _onChangeCompleted : _onVerificationCompleted,
         onCodeAutoRetrievalTimeout: _onCodeAutoRetrievalTimeout,
       );
     });
@@ -44,19 +46,61 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     });
     on<PhoneAuthCodeVerified>((event, emit) async {
       emit(PhoneAuthLoading());
-      PhoneAuthModel phoneAuthModel = await _phoneAuthRepository.verifySMSCode(
-        smsCode: event.smsCode,
-        verificationId: event.verificationId,
-      );
-      emit(
-        PhoneAuthCodeSuccess(uid: phoneAuthModel.uid),
-      );
+      if (IsChange.isChange) {
+        PhoneAuthModel phoneAuthModel =
+            await _phoneAuthRepository.verifyChangeSMSCode(
+          smsCode: event.smsCode,
+          verificationId: event.verificationId,
+        );
+        emit(
+          PhoneAuthCodeSuccess(uid: phoneAuthModel.uid),
+        );
+      } else {
+        PhoneAuthModel phoneAuthModel =
+            await _phoneAuthRepository.verifySMSCode(
+          smsCode: event.smsCode,
+          verificationId: event.verificationId,
+        );
+        emit(
+          PhoneAuthCodeSuccess(uid: phoneAuthModel.uid),
+        );
+      }
+    });
+    on<ChangeAuthCodeVerified>((event, emit) async {
+      emit(PhoneAuthLoading());
+      if (IsChange.isChange) {
+        PhoneAuthModel phoneAuthModel =
+            await _phoneAuthRepository.verifyChangeSMSCode(
+          smsCode: event.smsCode,
+          verificationId: event.verificationId,
+        );
+        emit(
+          PhoneAuthCodeSuccess(uid: phoneAuthModel.uid),
+        );
+      } else {
+        PhoneAuthModel phoneAuthModel =
+            await _phoneAuthRepository.verifySMSCode(
+          smsCode: event.smsCode,
+          verificationId: event.verificationId,
+        );
+        emit(
+          PhoneAuthCodeSuccess(uid: phoneAuthModel.uid),
+        );
+      }
     });
   }
 
   void _onVerificationCompleted(PhoneAuthCredential credential) async {
     final PhoneAuthModel phoneAuthModel =
         await _phoneAuthRepository.verifyWithCredential(credential: credential);
+    if (phoneAuthModel.phoneAuthModelState == PhoneAuthModelState.verified) {
+      add(PhoneAuthVerificationCompleted(phoneAuthModel.uid));
+    }
+  }
+
+  void _onChangeCompleted(PhoneAuthCredential credential) async {
+    final PhoneAuthModel phoneAuthModel = await _phoneAuthRepository
+        .updateNumberWithCredential(credential: credential);
     if (phoneAuthModel.phoneAuthModelState == PhoneAuthModelState.verified) {
       add(PhoneAuthVerificationCompleted(phoneAuthModel.uid));
     }

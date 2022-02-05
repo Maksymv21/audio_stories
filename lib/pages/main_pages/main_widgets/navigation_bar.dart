@@ -142,7 +142,7 @@ class MyNavigationBar extends StatelessWidget {
                       User? _user = FirebaseAuth.instance.currentUser;
                       if (_user != null) {
                         Utils.globalKey.currentState!
-                            .pushReplacementNamed(EditProfilePage.routName);
+                            .pushReplacementNamed(ProfilePage.routName);
                         context.read<BlocIndex>().add(
                               ColorProfile(),
                             );

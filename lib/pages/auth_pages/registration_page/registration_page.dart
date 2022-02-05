@@ -23,6 +23,13 @@ class RegistrationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String _text = RegistrationPageText.footerRegistration;
+    if (RegistrationPageText.header == 'Авторизация') {
+      _text = RegistrationPageText.footerAuth;
+    }
+    if (RegistrationPageText.header == 'Замена номера') {
+      _text = RegistrationPageText.footerChange;
+    }
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(
@@ -34,18 +41,20 @@ class RegistrationPage extends StatelessWidget {
               child: Container(
                 margin: const EdgeInsets.all(15.0),
                 child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        RegistrationOrAuthText.text,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 48.0,
-                          letterSpacing: 3.0,
-                        ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      RegistrationPageText.header,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 48.0,
+                        letterSpacing: 3.0,
                       ),
-                    ]),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -83,12 +92,10 @@ class RegistrationPage extends StatelessWidget {
             child: widget,
           ),
           const Spacer(),
-          const Expanded(
+          Expanded(
             flex: 5,
             child: WelcomeContainer(
-              text: 'Регистрация привяжет твои сказки'
-                  '\nк облаку, после чего они всегда '
-                  '\nбудут с тобой',
+              text: _text,
               width: 280.0,
               fontSize: 16.0,
             ),
@@ -102,8 +109,18 @@ class RegistrationPage extends StatelessWidget {
   }
 }
 
-class RegistrationOrAuthText {
-  static String text = 'Регистрация';
+class RegistrationPageText {
+  RegistrationPageText._();
 
-  RegistrationOrAuthText._();
+  static String header = 'Регистрация';
+
+  static String footerRegistration = 'Регистрация привяжет твои сказки'
+      '\nк облаку, после чего они всегда '
+      '\nбудут с тобой';
+  static String footerAuth = 'Авторизация на некоторое время'
+      '\nдаст тебе возможность'
+      '\nудалить аккаунт';
+  static String footerChange = 'Не волнуйся, все данные'
+      '\nтвоего аккаунта будут сохранены'
+      '\nпри замене номера';
 }

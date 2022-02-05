@@ -53,6 +53,19 @@ class PhoneAuthCodeVerified extends PhoneAuthEvent {
   List<Object> get props => [smsCode];
 }
 
+class ChangeAuthCodeVerified extends PhoneAuthEvent {
+  final String verificationId;
+  final String smsCode;
+
+  const ChangeAuthCodeVerified({
+    required this.verificationId,
+    required this.smsCode,
+  });
+
+  @override
+  List<Object> get props => [smsCode];
+}
+
 class PhoneAuthCodeAutoReturnTimeout extends PhoneAuthEvent {
   final String verificationId;
 
@@ -70,5 +83,7 @@ class PhoneAuthVerificationCompleted extends PhoneAuthEvent {
   @override
   List<Object?> get props => [uid];
 }
+
+
 
 

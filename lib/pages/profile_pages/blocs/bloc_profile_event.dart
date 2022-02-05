@@ -24,14 +24,5 @@ class ProfileSaveChanges extends ProfileEvent {
   List<Object?> get props => [avatar];
 }
 
-// class ProfileView extends ProfileEvent {}
-//
-// class ProfileChangeImageRequest extends ProfileEvent {
-//
-// }
-//
-// class ProfileProvideImagePath extends ProfileEvent {}
-//
-// class ProfileChangeNumber extends ProfileEvent {}
-//
+
 

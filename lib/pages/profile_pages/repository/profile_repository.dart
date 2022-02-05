@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:audio_stories/pages/profile_pages/models/profile_model.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/utils/local_db.dart';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -37,6 +36,4 @@ class ProfileRepository {
     Database.createOrUpdate({'uid': LocalDB.uid, 'name': name});
     return ProfileModel(name: name);
   }
-
-
 }

@@ -1,14 +1,15 @@
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
-import 'package:audio_stories/pages/main_pages/models/model_user.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/widgets/delete_acc_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
+import 'package:audio_stories/widgets/custom_dialog.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -42,8 +43,11 @@ class ProfilePage extends StatelessWidget {
               .snapshots(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
-              String? url = snapshot.data.data()['photo'];
-              // String? name = snapshot.data.data()['name'];
+              String? _url = snapshot.data?.data()?['imageURL'];
+              String? _name = snapshot.data?.data()?['name'];
+              if (_name == '') {
+                _name = 'Ваше имя';
+              }
               return Center(
                 child: Column(
                   children: [
@@ -82,10 +86,9 @@ class ProfilePage extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24.0),
                         image: DecorationImage(
-                          image: Image.asset(AppIcons.photo).image,
-                              // url == null
-                              // ? Image.asset(AppIcons.photo).image
-                              // : Image.network(url).image,
+                          image: _url == null
+                              ? Image.asset(AppIcons.photo).image
+                              : Image.network(_url).image,
                           fit: BoxFit.cover,
                         ),
                         boxShadow: const [
@@ -97,13 +100,11 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    const Expanded(
+                    Expanded(
                       flex: 4,
-                      child: Text('Ваше имя',
-                            // name == null
-                            // ? 'Ваше имя'
-                            // : snapshot.data.data()['name'],
-                        style: TextStyle(
+                      child: Text(
+                        _name ?? 'Ваше имя',
+                        style: const TextStyle(
                           fontSize: 24.0,
                         ),
                       ),
@@ -120,7 +121,7 @@ class ProfilePage extends StatelessWidget {
                           height: 62.0,
                           child: Center(
                             child: Text(
-                              ModelUser.profilePhoneNumber,
+                              LocalDB.profileNumber!,
                               style: const TextStyle(
                                 fontSize: 20.0,
                               ),
@@ -194,11 +195,14 @@ class ProfilePage extends StatelessWidget {
                         children: [
                           TextButton(
                             onPressed: () {
-                              Utils.firstKey.currentState!
-                                  .pushReplacementNamed(AuthPage.routName);
-                              RegistrationOrAuthText.text = 'Авторизация';
+                              _dialog(context);
                             },
-                            child: const Text('authorization'),
+                            child: const Text(
+                              'Выйти из приложения',
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                           const DeleteAccButton(),
                         ],
@@ -216,6 +220,26 @@ class ProfilePage extends StatelessWidget {
           },
         ),
       ],
+    );
+  }
+
+  Future<String?> _dialog(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+        title: 'Выход из аккаунта. \nЧтобы войти введите '
+            'уже существующий номер на странице регестрации',
+        onPressedNo: () => Navigator.pop(context, 'Cancel'),
+        onPressedYes: () {
+          FirebaseAuth.instance.signOut();
+          Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+            AuthPage.routName,
+            (Route<dynamic> route) => false,
+          );
+          RegistrationPageText.header = 'Регистрация';
+          IsChange.isChange = false;
+        },
+      ),
     );
   }
 }

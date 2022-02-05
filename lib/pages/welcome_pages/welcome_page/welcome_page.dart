@@ -90,9 +90,9 @@ class WelcomePage extends StatelessWidget {
                   AuthPage.routName,
                   (Route<dynamic> route) => false,
                 );
-                context.read<PhoneAuthBloc>().emit(
-                      PhoneAuthInitial(),
-                    );
+                // context.read<PhoneAuthBloc>().emit(
+                //       PhoneAuthInitial(),
+                //     );
                 // context.read<PhoneAuthBloc>().add(
                 //       DeletedAccount(),
                 //     );

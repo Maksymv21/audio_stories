@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
+import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile.dart';
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile_event.dart';
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile_state.dart';
@@ -9,6 +11,7 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
+import 'package:audio_stories/widgets/custom_dialog.dart';
 import 'package:audio_stories/widgets/number_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -84,17 +87,21 @@ class EditProfilePage extends StatelessWidget {
               builder: (context, AsyncSnapshot snapshot) {
                 return BlocBuilder<ProfileBloc, ProfileState>(
                     builder: (context, state) {
+                  final String? _url = snapshot.data?.data()['imageURL'];
+                  final String? _nameData = snapshot.data?.data()['name'];
                   ImageProvider _image = Image.asset(AppIcons.photo).image;
                   File? _currentImage;
-                  String? _name;
+                  String _name = 'Ваше имя';
 
                   if (state is ProfileInitial) {
                     if (snapshot.hasData) {
-                      String url = snapshot.data.data()['imageURL'];
-                      _image = Image.network(url).image;
-
-                      _name = snapshot.data.data()['name'];
-                      _editNameController.text = _name ?? 'Ваше имя';
+                      if (_url != null) {
+                        _image = Image.network(_url).image;
+                      }
+                      if (_nameData != null) {
+                        _name = _nameData;
+                        _editNameController.text = _nameData;
+                      }
                     } else {
                       return const Center(
                         child: CircularProgressIndicator(),
@@ -194,7 +201,7 @@ class EditProfilePage extends StatelessWidget {
                                 fontSize: 24.0,
                               ),
                               decoration: InputDecoration(
-                                hintText: _name ?? 'Ваше имя',
+                                hintText: _name == '' ? 'Ваше имя' : _name,
                               ),
                             ),
                           ),
@@ -215,12 +222,20 @@ class EditProfilePage extends StatelessWidget {
                         Expanded(
                           flex: 3,
                           child: TextButton(
-                            onPressed: () {
-                              context.read<ProfileBloc>().add(
-                                    ProfileSaveChanges(
-                                        avatar: _currentImage,
-                                        name: _editNameController.text),
-                                  );
+                            onPressed: () async {
+                              if (_editNumberController.text != '') {
+                                _dialog(context);
+                              } else {
+                                context.read<ProfileBloc>().add(
+                                      ProfileSaveChanges(
+                                          avatar: _currentImage,
+                                          name: _editNameController.text),
+                                    );
+                                Utils.globalKey.currentState!
+                                    .pushReplacementNamed(
+                                  ProfilePage.routName,
+                                );
+                              }
                             },
                             child: const Text(
                               'Сохранить',
@@ -241,6 +256,27 @@ class EditProfilePage extends StatelessWidget {
               }),
         ),
       ],
+    );
+  }
+
+  Future<String?> _dialog(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+        title: 'Для замены номера нужно пройти пару шагов',
+        onPressedNo: () {
+          _editNumberController.text = '';
+          Navigator.pop(context, 'Cancel');
+        },
+        onPressedYes: () {
+          Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+            AuthPage.routName,
+            (Route<dynamic> route) => false,
+          );
+          RegistrationPageText.header = 'Замена номера';
+          IsChange.isChange = true;
+        },
+      ),
     );
   }
 }
