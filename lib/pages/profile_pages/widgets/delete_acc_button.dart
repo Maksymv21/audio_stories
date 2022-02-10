@@ -32,8 +32,20 @@ class DeleteAccButton extends StatelessWidget {
                       )
                       .delete();
                 } catch (e) {
-                  debugPrint(
-                    e.toString(),
+                  showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => CustomDialog(
+                      title: 'Для данного действия нужно авторизоваться',
+                      onPressedNo: () => Navigator.pop(context, 'Cancel'),
+                      onPressedYes: () {
+                        Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+                          AuthPage.routName,
+                              (Route<dynamic> route) => false,
+                        );
+                        RegistrationPageText.header = 'Авторизация';
+                        IsChange.isChange = false;
+                      },
+                    ),
                   );
                 }
                 User? user = FirebaseAuth.instance.currentUser;
@@ -49,21 +61,7 @@ class DeleteAccButton extends StatelessWidget {
             ),
           );
         } catch (e) {
-          showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => CustomDialog(
-              title: 'Для данного действия нужно авторизоваться',
-              onPressedNo: () => Navigator.pop(context, 'Cancel'),
-              onPressedYes: () {
-                Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
-                  AuthPage.routName,
-                  (Route<dynamic> route) => false,
-                );
-                RegistrationPageText.header = 'Авторизация';
-                IsChange.isChange = false;
-              },
-            ),
-          );
+          debugPrint(e.toString());
         }
       },
       child: const Text(

@@ -7,6 +7,7 @@ import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/record_page/record_page.dart';
+import 'package:audio_stories/pages/record_page/test_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
 import 'package:audio_stories/utils/local_db.dart';
@@ -68,6 +69,9 @@ class MainPage extends StatelessWidget {
                 break;
               case RecordPage.routName:
                 page = const RecordPage();
+                break;
+              case TestPage.routName:
+                page = const TestPage();
                 break;
               default:
                 page = const HomePage();

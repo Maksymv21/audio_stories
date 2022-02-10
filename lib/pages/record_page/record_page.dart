@@ -1,15 +1,41 @@
 import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
+import 'package:audio_stories/pages/record_page/repository/record_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:flutter/material.dart';
 
-class RecordPage extends StatelessWidget {
+class RecordPage extends StatefulWidget {
   static const routName = '/record';
 
   const RecordPage({Key? key}) : super(key: key);
 
   @override
+  State<RecordPage> createState() => _RecordPageState();
+}
+
+class _RecordPageState extends State<RecordPage> {
+  final RecordRepository recorder = RecordRepository();
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //
+  //   recorder.init();
+  // }
+  //
+  // @override
+  // void dispose() {
+  //   recorder.dispose();
+  //
+  //   super.dispose();
+  // }
+
+  @override
   Widget build(BuildContext context) {
+    // final isRecording = recorder.isRecording;
+    final isRecording = false;
+    final String icon =
+        isRecording ? AppIcons.pauseRecord : AppIcons.playRecord;
     return Stack(
       children: [
         Column(
@@ -58,14 +84,19 @@ class RecordPage extends StatelessWidget {
                     flex: 3,
                     child: GestureDetector(
                       child: Container(
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage(
-                              AppIcons.pauseRecord,
+                              icon,
                             ),
                           ),
                         ),
                       ),
+                      onTap: () async {
+                        print('2');
+                        // await recorder.toggleRecording();
+                        setState(() {});
+                      },
                     ),
                   ),
                 ],

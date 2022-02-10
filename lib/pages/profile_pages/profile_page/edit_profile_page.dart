@@ -149,6 +149,7 @@ class EditProfilePage extends StatelessWidget {
                         const Spacer(
                           flex: 4,
                         ),
+
                         Container(
                           width: 228.0,
                           height: 228.0,
@@ -158,16 +159,6 @@ class EditProfilePage extends StatelessWidget {
                               colorFilter:
                                   const ColorFilter.srgbToLinearGamma(),
                               image: _image,
-                              // (() {
-                              //   if (url == null && _image == null) {
-                              //     return Image.asset(AppIcons.photo).image;
-                              //   }
-                              //   if (_image == null) {
-                              //     return Image.network(url!).image;
-                              //   } else {
-                              //     return Image.file(_image!).image;
-                              //   }
-                              // }()),
                               fit: BoxFit.cover,
                             ),
                             boxShadow: const [

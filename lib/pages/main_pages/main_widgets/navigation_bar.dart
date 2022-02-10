@@ -4,8 +4,8 @@ import 'package:audio_stories/pages/category_pages/category_page/category_page.d
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
-import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
+import 'package:audio_stories/pages/profile_pages/profile_page/test_rieastore_page.dart';
 import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -126,7 +126,7 @@ class MyNavigationBar extends StatelessWidget {
                   onPressed: () {
                     if (index != 3) {
                       Utils.globalKey.currentState!
-                          .pushReplacementNamed(AudioPage.routName);
+                          .pushReplacementNamed(TestPage.routName);
                       context.read<BlocIndex>().add(
                             ColorAudio(),
                           );

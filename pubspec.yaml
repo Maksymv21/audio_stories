@@ -41,7 +41,17 @@ dependencies:
   firebase_storage: ^10.2.5
   equatable: ^2.0.3
   image_picker: ^0.8.4+4
+
   flutter_sound: ^8.5.0
+
+  just_audio: ^0.9.19
+  assets_audio_player: ^3.0.4
+
+  path: ^1.8.0
+
+  audio_session: ^0.1.6+1
+  permission_handler: ^8.3.0
+  path_provider: ^2.0.1
   noise_meter: ^3.0.3
 
 
