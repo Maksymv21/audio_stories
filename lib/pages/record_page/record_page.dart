@@ -1,8 +1,11 @@
+import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
+import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
 import 'package:audio_stories/pages/record_page/repository/record_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class RecordPage extends StatefulWidget {
   static const routName = '/record';
@@ -14,28 +17,33 @@ class RecordPage extends StatefulWidget {
 }
 
 class _RecordPageState extends State<RecordPage> {
-  final RecordRepository recorder = RecordRepository();
+  final RecordRepository _recorder = RecordRepository();
+  bool _isRecorder = false;
+  bool _isPlayer = false;
+  bool _isPlay = false;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //
-  //   recorder.init();
-  // }
-  //
-  // @override
-  // void dispose() {
-  //   recorder.dispose();
-  //
-  //   super.dispose();
-  // }
+  @override
+  void initState() {
+    super.initState();
+
+    _recorder
+      ..openSession()
+      ..openTheRecorder().then((value) => _recorder.record(() {
+            setState(() {});
+          }));
+    _isPlay = true;
+  }
+
+  @override
+  void dispose() {
+    _recorder.close();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // final isRecording = recorder.isRecording;
-    final isRecording = false;
-    final String icon =
-        isRecording ? AppIcons.pauseRecord : AppIcons.playRecord;
+    String icon = _isPlay ? AppIcons.pauseRecord : AppIcons.playRecord;
     return Stack(
       children: [
         Column(
@@ -82,21 +90,30 @@ class _RecordPageState extends State<RecordPage> {
                   ),
                   Expanded(
                     flex: 3,
-                    child: GestureDetector(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: AssetImage(
-                              icon,
+                    child: BlocBuilder<BlocIndex, int>(
+                      builder: (context, index) => GestureDetector(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(
+                                icon,
+                              ),
                             ),
                           ),
                         ),
+                        onTap: () {
+                          if (!_isRecorder) {
+                            _stopRecord();
+                            context.read<BlocIndex>().add(
+                              ColorPlay(),
+                            );
+                          } else {
+                            _isPlayer ? _stopPlay() : _play();
+                          }
+                          setState(() {});
+                        },
                       ),
-                      onTap: () async {
-                        print('2');
-                        // await recorder.toggleRecording();
-                        setState(() {});
-                      },
+
                     ),
                   ),
                 ],
@@ -106,5 +123,31 @@ class _RecordPageState extends State<RecordPage> {
         ),
       ],
     );
+  }
+
+  void _stopRecord() {
+    _recorder.stopRecord(() {
+      setState(() {});
+    });
+    _isRecorder = true;
+    _isPlay = false;
+  }
+
+  void _play() {
+    _recorder.play(() {
+      setState(() {});
+      _isPlayer = false;
+      _isPlay = false;
+    });
+    _isPlayer = true;
+    _isPlay = true;
+  }
+
+  void _stopPlay() {
+    _recorder.stopPlayer(() {
+      setState(() {});
+    });
+    _isPlayer = false;
+    _isPlay = false;
   }
 }

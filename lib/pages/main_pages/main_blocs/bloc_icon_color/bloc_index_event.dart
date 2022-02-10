@@ -18,3 +18,5 @@ class ColorAudio extends IndexEvent {}
 class ColorProfile extends IndexEvent {}
 
 class NoColor extends IndexEvent {}
+
+class ColorPlay extends IndexEvent {}

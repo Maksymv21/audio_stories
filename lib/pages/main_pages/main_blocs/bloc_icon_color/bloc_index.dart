@@ -34,5 +34,10 @@ class BlocIndex extends Bloc<IndexEvent, int> {
         currentIndex = 5,
       );
     });
+    on<ColorPlay>((event, emit) {
+      emit(
+        currentIndex = 6,
+      );
+    });
   }
 }

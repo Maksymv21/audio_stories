@@ -94,7 +94,7 @@ class MyNavigationBar extends StatelessWidget {
                           );
                     }
                   },
-                  child: index == 2
+                  child: index == 2 || index == 6
                       ? Padding(
                           padding: const EdgeInsets.only(
                               left: 4.0, top: 7.0, right: 4.0, bottom: 20.0),
