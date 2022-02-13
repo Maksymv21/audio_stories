@@ -28,7 +28,7 @@ class MyNavigationBar extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.grey,
-            blurRadius: 5.0,
+            blurRadius: 10.0,
           ),
         ],
         color: Colors.white,

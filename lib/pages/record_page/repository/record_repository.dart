@@ -1,32 +1,37 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path/path.dart' as path;
+import 'package:intl/intl.dart' show DateFormat;
 
 class RecordRepository {
   final Codec _codec = Codec.aacMP4;
   final String _path = 'temp.aac';
   FlutterSoundPlayer? _player;
-  FlutterSoundRecorder? _recorder;
+  FlutterSoundRecorder? recorder;
+  String time = '00:00:00';
 
   bool get isStoppedPlayer => _player!.isStopped;
+  bool get isStoppedRecorder => recorder!.isStopped;
 
-  bool get isStoppedRecorder => _recorder!.isStopped;
+  Stream<RecordingDisposition>? get onProgress => recorder!.onProgress;
+  Stream<PlaybackDisposition>? get onProgressP => _player!.onProgress;
 
   Future openSession() async {
     _player = FlutterSoundPlayer();
-    _recorder = FlutterSoundRecorder();
+    recorder = FlutterSoundRecorder();
     _player!.openAudioSession();
   }
 
   Future openTheRecorder() async {
-    await _recorder!.openAudioSession(
+    await recorder!.openAudioSession(
       focus: AudioFocus.requestFocusAndStopOthers,
       category: SessionCategory.playAndRecord,
       mode: SessionMode.modeDefault,
     );
-    await _recorder!.setSubscriptionDuration(const Duration(milliseconds: 10));
+    await recorder!.setSubscriptionDuration(const Duration(milliseconds: 10));
     await Permission.microphone.request();
     await Permission.storage.request();
     await Permission.manageExternalStorage.request();
@@ -39,8 +44,8 @@ class RecordRepository {
   Future close() async {
     _player!.closeAudioSession();
     _player = null;
-    _recorder!.closeAudioSession();
-    _recorder = null;
+    recorder!.closeAudioSession();
+    recorder = null;
   }
 
   void record(void Function() foo) {
@@ -48,7 +53,7 @@ class RecordRepository {
     if (!directory.existsSync()) {
       directory.createSync();
     }
-    _recorder!
+    recorder!
         .startRecorder(
           toFile: _path,
           codec: _codec,
@@ -57,7 +62,7 @@ class RecordRepository {
   }
 
   void stopRecord(void Function() foo) async {
-    await _recorder!.stopRecorder().then((value) => foo);
+    await recorder!.stopRecorder().then((value) => foo);
   }
 
   void play(void Function() foo) {

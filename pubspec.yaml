@@ -48,11 +48,13 @@ dependencies:
   assets_audio_player: ^3.0.4
 
   path: ^1.8.0
+  intl: ^0.17.0
 
   audio_session: ^0.1.6+1
   permission_handler: ^8.3.0
   path_provider: ^2.0.1
   noise_meter: ^3.0.3
+
 
 
 dev_dependencies:

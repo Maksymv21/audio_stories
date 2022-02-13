@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
@@ -6,6 +8,7 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart' show DateFormat;
 
 class RecordPage extends StatefulWidget {
   static const routName = '/record';
@@ -18,6 +21,7 @@ class RecordPage extends StatefulWidget {
 
 class _RecordPageState extends State<RecordPage> {
   final RecordRepository _recorder = RecordRepository();
+  String _recorderTxt = '00:00:00';
   bool _isRecorder = false;
   bool _isPlayer = false;
   bool _isPlay = false;
@@ -25,12 +29,15 @@ class _RecordPageState extends State<RecordPage> {
   @override
   void initState() {
     super.initState();
-
     _recorder
       ..openSession()
-      ..openTheRecorder().then((value) => _recorder.record(() {
-            setState(() {});
-          }));
+      ..openTheRecorder().then((value) {
+        _recorder.record(() {
+          setState(() {});
+        });
+      });
+
+    startTimer();
     _isPlay = true;
   }
 
@@ -41,9 +48,61 @@ class _RecordPageState extends State<RecordPage> {
     super.dispose();
   }
 
+  void startTimer() async {
+    StreamSubscription _recorderSubscription =
+        _recorder.onProgress!.listen((e) {
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(
+          e.duration.inMilliseconds,
+          isUtc: true);
+      String txt = DateFormat('HH:mm:ss', 'en_GB').format(date);
+
+      setState(() {
+        _recorderTxt = txt.substring(0, 8);
+      });
+    });
+    // _recorderSubscription.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     String icon = _isPlay ? AppIcons.pauseRecord : AppIcons.playRecord;
+
+    Widget child = Column(
+      children: [
+        const Spacer(
+          flex: 8,
+        ),
+        Text(_recorderTxt),
+        Expanded(
+          flex: 3,
+          child: BlocBuilder<BlocIndex, int>(
+            builder: (context, index) => GestureDetector(
+              child: Container(
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage(
+                      icon,
+                    ),
+                  ),
+                ),
+              ),
+              onTap: () {
+                if (!_isRecorder) {
+                  _stopRecord();
+                  context.read<BlocIndex>().add(
+                    ColorPlay(),
+                  );
+                } else {
+                  _isPlayer ? _stopPlay() : _play();
+                }
+                setState(() {});
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+
     return Stack(
       children: [
         Column(
@@ -83,41 +142,7 @@ class _RecordPageState extends State<RecordPage> {
               padding: const EdgeInsets.only(
                 right: 13.0,
               ),
-              child: Column(
-                children: [
-                  const Spacer(
-                    flex: 8,
-                  ),
-                  Expanded(
-                    flex: 3,
-                    child: BlocBuilder<BlocIndex, int>(
-                      builder: (context, index) => GestureDetector(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            image: DecorationImage(
-                              image: AssetImage(
-                                icon,
-                              ),
-                            ),
-                          ),
-                        ),
-                        onTap: () {
-                          if (!_isRecorder) {
-                            _stopRecord();
-                            context.read<BlocIndex>().add(
-                              ColorPlay(),
-                            );
-                          } else {
-                            _isPlayer ? _stopPlay() : _play();
-                          }
-                          setState(() {});
-                        },
-                      ),
-
-                    ),
-                  ),
-                ],
-              ),
+              child: child,
             ),
           ),
         ),
@@ -139,6 +164,7 @@ class _RecordPageState extends State<RecordPage> {
       _isPlayer = false;
       _isPlay = false;
     });
+
     _isPlayer = true;
     _isPlay = true;
   }
