@@ -26,6 +26,11 @@ class AppIcons {
   static const String arrow = '$_path/arrow.png';
   static const String back = '$_path/back.png';
   static const String camera = '$_path/camera.png';
+  static const String upload = '$_path/upload.png';
+  static const String download = '$_path/download.png';
+  static const String back15 = '$_path/back15.png';
+  static const String forward15 = '$_path/forward15.png';
+
 
   static const String pauseRecord = '$_path/pause.png';
   static const String playRecord = '$_path/play_record.png';

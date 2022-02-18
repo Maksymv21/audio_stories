@@ -1,8 +1,10 @@
 import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart';
+import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
 import 'package:flutter/material.dart';
+
+import '../../main_pages/widgets/button_menu.dart';
 
 class HomePage extends StatelessWidget {
   static const routName = '/home';
@@ -11,6 +13,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Widget _soundList =
     return Stack(
       children: [
         Column(
@@ -213,24 +216,25 @@ class HomePage extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                const Align(
-                  alignment: AlignmentDirectional(0.0, -0.2),
-                  child: Text(
-                    'Как только ты запишешь'
-                    '\nаудио, она появится здесь.',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.grey,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                Align(
-                  alignment: const AlignmentDirectional(-0.05, 0.7),
-                  child: Image(
-                    image: Image.asset(AppIcons.arrow).image,
-                  ),
-                ),
+                Center(child: SoundContainer()),
+                // const Align(
+                //   alignment: AlignmentDirectional(0.0, -0.2),
+                //   child: Text(
+                //     'Как только ты запишешь'
+                //     '\nаудио, она появится здесь.',
+                //     style: TextStyle(
+                //       fontSize: 20.0,
+                //       color: Colors.grey,
+                //     ),
+                //     textAlign: TextAlign.center,
+                //   ),
+                // ),
+                // Align(
+                //   alignment: const AlignmentDirectional(-0.05, 0.7),
+                //   child: Image(
+                //     image: Image.asset(AppIcons.arrow).image,
+                //   ),
+                // ),
               ],
             ),
           ),

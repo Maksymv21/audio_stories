@@ -1,6 +1,6 @@
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
-import 'package:audio_stories/pages/main_pages/main_widgets/button_menu.dart';
+import 'package:audio_stories/pages/main_pages/widgets/button_menu.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page.dart';
 import 'package:audio_stories/pages/profile_pages/widgets/delete_acc_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';

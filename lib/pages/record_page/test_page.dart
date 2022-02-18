@@ -1,414 +1,456 @@
-import 'dart:async';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
-import 'package:path/path.dart' as path;
-import 'package:permission_handler/permission_handler.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
+import 'package:flutter/rendering.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:rxdart/rxdart.dart';
+
+var themeNotifier = ValueNotifier<ThemeVariation>(
+  const ThemeVariation(Colors.blue, Brightness.light),
+);
+
+class ThemeVariation {
+  const ThemeVariation(this.color, this.brightness);
+  final MaterialColor color;
+  final Brightness brightness;
+}
 
 class TestPage extends StatefulWidget {
   static const routName = '/test';
+  TestPage({Key? key, required this.title}) : super(key: key);
 
-  const TestPage({Key? key}) : super(key: key);
+  final String title;
 
   @override
   _TestPageState createState() => _TestPageState();
 }
 
 class _TestPageState extends State<TestPage> {
-  // FlutterSoundRecorder? _recordingSession;
-  // final recordingPlayer = AssetsAudioPlayer();
-  // String? pathToAudio;
-  // bool _playAudio = false;
-  // String _timerText = '00:00:00';
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   initializer();
-  // }
-  //
-  // void initializer() async {
-  //   pathToAudio = 'temp.aac';
-  //   _recordingSession = FlutterSoundRecorder();
-  //   await _recordingSession!.openAudioSession(
-  //     focus: AudioFocus.requestFocusAndStopOthers,
-  //     category: SessionCategory.playAndRecord,
-  //     mode: SessionMode.modeDefault,
-  //     //device: AudioDevice.speaker
-  //   );
-  //   await _recordingSession!
-  //       .setSubscriptionDuration(Duration(milliseconds: 10));
-  //   // await initializeDateFormatting();
-  //   await Permission.microphone.request();
-  //   await Permission.storage.request();
-  //   await Permission.manageExternalStorage.request();
-  // }
-  //
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: Colors.black87,
-  //     appBar: AppBar(title: Text('Audio Recording and Playing')),
-  //     body: Center(
-  //       child: Column(
-  //         mainAxisAlignment: MainAxisAlignment.start,
-  //         children: <Widget>[
-  //           SizedBox(
-  //             height: 40,
-  //           ),
-  //           Container(
-  //             child: Center(
-  //               child: Text(
-  //                 _timerText,
-  //                 style: TextStyle(fontSize: 70, color: Colors.red),
-  //               ),
-  //             ),
-  //           ),
-  //           SizedBox(
-  //             height: 20,
-  //           ),
-  //           Row(
-  //             mainAxisAlignment: MainAxisAlignment.center,
-  //             children: <Widget>[
-  //               createElevatedButton(
-  //                 icon: Icons.mic,
-  //                 iconColor: Colors.red,
-  //                 onPressFunc: startRecording,
-  //               ),
-  //               SizedBox(
-  //                 width: 30,
-  //               ),
-  //               createElevatedButton(
-  //                 icon: Icons.stop,
-  //                 iconColor: Colors.red,
-  //                 onPressFunc: stopRecording,
-  //               ),
-  //             ],
-  //           ),
-  //           SizedBox(
-  //             height: 20,
-  //           ),
-  //           ElevatedButton.icon(
-  //             style:
-  //                 ElevatedButton.styleFrom(elevation: 9.0, primary: Colors.red),
-  //             onPressed: () {
-  //               setState(() {
-  //                 _playAudio = !_playAudio;
-  //               });
-  //               if (_playAudio) playFunc();
-  //               if (!_playAudio) stopPlayFunc();
-  //             },
-  //             icon: _playAudio
-  //                 ? Icon(
-  //                     Icons.stop,
-  //                   )
-  //                 : Icon(Icons.play_arrow),
-  //             label: _playAudio
-  //                 ? Text(
-  //                     "Stop",
-  //                     style: TextStyle(
-  //                       fontSize: 28,
-  //                     ),
-  //                   )
-  //                 : Text(
-  //                     "Play",
-  //                     style: TextStyle(
-  //                       fontSize: 28,
-  //                     ),
-  //                   ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-  // ElevatedButton createElevatedButton(
-  //     {required IconData icon,
-  //     required Color iconColor,
-  //     required Function() onPressFunc}) {
-  //   return ElevatedButton.icon(
-  //     style: ElevatedButton.styleFrom(
-  //       padding: EdgeInsets.all(6.0),
-  //       side: BorderSide(
-  //         color: Colors.red,
-  //         width: 4.0,
-  //       ),
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(20),
-  //       ),
-  //       primary: Colors.white,
-  //       elevation: 9.0,
-  //     ),
-  //     onPressed: onPressFunc,
-  //     icon: Icon(
-  //       icon,
-  //       color: iconColor,
-  //       size: 38.0,
-  //     ),
-  //     label: Text(''),
-  //   );
-  // }
-  //
-  // Future<void> startRecording() async {
-  //   Directory directory = Directory(path.dirname(pathToAudio!));
-  //   if (!directory.existsSync()) {
-  //     directory.createSync();
-  //   }
-  //   _recordingSession!.openAudioSession();
-  //   await _recordingSession!.startRecorder(
-  //     toFile: pathToAudio,
-  //     codec: Codec.aacMP4,
-  //   );
-  //   StreamSubscription _recorderSubscription =
-  //       _recordingSession!.onProgress!.listen((e) {
-  //     var date = DateTime.fromMillisecondsSinceEpoch(e.duration.inMilliseconds,
-  //         isUtc: true);
-  //     var timeText = DateTime.now().microsecond.toString();
-  //     setState(() {
-  //       _timerText = timeText.substring(0, 8);
-  //     });
-  //   });
-  //   _recorderSubscription.cancel();
-  // }
-  //
-  // Future<String?> stopRecording() async {
-  //   _recordingSession!.closeAudioSession();
-  //   return await _recordingSession!.stopRecorder();
-  // }
-  //
-  // Future<void> playFunc() async {
-  //   recordingPlayer.open(
-  //     Audio.file(pathToAudio!),
-  //     autoStart: true,
-  //     showNotification: true,
-  //   );
-  // }
-  //
-  // Future<void> stopPlayFunc() async {
-  //   recordingPlayer.stop();
-  // }
+  late AudioPlayer _player;
+  final url = 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3';
+  late Stream<DurationState> _durationState;
+  var _isShowingWidgetOutline = false;
+  var _labelLocation = TimeLabelLocation.below;
+  var _labelType = TimeLabelType.totalTime;
+  TextStyle? _labelStyle;
+  var _thumbRadius = 10.0;
+  var _labelPadding = 0.0;
+  var _barHeight = 5.0;
+  var _barCapShape = BarCapShape.round;
+  Color? _baseBarColor;
+  Color? _progressBarColor;
+  Color? _bufferedBarColor;
+  Color? _thumbColor;
+  Color? _thumbGlowColor;
+  var _thumbCanPaintOutsideBar = true;
 
-final Codec _codec = Codec.aacMP4;
-String _mPath = '/sdcard/Download/temp.aac';
-FlutterSoundPlayer? _mPlayer = FlutterSoundPlayer();
-FlutterSoundRecorder? _mRecorder = FlutterSoundRecorder();
-bool _mPlayerIsInited = false;
-bool _mRecorderIsInited = false;
-bool _mPlaybackReady = false;
-
-@override
-void initState() {
-  _mPlayer!.openAudioSession().then((value) {
-    setState(() {
-      _mPlayerIsInited = true;
-    });
-  });
-
-  openTheRecorder().then((value) {
-    setState(() {
-      _mRecorderIsInited = true;
-    });
-  });
-  super.initState();
-}
-
-@override
-void dispose() {
-  _mPlayer!.closeAudioSession();
-  _mPlayer = null;
-
-  _mRecorder!.closeAudioSession();
-  _mRecorder = null;
-  super.dispose();
-}
-
-Future<void> openTheRecorder() async {
-  _mPath = 'temp.aac';
-  _mRecorder = FlutterSoundRecorder();
-    await _mRecorder!.openAudioSession(
-      focus: AudioFocus.requestFocusAndStopOthers,
-      category: SessionCategory.playAndRecord,
-      mode: SessionMode.modeDefault,
-      //device: AudioDevice.speaker
-    );
-    await _mRecorder!
-        .setSubscriptionDuration(const Duration(milliseconds: 10));
-    // await initializeDateFormatting();
-    await Permission.microphone.request();
-    await Permission.storage.request();
-    await Permission.manageExternalStorage.request();
-  final status = await Permission.microphone.request();
-  if (status != PermissionStatus.granted) {
-    throw RecordingPermissionException('Microphone permission not granted');
+  @override
+  void initState() {
+    super.initState();
+    _player = AudioPlayer();
+    _durationState = Rx.combineLatest2<Duration, PlaybackEvent, DurationState>(
+        _player.positionStream,
+        _player.playbackEventStream,
+            (position, playbackEvent) => DurationState(
+          progress: position,
+          buffered: playbackEvent.bufferedPosition,
+          total: playbackEvent.duration,
+        ));
+    _init();
   }
-  // await Permission.storage.request();
-  // await Permission.manageExternalStorage.request();
-  // await _mRecorder!.startRecorder();
-  // if (!await _mRecorder!.isEncoderSupported(_codec)) {
-  //   _codec = Codec.opusWebM;
-  //   _mPath = 'test.aac';
-  //   if (!await _mRecorder!.isEncoderSupported(_codec)) {
-  //     _mRecorderIsInited = true;
-  //     return;
-  //   }
-  // }
-  // final session = await AudioSession.instance;
-  // await session.configure(AudioSessionConfiguration(
-  //   avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
-  //   avAudioSessionCategoryOptions:
-  //       AVAudioSessionCategoryOptions.allowBluetooth |
-  //           AVAudioSessionCategoryOptions.defaultToSpeaker,
-  //   avAudioSessionMode: AVAudioSessionMode.spokenAudio,
-  //   avAudioSessionRouteSharingPolicy:
-  //       AVAudioSessionRouteSharingPolicy.defaultPolicy,
-  //   avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
-  //   androidAudioAttributes: const AndroidAudioAttributes(
-  //     contentType: AndroidAudioContentType.speech,
-  //     flags: AndroidAudioFlags.none,
-  //     usage: AndroidAudioUsage.voiceCommunication,
-  //   ),
-  //   androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
-  //   androidWillPauseWhenDucked: true,
-  // ));
 
-  _mRecorderIsInited = true;
-}
-
-void record() {
-  Directory directory = Directory(path.dirname(_mPath));
-    if (!directory.existsSync()) {
-      directory.createSync();
+  Future<void> _init() async {
+    try {
+      await _player.setUrl(url);
+    } catch (e) {
+      debugPrint('An error occured $e');
     }
-  _mRecorder!
-      .startRecorder(
-    toFile: _mPath,
-    codec: _codec,
-
-  )
-      .then((value) {
-    setState(() {});
-  });
-}
-
-void stopRecorder() async {
-  await _mRecorder!.stopRecorder().then((value) {
-    setState(() {
-      //var url = value;
-      _mPlaybackReady = true;
-    });
-  });
-}
-
-void play() {
-  assert(_mPlayerIsInited &&
-      _mPlaybackReady &&
-      _mRecorder!.isStopped &&
-      _mPlayer!.isStopped);
-  _mPlayer!
-      .startPlayer(
-          fromURI: _mPath,
-          //codec: kIsWeb ? Codec.opusWebM : Codec.aacADTS,
-          whenFinished: () {
-            setState(() {});
-          })
-      .then((value) {
-    setState(() {});
-  });
-}
-
-void stopPlayer() {
-  _mPlayer!.stopPlayer().then((value) {
-    setState(() {});
-  });
-}
-
-Function()? getRecorderFn() {
-  if (!_mRecorderIsInited || !_mPlayer!.isStopped) {
-    return null;
   }
-  return _mRecorder!.isStopped ? record : stopRecorder;
-}
 
-Function()? getPlaybackFn() {
-  if (!_mPlayerIsInited || !_mPlaybackReady || !_mRecorder!.isStopped) {
-    return null;
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
   }
-  return _mPlayer!.isStopped ? play : stopPlayer;
-}
 
-@override
-Widget build(BuildContext context) {
-  Widget makeBody() {
-    return Column(
-      children: [
-        Container(
-          margin: const EdgeInsets.all(3),
-          padding: const EdgeInsets.all(3),
-          height: 80,
-          width: double.infinity,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFAF0E6),
-            border: Border.all(
-              color: Colors.indigo,
-              width: 3,
-            ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            children: [
+              Expanded(
+                child: ListView(
+                  children: [
+                    _themeButtons(),
+                    _widgetSizeButtons(),
+                    const SizedBox(height: 20),
+                    const Text(
+                      '------- Labels -------',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    _labelLocationButtons(),
+                    _labelTypeButtons(),
+                    _labelSizeButtons(),
+                    _paddingSizeButtons(),
+                    const SizedBox(height: 20),
+                    const Text(
+                      '------- Bar -------',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    _barColorButtons(),
+                    _barCapShapeButtons(),
+                    _barHeightButtons(),
+                    _thumbSizeButtons(),
+                    _thumbOutsideBarButtons(),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                decoration: _widgetBorder(),
+                child: _progressBar(),
+              ),
+              const SizedBox(height: 20),
+              _playButton(),
+            ],
           ),
-          child: Row(children: [
-            ElevatedButton(
-              onPressed: getRecorderFn(),
-              //color: Colors.white,
-              //disabledColor: Colors.grey,
-              child: Text(_mRecorder!.isRecording ? 'Stop' : 'Record'),
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Text(_mRecorder!.isRecording
-                ? 'Recording in progress'
-                : 'Recorder is stopped'),
-          ]),
         ),
-        Container(
-          margin: const EdgeInsets.all(3),
-          padding: const EdgeInsets.all(3),
-          height: 80,
-          width: double.infinity,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: const Color(0xFFFAF0E6),
-            border: Border.all(
-              color: Colors.indigo,
-              width: 3,
-            ),
-          ),
-          child: Row(children: [
-            ElevatedButton(
-              onPressed: getPlaybackFn(),
-              //color: Colors.white,
-              //disabledColor: Colors.grey,
-              child: Text(_mPlayer!.isPlaying ? 'Stop' : 'Play'),
-            ),
-            const SizedBox(
-              width: 20,
-            ),
-            Text(_mPlayer!.isPlaying
-                ? 'Playback in progress'
-                : 'Player is stopped'),
-          ]),
-        ),
-      ],
+      ),
     );
   }
 
-  return Scaffold(
-    backgroundColor: Colors.blue,
-    appBar: AppBar(
-      title: const Text('Simple Recorder'),
-    ),
-    body: makeBody(),
-  );
+  Wrap _themeButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('light'),
+        onPressed: () {
+          themeNotifier.value =
+          const ThemeVariation(Colors.blue, Brightness.light);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('dark'),
+        onPressed: () {
+          themeNotifier.value =
+          const ThemeVariation(Colors.blue, Brightness.dark);
+        },
+      ),
+    ]);
+  }
+
+  Wrap _widgetSizeButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('hide widget size'),
+        onPressed: () {
+          setState(() => _isShowingWidgetOutline = false);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('show'),
+        onPressed: () {
+          setState(() => _isShowingWidgetOutline = true);
+        },
+      ),
+    ]);
+  }
+
+  BoxDecoration _widgetBorder() {
+    return BoxDecoration(
+      border: _isShowingWidgetOutline
+          ? Border.all(color: Colors.red)
+          : Border.all(color: Colors.transparent),
+    );
+  }
+
+  Wrap _labelLocationButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('below'),
+        onPressed: () {
+          setState(() => _labelLocation = TimeLabelLocation.below);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('above'),
+        onPressed: () {
+          setState(() => _labelLocation = TimeLabelLocation.above);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('sides'),
+        onPressed: () {
+          setState(() => _labelLocation = TimeLabelLocation.sides);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('none'),
+        onPressed: () {
+          setState(() => _labelLocation = TimeLabelLocation.none);
+        },
+      ),
+    ]);
+  }
+
+  Wrap _labelTypeButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('total time'),
+        onPressed: () {
+          setState(() => _labelType = TimeLabelType.totalTime);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('remaining time'),
+        onPressed: () {
+          setState(() => _labelType = TimeLabelType.remainingTime);
+        },
+      ),
+    ]);
+  }
+
+  Wrap _labelSizeButtons() {
+    final fontColor = Theme.of(context).textTheme.bodyText1?.color;
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('standard font size'),
+        onPressed: () {
+          setState(() => _labelStyle = null);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('large'),
+        onPressed: () {
+          setState(
+                  () => _labelStyle = TextStyle(fontSize: 40, color: fontColor));
+        },
+      ),
+      OutlinedButton(
+        child: const Text('small'),
+        onPressed: () {
+          setState(
+                  () => _labelStyle = TextStyle(fontSize: 8, color: fontColor));
+        },
+      ),
+    ]);
+  }
+
+  Wrap _thumbSizeButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('standard thumb radius'),
+        onPressed: () {
+          setState(() => _thumbRadius = 10);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('large'),
+        onPressed: () {
+          setState(() => _thumbRadius = 20);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('small'),
+        onPressed: () {
+          setState(() => _thumbRadius = 5);
+        },
+      ),
+    ]);
+  }
+
+  Wrap _paddingSizeButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('standard padding'),
+        onPressed: () {
+          setState(() => _labelPadding = 0.0);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('10 padding'),
+        onPressed: () {
+          setState(() => _labelPadding = 10);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('-5 padding'),
+        onPressed: () {
+          setState(() => _labelPadding = -5);
+        },
+      ),
+    ]);
+  }
+
+  Wrap _barHeightButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('standard bar height'),
+        onPressed: () {
+          setState(() => _barHeight = 5.0);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('thin'),
+        onPressed: () {
+          setState(() => _barHeight = 1.0);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('thick'),
+        onPressed: () {
+          setState(() => _barHeight = 20.0);
+        },
+      ),
+    ]);
+  }
+
+  Wrap _barCapShapeButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('round caps'),
+        onPressed: () {
+          setState(() => _barCapShape = BarCapShape.round);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('square'),
+        onPressed: () {
+          setState(() => _barCapShape = BarCapShape.square);
+        },
+      ),
+    ]);
+  }
+
+  Wrap _barColorButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('theme colors'),
+        onPressed: () {
+          setState(() {
+            _baseBarColor = null;
+            _progressBarColor = null;
+            _bufferedBarColor = null;
+            _thumbColor = null;
+            _thumbGlowColor = null;
+          });
+        },
+      ),
+      OutlinedButton(
+        child: const Text('custom'),
+        onPressed: () {
+          setState(() {
+            _baseBarColor = Colors.grey.withOpacity(0.2);
+            _progressBarColor = Colors.green;
+            _bufferedBarColor = Colors.grey.withOpacity(0.2);
+            _thumbColor = Colors.purple;
+            _thumbGlowColor = Colors.green.withOpacity(0.3);
+          });
+        },
+      ),
+    ]);
+  }
+
+  Wrap _thumbOutsideBarButtons() {
+    return Wrap(children: [
+      OutlinedButton(
+        child: const Text('thumb can paint outside bar'),
+        onPressed: () {
+          setState(() => _thumbCanPaintOutsideBar = true);
+        },
+      ),
+      OutlinedButton(
+        child: const Text('false'),
+        onPressed: () {
+          setState(() => _thumbCanPaintOutsideBar = false);
+        },
+      ),
+    ]);
+  }
+
+  StreamBuilder<DurationState> _progressBar() {
+    return StreamBuilder<DurationState>(
+      stream: _durationState,
+      builder: (context, snapshot) {
+        final durationState = snapshot.data;
+        final progress = durationState?.progress ?? Duration.zero;
+        final buffered = durationState?.buffered ?? Duration.zero;
+        final total = durationState?.total ?? Duration.zero;
+        return ProgressBar(
+          progress: progress,
+          buffered: buffered,
+          total: total,
+          onSeek: (duration) {
+            _player.seek(duration);
+          },
+          onDragUpdate: (details) {
+            debugPrint('${details.timeStamp}, ${details.localPosition}');
+          },
+          barHeight: _barHeight,
+          baseBarColor: _baseBarColor,
+          progressBarColor: _progressBarColor,
+          bufferedBarColor: _bufferedBarColor,
+          thumbColor: _thumbColor,
+          thumbGlowColor: _thumbGlowColor,
+          barCapShape: _barCapShape,
+          thumbRadius: _thumbRadius,
+          thumbCanPaintOutsideBar: _thumbCanPaintOutsideBar,
+          timeLabelLocation: _labelLocation,
+          timeLabelType: _labelType,
+          timeLabelTextStyle: _labelStyle,
+          timeLabelPadding: _labelPadding,
+        );
+      },
+    );
+  }
+
+  StreamBuilder<PlayerState> _playButton() {
+    return StreamBuilder<PlayerState>(
+      stream: _player.playerStateStream,
+      builder: (context, snapshot) {
+        final playerState = snapshot.data;
+        final processingState = playerState?.processingState;
+        final playing = playerState?.playing;
+        if (processingState == ProcessingState.loading ||
+            processingState == ProcessingState.buffering) {
+          return Container(
+            margin: const EdgeInsets.all(8.0),
+            width: 32.0,
+            height: 32.0,
+            child: const CircularProgressIndicator(),
+          );
+        } else if (playing != true) {
+          return IconButton(
+            icon: const Icon(Icons.play_arrow),
+            iconSize: 32.0,
+            onPressed: _player.play,
+          );
+        } else if (processingState != ProcessingState.completed) {
+          return IconButton(
+            icon: const Icon(Icons.pause),
+            iconSize: 32.0,
+            onPressed: _player.pause,
+          );
+        } else {
+          return IconButton(
+            icon: const Icon(Icons.replay),
+            iconSize: 32.0,
+            onPressed: () => _player.seek(Duration.zero),
+          );
+        }
+      },
+    );
+  }
 }
+
+class DurationState {
+  const DurationState({
+    required this.progress,
+    required this.buffered,
+    this.total,
+  });
+  final Duration progress;
+  final Duration buffered;
+  final Duration? total;
 }

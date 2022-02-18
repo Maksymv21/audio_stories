@@ -1,9 +1,9 @@
+import 'package:audio_stories/utils/local_db.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _user = FirebaseFirestore.instance.collection('users');
 
 class Database {
-
   static Future createOrUpdate(Map<String, dynamic> map) async {
     _user.doc(map['uid']).set(
           map,
@@ -15,6 +15,16 @@ class Database {
 
   static Future delete(String uid) async {
     _user.doc(uid).delete();
+  }
+
+  static Future createOrUpdateSound(Map<String, dynamic> map) async {
+    final _sounds = _user.doc(LocalDB.uid).collection('sounds');
+    _sounds.doc().set(
+          map,
+          SetOptions(
+            merge: true,
+          ),
+        );
   }
 }
 
