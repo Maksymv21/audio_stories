@@ -61,7 +61,7 @@ class RecordRepository {
     _player!.pausePlayer().then((value) => foo);
   }
 
-  Future<void> uploadSound() async {
+  Future<void> uploadSound(String title, double time) async {
     FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
     Reference reference = _firebaseStorage.ref().child('Sounds').child(
           LocalDB.uid.toString() + 'sound',
@@ -71,6 +71,10 @@ class RecordRepository {
     await reference.putFile(sound);
     String downloadUrl = await reference.getDownloadURL();
 
-    Database.createOrUpdateSound({'song': downloadUrl});
+    Database.createOrUpdateSound({
+      'song': downloadUrl,
+      'title': title,
+      'time': time,
+    });
   }
 }

@@ -2,8 +2,11 @@ import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart
 import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
+import '../../../utils/local_db.dart';
 import '../../main_pages/widgets/button_menu.dart';
 
 class HomePage extends StatelessWidget {
@@ -216,25 +219,66 @@ class HomePage extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                Center(child: SoundContainer()),
-                // const Align(
-                //   alignment: AlignmentDirectional(0.0, -0.2),
-                //   child: Text(
-                //     'Как только ты запишешь'
-                //     '\nаудио, она появится здесь.',
-                //     style: TextStyle(
-                //       fontSize: 20.0,
-                //       color: Colors.grey,
-                //     ),
-                //     textAlign: TextAlign.center,
-                //   ),
-                // ),
-                // Align(
-                //   alignment: const AlignmentDirectional(-0.05, 0.7),
-                //   child: Image(
-                //     image: Image.asset(AppIcons.arrow).image,
-                //   ),
-                // ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 50.0, bottom: 10.0),
+                  child: StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(LocalDB.uid)
+                          .collection('sounds')
+                          .snapshots(),
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.data?.docs.length == 0) {
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 10.0),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  const Text(
+                                    'Как только ты запишешь'
+                                    '\nаудио, она появится здесь.',
+                                    style: TextStyle(
+                                      fontSize: 20.0,
+                                      color: Colors.grey,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  Image(
+                                    image: Image.asset(AppIcons.arrow).image,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: snapshot.data.docs.length,
+                            itemBuilder: (context, index) {
+                              return Column(
+                                children: [
+                                  SoundContainer(
+                                    title: snapshot.data.docs[index]['title'],
+                                    time:
+                                        (snapshot.data.docs[index]['time'] / 60)
+                                            .toStringAsFixed(1),
+                                  ),
+                                  const SizedBox(
+                                    height: 7.0,
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                      }),
+                ),
               ],
             ),
           ),

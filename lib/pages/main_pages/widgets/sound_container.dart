@@ -3,7 +3,14 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:flutter/material.dart';
 
 class SoundContainer extends StatelessWidget {
-  const SoundContainer({Key? key}) : super(key: key);
+  String title;
+  String time;
+
+  SoundContainer({
+    Key? key,
+    required this.title,
+    required this.time,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,25 +47,23 @@ class SoundContainer extends StatelessWidget {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
-                'Titleeee',
-                style: TextStyle(
+                title,
+                style: const TextStyle(
                   fontSize: 14.0,
                 ),
               ),
               Text(
-                'time',
-                style: TextStyle(
+                '$time минут',
+                style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 14.0,
                 ),
               ),
             ],
           ),
-          const SizedBox(
-            width: 162.0,
-          ),
+          const Spacer(),
           Align(
             alignment: const AlignmentDirectional(0.0, -2.5),
             child: TextButton(
@@ -66,7 +71,7 @@ class SoundContainer extends StatelessWidget {
               style: const ButtonStyle(
                 splashFactory: NoSplash.splashFactory,
               ),
-              child: Text(
+              child: const Text(
                 '...',
                 style: TextStyle(
                   color: Colors.black,

@@ -8,6 +8,7 @@ import 'package:audio_stories/pages/record_page/repository/record_repository.dar
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -15,7 +16,8 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:just_audio/just_audio.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:rxdart/rxdart.dart';
+
+import '../../utils/local_db.dart';
 
 class RecordPage extends StatefulWidget {
   static const routName = '/record';
@@ -31,6 +33,7 @@ class _RecordPageState extends State<RecordPage> {
   StreamSubscription? _recorderSubscription;
   Duration _position = Duration();
   String _recorderTxt = '00:00:00';
+  double _time = 0.0;
   bool _isRecorded = false;
   bool _isPlay = false;
 
@@ -70,7 +73,7 @@ class _RecordPageState extends State<RecordPage> {
   void dispose() {
     _recorder.close();
     _recorderSubscription?.cancel();
-    v?.cancel();
+    recordSub?.cancel();
     s?.cancel();
     super.dispose();
   }
@@ -83,20 +86,19 @@ class _RecordPageState extends State<RecordPage> {
       String txt = DateFormat('HH:mm:ss', 'en_GB').format(date);
       setState(() {
         _recorderTxt = txt.substring(0, 8);
+        _time = e.duration.inSeconds.toDouble();
       });
     });
   }
 
   NoiseMeter noiseReading = NoiseMeter();
-  StreamSubscription? v;
-  double min = 0;
-  double max = 10;
+  StreamSubscription? recordSub;
+  double db = 10;
 
   void noise() {
-    v = noiseReading.noiseStream.listen((e) {
+    recordSub = noiseReading.noiseStream.listen((e) {
       setState(() {
-        min = e.meanDecibel;
-        max = e.maxDecibel;
+        db = e.maxDecibel;
       });
     });
   }
@@ -105,16 +107,15 @@ class _RecordPageState extends State<RecordPage> {
   double val = 0.0;
 
   void valuePlayer() {
-    // s = _recorder.onProgressP!.listen((e) {
-    //   setState(() {
-    //     val = e.position.inSeconds.toDouble();
-    //     print(val);
-    //     print('1');
-    //   });
-    // });
+    print('!');
+    s = _recorder.onProgressP!.listen((e) {
+      setState(() {
+        val = e.position.inSeconds.toDouble();
+        print(val);
+        print('1');
+      });
+    });
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +128,7 @@ class _RecordPageState extends State<RecordPage> {
             child: Container(
               color: Colors.black,
               width: 5.0,
-              height: max < 0 ? -max : max,
+              height: db < 0 ? -db : db,
             ),
           ),
           Column(
@@ -218,102 +219,133 @@ class _RecordPageState extends State<RecordPage> {
       ),
     );
 
-
-
-    Widget childPlay = Column(
-      children: [
-        Expanded(
-          flex: 3,
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 10.0,
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Image.asset(
-                  AppIcons.upload,
-                ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Image.asset(
-                  AppIcons.download,
-                ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Image.asset(
-                  AppIcons.delete,
-                ),
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  _recorder.uploadSound();
-                },
-                child: const Text(
-                  'Сохранить',
-                  style: TextStyle(
-                    color: Colors.black,
+    Widget childPlay = StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('users')
+            .doc(LocalDB.uid)
+            .collection('sounds')
+            .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Row(
+                    children: [
+                      const SizedBox(
+                        width: 10.0,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Image.asset(
+                          AppIcons.upload,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Image.asset(
+                          AppIcons.download,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Image.asset(
+                          AppIcons.delete,
+                        ),
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          _recorder.uploadSound(
+                            'Аудиозапись ${snapshot.data?.docs.length + 1}',
+                            _time,
+                          );
+                          context.read<BlocIndex>().add(
+                                ColorHome(),
+                              );
+                          Utils.globalKey.currentState!.pushReplacementNamed(
+                            HomePage.routName,
+                          );
+                        },
+                        child: const Text(
+                          'Сохранить',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          flex: 10,
-          child: Slider(
-            value: val,
-            min: -10.0,
-            max: 10.0,
-            onChanged: (double value) {
-              setState(() {
-                val = value;
-              });
-            },
-          ),
-        ),
-        Expanded(
-          flex: 5,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () {},
-                icon: Image.asset(
-                  AppIcons.back15,
+                const Spacer(
+                  flex: 2,
                 ),
-              ),
-              const SizedBox(
-                width: 50.0,
-              ),
-              GestureDetector(
-                child: ClipRRect(
-                  child: Image.asset(
-                    icon,
+                Expanded(
+                  flex: 3,
+                  child: Text(
+                    'Аудиозапись ${snapshot.data?.docs.length + 1}',
+                    style: const TextStyle(
+                      fontSize: 24.0,
+                    ),
                   ),
                 ),
-                onTap: () {
-                  _isPlay ? _pausePlay() : _play();
-                  setState(() {});
-                },
-              ),
-              const SizedBox(
-                width: 50.0,
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: Image.asset(
-                  AppIcons.forward15,
+                Expanded(
+                  flex: 7,
+                  child: Slider(
+                    value: val,
+                    // min: -10.0,
+                    // max: 10.0,
+                    onChanged: (double value) {
+                      // setState(() {
+                      //   val = value;
+                      // });
+                    },
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
+                Expanded(
+                  flex: 5,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: Image.asset(
+                          AppIcons.back15,
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 50.0,
+                      ),
+                      GestureDetector(
+                        child: ClipRRect(
+                          child: Image.asset(
+                            icon,
+                          ),
+                        ),
+                        onTap: () {
+                          _isPlay ? _pausePlay() : _play();
+                          setState(() {});
+                        },
+                      ),
+                      const SizedBox(
+                        width: 50.0,
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Image.asset(
+                          AppIcons.forward15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          } else {
+            return const CircularProgressIndicator();
+          }
+        });
 
     return Stack(
       children: [
@@ -362,13 +394,11 @@ class _RecordPageState extends State<RecordPage> {
     );
   }
 
-  Stream<DurationState>? _durationState;
-
   void _stopRecord() {
     _recorder.stopRecord(() {
       setState(() {});
     });
-    v?.cancel();
+    recordSub?.cancel();
 
     _isRecorded = true;
     _isPlay = false;
@@ -376,10 +406,13 @@ class _RecordPageState extends State<RecordPage> {
 
   void _play() {
     _recorder.play(() {
-      setState(() {});
+      setState(() {
+        print('1111');
+        valuePlayer();
+      });
+
       _isPlay = false;
     });
-    valuePlayer();
 
     _isPlay = true;
   }
