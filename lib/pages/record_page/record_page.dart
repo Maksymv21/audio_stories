@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
@@ -13,9 +14,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart' show DateFormat;
-import 'package:just_audio/just_audio.dart';
 import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../utils/local_db.dart';
 
@@ -31,11 +33,12 @@ class RecordPage extends StatefulWidget {
 class _RecordPageState extends State<RecordPage> {
   final RecordRepository _recorder = RecordRepository();
   StreamSubscription? _recorderSubscription;
-  Duration _position = Duration();
   String _recorderTxt = '00:00:00';
+  String _playTxt = '00:00';
   double _time = 0.0;
   bool _isRecorded = false;
   bool _isPlay = false;
+  bool _isPause = false;
 
   @override
   void initState() {
@@ -48,7 +51,6 @@ class _RecordPageState extends State<RecordPage> {
     openTheRecorder();
     startTimer();
     noise();
-    valuePlayer();
     _isPlay = true;
   }
 
@@ -74,7 +76,7 @@ class _RecordPageState extends State<RecordPage> {
     _recorder.close();
     _recorderSubscription?.cancel();
     recordSub?.cancel();
-    s?.cancel();
+    _playerSubscription?.cancel();
     super.dispose();
   }
 
@@ -93,7 +95,7 @@ class _RecordPageState extends State<RecordPage> {
 
   NoiseMeter noiseReading = NoiseMeter();
   StreamSubscription? recordSub;
-  double db = 10;
+  double db = 0.0;
 
   void noise() {
     recordSub = noiseReading.noiseStream.listen((e) {
@@ -103,23 +105,38 @@ class _RecordPageState extends State<RecordPage> {
     });
   }
 
-  StreamSubscription? s;
-  double val = 0.0;
+  StreamSubscription? _playerSubscription;
+  double sliderCurrentPosition = 0.0;
+  double maxDuration = 1.0;
 
   void valuePlayer() {
-    print('!');
-    s = _recorder.onProgressP!.listen((e) {
+    _playerSubscription = _recorder.onProgressP!.listen((e) {
+      maxDuration = e.duration.inMilliseconds.toDouble();
+      if (maxDuration <= 0) maxDuration = 0.0;
+
+      sliderCurrentPosition =
+          min(e.position.inMilliseconds.toDouble(), maxDuration);
+      if (sliderCurrentPosition < 0.0) {
+        sliderCurrentPosition = 0.0;
+      }
+      DateTime date = DateTime.fromMillisecondsSinceEpoch(
+          e.position.inMilliseconds,
+          isUtc: true);
+      String txt = DateFormat('mm:ss', 'en_GB').format(date);
       setState(() {
-        val = e.position.inSeconds.toDouble();
-        print(val);
-        print('1');
+        _playTxt = txt.substring(0, 5);
       });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    String icon = _isPlay ? AppIcons.pauseRecord : AppIcons.playRecord;
+    String icon = AppIcons.playRecord;
+    if (_isPlay) {
+      icon = _isPlay && _isPause ? AppIcons.playRecord : AppIcons.pauseRecord;
+    } else {
+      icon = AppIcons.playRecord;
+    }
 
     Widget childRecord = BlocBuilder<BlocIndex, int>(
       builder: (context, state) => Stack(
@@ -279,7 +296,7 @@ class _RecordPageState extends State<RecordPage> {
                   ),
                 ),
                 const Spacer(
-                  flex: 2,
+                  flex: 4,
                 ),
                 Expanded(
                   flex: 3,
@@ -290,26 +307,56 @@ class _RecordPageState extends State<RecordPage> {
                     ),
                   ),
                 ),
+                const Spacer(),
                 Expanded(
                   flex: 7,
-                  child: Slider(
-                    value: val,
-                    // min: -10.0,
-                    // max: 10.0,
-                    onChanged: (double value) {
-                      // setState(() {
-                      //   val = value;
-                      // });
-                    },
+                  child: Column(
+                    children: [
+                      SfSlider(
+                        value: min(sliderCurrentPosition, maxDuration),
+                        min: 0.0,
+                        max: maxDuration,
+                        thumbShape: _SfThumbShape(),
+                        activeColor: Colors.black,
+                       inactiveColor: Colors.black,
+                        onChanged: (value) async {
+                          sliderCurrentPosition = value;
+                          await seek(value.toInt());
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 10.0,
+                          right: 8.0,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(_playTxt),
+                            Text(
+                              _recorderTxt.substring(3, 8),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
-                  flex: 5,
+                  flex: 7,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          sliderCurrentPosition =
+                              sliderCurrentPosition - 15000.0;
+                          if (sliderCurrentPosition < 0) {
+                            sliderCurrentPosition = 0.0;
+                          }
+                          await seek(sliderCurrentPosition.toInt());
+                          setState(() {});
+                        },
                         icon: Image.asset(
                           AppIcons.back15,
                         ),
@@ -324,7 +371,8 @@ class _RecordPageState extends State<RecordPage> {
                           ),
                         ),
                         onTap: () {
-                          _isPlay ? _pausePlay() : _play();
+                          if (_isPlay) _isPause ? _resumePlay() : _pausePlay();
+                          if (!_isPlay) _play();
                           setState(() {});
                         },
                       ),
@@ -332,7 +380,14 @@ class _RecordPageState extends State<RecordPage> {
                         width: 50.0,
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          sliderCurrentPosition += 15000.0;
+                          if (sliderCurrentPosition > maxDuration) {
+                            sliderCurrentPosition = maxDuration - 300;
+                          }
+                          await seek(sliderCurrentPosition.toInt());
+                          setState(() {});
+                        },
                         icon: Image.asset(
                           AppIcons.forward15,
                         ),
@@ -404,16 +459,13 @@ class _RecordPageState extends State<RecordPage> {
     _isPlay = false;
   }
 
-  void _play() {
-    _recorder.play(() {
-      setState(() {
-        print('1111');
-        valuePlayer();
-      });
-
+  void _play() async {
+    await _recorder.play(() {
+      setState(() {});
       _isPlay = false;
     });
-
+    valuePlayer();
+    setState(() {});
     _isPlay = true;
   }
 
@@ -421,34 +473,41 @@ class _RecordPageState extends State<RecordPage> {
     _recorder.pausePlayer(() {
       setState(() {});
     });
-
-    _isPlay = false;
+    _isPause = true;
   }
 
-// StreamBuilder<DurationState> _progressBar() {
-//   return StreamBuilder<DurationState>(
-//     stream: _durationState,
-//     builder: (context, snapshot) {
-//       final durationState = snapshot.data;
-//       final progress = durationState?.progress ?? Duration.zero;
-//       final buffered = durationState?.buffered ?? Duration.zero;
-//       final total = durationState?.total ?? Duration.zero;
-//       return ProgressBar(
-//
-//       );
-//     },
-//   );
-// }
+  void _resumePlay() {
+    _recorder.resumePlayer(() {
+      setState(() {});
+    });
+    _isPause = false;
+  }
+
+  Future<void> seek(int ms) async {
+    await _recorder.seek(ms);
+    setState(() {});
+  }
 }
 
-class DurationState {
-  const DurationState({
-    required this.progress,
-    required this.buffered,
-    this.total,
-  });
+class _SfThumbShape extends SfThumbShape {
+  @override
+  void paint(PaintingContext context, Offset center,
+      {required RenderBox parentBox,
+      required RenderBox? child,
+      required SfSliderThemeData themeData,
+      SfRangeValues? currentValues,
+      dynamic currentValue,
+      required Paint? paint,
+      required Animation<double> enableAnimation,
+      required TextDirection textDirection,
+      required SfThumb? thumb}) {
+    final Path path = Path();
 
-  final Duration progress;
-  final Duration buffered;
-  final Duration? total;
+    path.addOval(Rect.fromLTRB(
+        center.dx - 10, center.dy - 7, center.dx + 10, center.dy + 7));
+
+    path.close();
+    context.canvas.drawPath(path, Paint());
+  }
 }
+

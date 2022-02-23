@@ -1,5 +1,6 @@
 import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart';
 import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
+import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,7 +17,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Widget _soundList =
     return Stack(
       children: [
         Column(
@@ -189,7 +189,7 @@ class HomePage extends StatelessWidget {
         Align(
           alignment: const AlignmentDirectional(0.0, 1.05),
           child: Container(
-            width: 380.0,
+            width: MediaQuery.of(context).size.width * 0.96,
             height: MediaQuery.of(context).size.height * 0.38,
             decoration: const BoxDecoration(
               boxShadow: [
@@ -260,6 +260,7 @@ class HomePage extends StatelessWidget {
                               return Column(
                                 children: [
                                   SoundContainer(
+                                    color: AppColor.active,
                                     title: snapshot.data.docs[index]['title'],
                                     time:
                                         (snapshot.data.docs[index]['time'] / 60)

@@ -159,6 +159,7 @@ class AudioPage extends StatelessWidget {
                       return Column(
                         children: [
                           SoundContainer(
+                            color: const Color(0xff678BD2),
                             title: snapshot.data.docs[index]['title'],
                             time: (snapshot.data.docs[index]['time'] / 60)
                                 .toStringAsFixed(1),

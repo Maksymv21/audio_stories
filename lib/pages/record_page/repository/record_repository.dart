@@ -23,6 +23,11 @@ class RecordRepository {
     _player = FlutterSoundPlayer();
     _recorder = FlutterSoundRecorder();
     _player!.openAudioSession();
+    await _player?.setSubscriptionDuration(
+      const Duration(
+        milliseconds: 50,
+      ),
+    );
   }
 
   Future close() async {
@@ -51,14 +56,18 @@ class RecordRepository {
     await _recorder!.stopRecorder().then((value) => foo);
   }
 
-  void play(void Function() foo) {
-    _player!
+  Future<void> play(void Function() foo) async{
+    await _player!
         .startPlayer(fromURI: _path, whenFinished: foo)
         .then((value) => foo);
   }
 
   void pausePlayer(void Function() foo) {
     _player!.pausePlayer().then((value) => foo);
+  }
+
+  void resumePlayer(void Function() foo) {
+    _player!.resumePlayer().then((value) => foo);
   }
 
   Future<void> uploadSound(String title, double time) async {
@@ -76,5 +85,9 @@ class RecordRepository {
       'title': title,
       'time': time,
     });
+  }
+
+  Future<void> seek(int ms) async{
+    await _player!.seekToPlayer(Duration(milliseconds: ms));
   }
 }
