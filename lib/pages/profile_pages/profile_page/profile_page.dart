@@ -7,7 +7,7 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
-import 'package:audio_stories/widgets/custom_dialog.dart';
+import 'package:audio_stories/widgets/dialog_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -226,7 +226,7 @@ class ProfilePage extends StatelessWidget {
   Future<String?> _dialog(BuildContext context) {
     return showDialog<String>(
       context: context,
-      builder: (BuildContext context) => CustomDialog(
+      builder: (BuildContext context) => DialogProfile(
         title: 'Выход из аккаунта. \nЧтобы войти введите '
             'уже существующий номер на странице регестрации',
         onPressedNo: () => Navigator.pop(context, 'Cancel'),

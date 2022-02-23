@@ -1,20 +1,28 @@
 import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart';
 import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
 import 'package:audio_stories/resources/app_color.dart';
+import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/widgets/dialog_sound.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../../../utils/local_db.dart';
+import '../../../widgets/dialog_profile.dart';
 import '../../main_pages/widgets/button_menu.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   static const routName = '/home';
 
-  const HomePage({Key? key}) : super(key: key);
+  HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -226,6 +234,10 @@ class HomePage extends StatelessWidget {
                           .collection('users')
                           .doc(LocalDB.uid)
                           .collection('sounds')
+                          .orderBy(
+                            'date',
+                            descending: true,
+                          )
                           .snapshots(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.data?.docs.length == 0) {
@@ -257,14 +269,25 @@ class HomePage extends StatelessWidget {
                           return ListView.builder(
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
+                              final String title =
+                                  snapshot.data.docs[index]['title'];
+                              final String id = snapshot.data.docs[index].id;
                               return Column(
                                 children: [
                                   SoundContainer(
                                     color: AppColor.active,
-                                    title: snapshot.data.docs[index]['title'],
+                                    title: title,
                                     time:
                                         (snapshot.data.docs[index]['time'] / 60)
                                             .toStringAsFixed(1),
+                                    delete: () {
+                                      Database.deleteSound(id);
+                                    },
+                                    name: () => _dialog(
+                                      context,
+                                      title,
+                                      id,
+                                    ),
                                   ),
                                   const SizedBox(
                                     height: 7.0,
@@ -285,6 +308,33 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<String?> _dialog(
+    BuildContext context,
+    String title,
+    String id,
+  ) {
+    final TextEditingController controller = TextEditingController();
+    controller.text = title;
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) => DialogSound(
+        content: TextFormField(
+          controller: controller,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 18.0,
+          ),
+        ),
+        title: 'Введите новое название',
+        onPressedCancel: () => Navigator.pop(context, 'Cancel'),
+        onPressedSave: () {
+          Database.createOrUpdateSound({'title': controller.text}, id: id);
+          Navigator.pop(context, 'Cancel');
+        },
+      ),
     );
   }
 }

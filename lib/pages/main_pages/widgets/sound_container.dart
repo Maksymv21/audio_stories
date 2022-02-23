@@ -5,12 +5,16 @@ class SoundContainer extends StatelessWidget {
   String title;
   String time;
   Color color;
+  void Function()? delete;
+  void Function()? name;
 
   SoundContainer({
     Key? key,
     required this.title,
     required this.time,
     required this.color,
+    this.delete,
+    this.name,
   }) : super(key: key);
 
   @override
@@ -96,7 +100,7 @@ class SoundContainer extends StatelessWidget {
                         fontSize: 14.0,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: name,
                   ),
                   PopupMenuItem(
                     child: const Text(
@@ -123,7 +127,7 @@ class SoundContainer extends StatelessWidget {
                         fontSize: 14.0,
                       ),
                     ),
-                    onTap: () {},
+                    onTap: delete,
                   ),
                 ],
                 child: const Text(

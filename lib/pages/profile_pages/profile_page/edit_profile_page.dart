@@ -11,7 +11,7 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
-import 'package:audio_stories/widgets/custom_dialog.dart';
+import 'package:audio_stories/widgets/dialog_profile.dart';
 import 'package:audio_stories/widgets/number_form.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -253,7 +253,7 @@ class EditProfilePage extends StatelessWidget {
   Future<String?> _dialog(BuildContext context) {
     return showDialog<String>(
       context: context,
-      builder: (BuildContext context) => CustomDialog(
+      builder: (BuildContext context) => DialogProfile(
         title: 'Для замены номера нужно пройти пару шагов',
         onPressedNo: () {
           _editNumberController.text = '';

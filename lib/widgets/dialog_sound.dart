@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
-class CustomDialog extends StatelessWidget {
+class DialogSound extends StatelessWidget {
   final String title;
-  final void Function() onPressedNo;
-  final void Function() onPressedYes;
+  final void Function() onPressedCancel;
+  final void Function()? onPressedSave;
+  final Widget content;
 
-  const CustomDialog({
+  const DialogSound({
     Key? key,
     required this.title,
-    required this.onPressedNo,
-    required this.onPressedYes,
+    required this.onPressedCancel,
+    required this.onPressedSave,
+    required this.content,
   }) : super(key: key);
 
   @override
@@ -27,17 +29,14 @@ class CustomDialog extends StatelessWidget {
         title,
         textAlign: TextAlign.center,
       ),
-      content: const Text(
-        'Желаете продолжить?',
-        textAlign: TextAlign.center,
-      ),
+      content: content,
       actions: <Widget>[
         Row(
           children: [
             TextButton(
-              onPressed: onPressedNo,
+              onPressed: onPressedCancel,
               child: const Text(
-                'Нет',
+                'Отмена',
                 style: TextStyle(
                   color: Colors.black,
                   fontSize: 20.0,
@@ -45,11 +44,11 @@ class CustomDialog extends StatelessWidget {
               ),
             ),
             TextButton(
-              onPressed: onPressedYes,
+              onPressed: onPressedSave,
               child: const Text(
-                'Да',
+                'Сохранить',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.black,
                   fontSize: 20.0,
                 ),
               ),

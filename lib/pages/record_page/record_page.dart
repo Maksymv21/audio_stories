@@ -277,6 +277,7 @@ class _RecordPageState extends State<RecordPage> {
                           _recorder.uploadSound(
                             'Аудиозапись ${snapshot.data?.docs.length + 1}',
                             _time,
+                            DateTime.now(),
                           );
                           context.read<BlocIndex>().add(
                                 ColorHome(),

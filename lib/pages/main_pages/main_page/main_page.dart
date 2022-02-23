@@ -43,7 +43,7 @@ class MainPage extends StatelessWidget {
 
             switch (settings.name) {
               case HomePage.routName:
-                page = const HomePage();
+                page = HomePage();
                 break;
               case AudioPage.routName:
                 page = const AudioPage();
@@ -70,7 +70,7 @@ class MainPage extends StatelessWidget {
                 page = const RecordPage();
                 break;
               default:
-                page = const HomePage();
+                page = HomePage();
                 break;
             }
 

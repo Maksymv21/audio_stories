@@ -17,9 +17,13 @@ class Database {
     _user.doc(uid).delete();
   }
 
-  static Future createOrUpdateSound(Map<String, dynamic> map) async {
+  static Future deleteSound(String path) async {
+    _user.doc(LocalDB.uid).collection('sounds').doc(path).delete();
+  }
+
+  static Future createOrUpdateSound(Map<String, dynamic> map, {String? id}) async {
     final _sounds = _user.doc(LocalDB.uid).collection('sounds');
-    _sounds.doc().set(
+    _sounds.doc(id).set(
           map,
           SetOptions(
             merge: true,

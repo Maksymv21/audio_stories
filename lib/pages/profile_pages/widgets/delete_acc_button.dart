@@ -4,7 +4,7 @@ import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/utils/utils.dart';
-import 'package:audio_stories/widgets/custom_dialog.dart';
+import 'package:audio_stories/widgets/dialog_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ class DeleteAccButton extends StatelessWidget {
         try {
           showDialog<String>(
             context: context,
-            builder: (BuildContext context) => CustomDialog(
+            builder: (BuildContext context) => DialogProfile(
               title: 'После удаления аккаунта все данные будут утеряны',
               onPressedNo: () => Navigator.pop(context, 'Cancel'),
               onPressedYes: () async {
@@ -34,7 +34,7 @@ class DeleteAccButton extends StatelessWidget {
                 } catch (e) {
                   showDialog<String>(
                     context: context,
-                    builder: (BuildContext context) => CustomDialog(
+                    builder: (BuildContext context) => DialogProfile(
                       title: 'Для данного действия нужно авторизоваться',
                       onPressedNo: () => Navigator.pop(context, 'Cancel'),
                       onPressedYes: () {
