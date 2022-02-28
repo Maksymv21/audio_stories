@@ -35,10 +35,13 @@ class _RecordPageState extends State<RecordPage> {
   StreamSubscription? _recorderSubscription;
   String _recorderTxt = '00:00:00';
   String _playTxt = '00:00';
+  String _playTxtChange = '00:00';
   double _time = 0.0;
   bool _isRecorded = false;
   bool _isPlay = false;
   bool _isPause = false;
+  bool _onChanged = false;
+  double val = 0.0;
 
   @override
   void initState() {
@@ -63,8 +66,6 @@ class _RecordPageState extends State<RecordPage> {
     await _recorder.recorder!
         .setSubscriptionDuration(const Duration(milliseconds: 10));
     await Permission.microphone.request();
-    await Permission.storage.request();
-    await Permission.manageExternalStorage.request();
     final status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
       throw RecordingPermissionException('Microphone permission not granted');
@@ -91,6 +92,13 @@ class _RecordPageState extends State<RecordPage> {
         _time = e.duration.inSeconds.toDouble();
       });
     });
+  }
+
+  void refreshTimer(double value) {
+    DateTime date =
+        DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
+    String txt = DateFormat('mm:ss', 'en_GB').format(date);
+    _playTxtChange = txt.substring(0, 5);
   }
 
   NoiseMeter noiseReading = NoiseMeter();
@@ -314,15 +322,25 @@ class _RecordPageState extends State<RecordPage> {
                   child: Column(
                     children: [
                       SfSlider(
-                        value: min(sliderCurrentPosition, maxDuration),
+                        value: _onChanged ? val : sliderCurrentPosition,
                         min: 0.0,
                         max: maxDuration,
                         thumbShape: _SfThumbShape(),
                         activeColor: Colors.black,
-                       inactiveColor: Colors.black,
-                        onChanged: (value) async {
-                          sliderCurrentPosition = value;
+                        inactiveColor: Colors.black,
+                        onChanged: (value) {
+                          if (_isPause) {
+                            sliderCurrentPosition = value;
+                          } else {
+                            val = value;
+                          }
+                          refreshTimer(value);
+                          _onChanged = true;
+                        },
+                        onChangeEnd: (value) async {
                           await seek(value.toInt());
+                          val = sliderCurrentPosition;
+                          _onChanged = false;
                         },
                       ),
                       Padding(
@@ -333,7 +351,11 @@ class _RecordPageState extends State<RecordPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(_playTxt),
+                            Text(
+                              _onChanged || _isPause
+                                  ? _playTxtChange
+                                  : _playTxt,
+                            ),
                             Text(
                               _recorderTxt.substring(3, 8),
                             ),
@@ -352,9 +374,10 @@ class _RecordPageState extends State<RecordPage> {
                         onPressed: () async {
                           sliderCurrentPosition =
                               sliderCurrentPosition - 15000.0;
-                          if (sliderCurrentPosition < 0) {
+                          if (sliderCurrentPosition < 0.0) {
                             sliderCurrentPosition = 0.0;
                           }
+                          refreshTimer(sliderCurrentPosition);
                           await seek(sliderCurrentPosition.toInt());
                           setState(() {});
                         },
@@ -374,6 +397,7 @@ class _RecordPageState extends State<RecordPage> {
                         onTap: () {
                           if (_isPlay) _isPause ? _resumePlay() : _pausePlay();
                           if (!_isPlay) _play();
+                          refreshTimer(sliderCurrentPosition);
                           setState(() {});
                         },
                       ),
@@ -386,6 +410,7 @@ class _RecordPageState extends State<RecordPage> {
                           if (sliderCurrentPosition > maxDuration) {
                             sliderCurrentPosition = maxDuration - 300;
                           }
+                          refreshTimer(sliderCurrentPosition);
                           await seek(sliderCurrentPosition.toInt());
                           setState(() {});
                         },
@@ -464,6 +489,7 @@ class _RecordPageState extends State<RecordPage> {
     await _recorder.play(() {
       setState(() {});
       _isPlay = false;
+      sliderCurrentPosition = maxDuration;
     });
     valuePlayer();
     setState(() {});
@@ -511,4 +537,3 @@ class _SfThumbShape extends SfThumbShape {
     context.canvas.drawPath(path, Paint());
   }
 }
-

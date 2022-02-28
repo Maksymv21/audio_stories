@@ -50,6 +50,7 @@ dependencies:
 
   path: ^1.8.0
   intl: ^0.17.0
+  flutter_downloader: ^1.7.2
   audio_streamer: ^2.0.3
 
   audio_session: ^0.1.6+1

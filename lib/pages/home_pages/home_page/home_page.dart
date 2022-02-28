@@ -6,23 +6,37 @@ import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/dialog_sound.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 import '../../../utils/local_db.dart';
-import '../../../widgets/dialog_profile.dart';
 import '../../main_pages/widgets/button_menu.dart';
 
 class HomePage extends StatefulWidget {
   static const routName = '/home';
 
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+
+  @override
+  void initState() {
+    super.initState();
+    permission();
+  }
+
+  Future permission() async{
+    await Permission.storage.request();
+    await Permission.manageExternalStorage.request();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -105,8 +119,8 @@ class _HomePageState extends State<HomePage> {
                             flex: 4,
                             child: Text(
                               'Здесь будет'
-                              '\nтвой набор '
-                              '\nсказок',
+                                  '\nтвой набор '
+                                  '\nсказок',
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.white,
@@ -197,8 +211,14 @@ class _HomePageState extends State<HomePage> {
         Align(
           alignment: const AlignmentDirectional(0.0, 1.05),
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.96,
-            height: MediaQuery.of(context).size.height * 0.38,
+            width: MediaQuery
+                .of(context)
+                .size
+                .width * 0.96,
+            height: MediaQuery
+                .of(context)
+                .size
+                .height * 0.38,
             decoration: const BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -235,9 +255,9 @@ class _HomePageState extends State<HomePage> {
                           .doc(LocalDB.uid)
                           .collection('sounds')
                           .orderBy(
-                            'date',
-                            descending: true,
-                          )
+                        'date',
+                        descending: true,
+                      )
                           .snapshots(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.data?.docs.length == 0) {
@@ -246,11 +266,11 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.only(right: 10.0),
                               child: Column(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                                MainAxisAlignment.spaceAround,
                                 children: [
                                   const Text(
                                     'Как только ты запишешь'
-                                    '\nаудио, она появится здесь.',
+                                        '\nаудио, она появится здесь.',
                                     style: TextStyle(
                                       fontSize: 20.0,
                                       color: Colors.grey,
@@ -258,7 +278,9 @@ class _HomePageState extends State<HomePage> {
                                     textAlign: TextAlign.center,
                                   ),
                                   Image(
-                                    image: Image.asset(AppIcons.arrow).image,
+                                    image: Image
+                                        .asset(AppIcons.arrow)
+                                        .image,
                                   ),
                                 ],
                               ),
@@ -270,7 +292,7 @@ class _HomePageState extends State<HomePage> {
                             itemCount: snapshot.data.docs.length,
                             itemBuilder: (context, index) {
                               final String title =
-                                  snapshot.data.docs[index]['title'];
+                              snapshot.data.docs[index]['title'];
                               final String id = snapshot.data.docs[index].id;
                               return Column(
                                 children: [
@@ -278,16 +300,18 @@ class _HomePageState extends State<HomePage> {
                                     color: AppColor.active,
                                     title: title,
                                     time:
-                                        (snapshot.data.docs[index]['time'] / 60)
-                                            .toStringAsFixed(1),
+                                    (snapshot.data.docs[index]['time'] / 60)
+                                        .toStringAsFixed(1),
                                     delete: () {
                                       Database.deleteSound(id);
                                     },
-                                    name: () => _dialog(
-                                      context,
-                                      title,
-                                      id,
-                                    ),
+                                    name: () =>
+                                        _dialog(
+                                          context,
+                                          title,
+                                          id,
+                                        ),
+                                    download: () => {},
                                   ),
                                   const SizedBox(
                                     height: 7.0,
@@ -311,30 +335,56 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<String?> _dialog(
-    BuildContext context,
-    String title,
-    String id,
-  ) {
+  Future<String?> _dialog(BuildContext context,
+      String title,
+      String id,) {
     final TextEditingController controller = TextEditingController();
     controller.text = title;
     return showDialog<String>(
       context: context,
-      builder: (BuildContext context) => DialogSound(
-        content: TextFormField(
-          controller: controller,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 18.0,
+      builder: (BuildContext context) =>
+          DialogSound(
+            content: TextFormField(
+              controller: controller,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18.0,
+              ),
+            ),
+            title: 'Введите новое название',
+            onPressedCancel: () => Navigator.pop(context, 'Cancel'),
+            onPressedSave: () {
+              if (controller.text != '') {
+                Database.createOrUpdateSound(
+                    {'title': controller.text}, id: id);
+              }
+              Navigator.pop(context, 'Cancel');
+            },
           ),
-        ),
-        title: 'Введите новое название',
-        onPressedCancel: () => Navigator.pop(context, 'Cancel'),
-        onPressedSave: () {
-          Database.createOrUpdateSound({'title': controller.text}, id: id);
-          Navigator.pop(context, 'Cancel');
-        },
-      ),
     );
   }
+
+  Future<void> _download(String url) async {
+    // final dir = await getApplicationDocumentsDirectory();
+    // String _path = dir.path + name;
+    // final saveDir = Directory(_path);
+    // await saveDir.create(recursive: true).then((value) async {
+    //   String? taskId = await FlutterDownloader.enqueue(
+    //     url: url,
+    //     savedDir: _path,
+    //   );
+    // });
+    final status = await Permission.storage.request();
+
+    final externalDir = await getExternalStorageDirectory();
+
+    final id = await FlutterDownloader.enqueue(
+      url:
+      url,
+      savedDir: externalDir!.path,
+      fileName: "download",
+      showNotification: true,
+      openFileFromNotification: true,);
+  }
+
 }
