@@ -1,5 +1,6 @@
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 final _user = FirebaseFirestore.instance.collection('users');
 
@@ -17,11 +18,24 @@ class Database {
     _user.doc(uid).delete();
   }
 
-  static Future deleteSound(String path) async {
+  static Future deleteSound(
+    String path,
+    String title,
+    String date,
+  ) async {
     _user.doc(LocalDB.uid).collection('sounds').doc(path).delete();
+    FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+    _firebaseStorage
+        .ref()
+        .child('Sounds')
+        .child(
+          title + '.' + date,
+        )
+        .delete();
   }
 
-  static Future createOrUpdateSound(Map<String, dynamic> map, {String? id}) async {
+  static Future createOrUpdateSound(Map<String, dynamic> map,
+      {String? id}) async {
     final _sounds = _user.doc(LocalDB.uid).collection('sounds');
     _sounds.doc(id).set(
           map,

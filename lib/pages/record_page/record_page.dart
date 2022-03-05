@@ -46,6 +46,7 @@ class _RecordPageState extends State<RecordPage> {
   @override
   void initState() {
     super.initState();
+    Permission.microphone.request();
     _recorder.openSession().then((value) {
       _recorder.record(() {
         setState(() {});
@@ -65,11 +66,7 @@ class _RecordPageState extends State<RecordPage> {
     );
     await _recorder.recorder!
         .setSubscriptionDuration(const Duration(milliseconds: 10));
-    await Permission.microphone.request();
-    final status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      throw RecordingPermissionException('Microphone permission not granted');
-    }
+
   }
 
   @override
@@ -285,7 +282,7 @@ class _RecordPageState extends State<RecordPage> {
                           _recorder.uploadSound(
                             'Аудиозапись ${snapshot.data?.docs.length + 1}',
                             _time,
-                            DateTime.now(),
+                            Timestamp.now(),
                           );
                           context.read<BlocIndex>().add(
                                 ColorHome(),

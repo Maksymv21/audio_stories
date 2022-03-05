@@ -4,9 +4,7 @@ import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
-import '../../../widgets/dialog_sound.dart';
 import '../../main_pages/widgets/button_menu.dart';
 import '../../main_pages/widgets/sound_container.dart';
 
@@ -159,23 +157,16 @@ class AudioPage extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
-                      final String title = snapshot.data.docs[index]['title'];
-                      final String id = snapshot.data.docs[index].id;
                       return Column(
                         children: [
                           SoundContainer(
                             color: const Color(0xff678BD2),
-                            title: title,
+                            title: snapshot.data.docs[index]['title'],
                             time: (snapshot.data.docs[index]['time'] / 60)
                                 .toStringAsFixed(1),
-                            delete: () {
-                              Database.deleteSound(id);
-                            },
-                            name: () => _dialog(
-                              context,
-                              title,
-                              id,
-                            ),
+                            id: snapshot.data.docs[index].id,
+                            url: snapshot.data.docs[index]['song'],
+                            date: snapshot.data.docs[index]['date'],
                           ),
                           const SizedBox(
                             height: 7.0,
@@ -202,34 +193,5 @@ class AudioPage extends StatelessWidget {
             );
           }
         });
-  }
-
-  Future<String?> _dialog(
-    BuildContext context,
-    String title,
-    String id,
-  ) {
-    final TextEditingController controller = TextEditingController();
-    controller.text = title;
-    return showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => DialogSound(
-        content: TextFormField(
-          controller: controller,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            fontSize: 18.0,
-          ),
-        ),
-        title: 'Введите новое название',
-        onPressedCancel: () => Navigator.pop(context, 'Cancel'),
-        onPressedSave: () {
-          if (controller.text != '') {
-            Database.createOrUpdateSound({'title': controller.text}, id: id);
-          }
-          Navigator.pop(context, 'Cancel');
-        },
-      ),
-    );
   }
 }

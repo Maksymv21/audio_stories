@@ -36,7 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_bloc: ^8.0.0
   firebase_auth: ^3.3.5
-  firebase_core: ^1.11.0
+  firebase_core: ^1.13.1
+  firebase_app_check: ^0.0.6+7
   cloud_firestore: ^3.1.6
   firebase_storage: ^10.2.5
   equatable: ^2.0.3
@@ -51,6 +52,7 @@ dependencies:
   path: ^1.8.0
   intl: ^0.17.0
   flutter_downloader: ^1.7.2
+  dio: ^4.0.4
   audio_streamer: ^2.0.3
 
   audio_session: ^0.1.6+1

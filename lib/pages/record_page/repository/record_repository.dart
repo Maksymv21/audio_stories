@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
@@ -8,7 +9,7 @@ import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
 
 class RecordRepository {
-  final Codec _codec = Codec.aacMP4;
+  final Codec _codec = Codec.aacADTS;
   String? _path;
   FlutterSoundPlayer? _player;
   FlutterSoundRecorder? _recorder;
@@ -70,10 +71,10 @@ class RecordRepository {
     _player!.resumePlayer().then((value) => foo);
   }
 
-  Future<void> uploadSound(String title, double time, DateTime date) async {
+  Future<void> uploadSound(String title, double time, Timestamp date) async {
     FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
     Reference reference = _firebaseStorage.ref().child('Sounds').child(
-          LocalDB.uid.toString() + 'sound',
+          title + '.' + date.toString(),
         );
 
     File sound = await File(_path!).create();

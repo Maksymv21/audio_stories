@@ -1,3 +1,4 @@
+import 'package:audio_stories/pages/audio_pages/audio_page/test_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
@@ -68,6 +69,9 @@ class MainPage extends StatelessWidget {
                 break;
               case RecordPage.routName:
                 page = const RecordPage();
+                break;
+              case TestPage.routName:
+                page = const TestPage();
                 break;
               default:
                 page = HomePage();

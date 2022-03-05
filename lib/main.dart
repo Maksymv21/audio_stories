@@ -6,6 +6,7 @@ import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/splash_pages/splash_page/splash_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/utils/utils.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,8 @@ void main() async {
   ));
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  FirebaseAppCheck firebaseAppCheck = FirebaseAppCheck.instance;
+  await firebaseAppCheck.setTokenAutoRefreshEnabled(true);
   initializeDateFormatting('en_GB');
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(debug: true);

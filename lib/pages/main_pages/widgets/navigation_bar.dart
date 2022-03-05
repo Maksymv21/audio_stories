@@ -126,7 +126,7 @@ class MyNavigationBar extends StatelessWidget {
                   onPressed: () {
                     if (index != 3) {
                       Utils.globalKey.currentState!
-                          .pushReplacementNamed(AudioPage.routName);
+                          .pushReplacementNamed(TestPage.routName);
                       context.read<BlocIndex>().add(
                             ColorAudio(),
                           );
