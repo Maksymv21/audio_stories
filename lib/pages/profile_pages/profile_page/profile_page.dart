@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/pages/main_pages/widgets/button_menu.dart';
@@ -45,6 +47,10 @@ class ProfilePage extends StatelessWidget {
             if (snapshot.hasData) {
               String? _url = snapshot.data?.data()?['imageURL'];
               String? _name = snapshot.data?.data()?['name'];
+              int? memoryInt = snapshot.data?.data()?['totalMemory'];
+              memoryInt ??= 0;
+              String? memory = (memoryInt / pow(10, 6))
+                  .toStringAsFixed(0);
               if (_name == '') {
                 _name = 'Ваше имя';
               }
@@ -178,11 +184,11 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    const Expanded(
+                    Expanded(
                       flex: 2,
                       child: Text(
-                        '0/500 мб',
-                        style: TextStyle(
+                        '$memory/500 мб',
+                        style: const TextStyle(
                           fontSize: 14.0,
                         ),
                       ),

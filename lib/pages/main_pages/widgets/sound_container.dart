@@ -1,5 +1,4 @@
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class SoundContainer extends StatelessWidget {
@@ -7,6 +6,7 @@ class SoundContainer extends StatelessWidget {
   String time;
   Color color;
   Widget buttonRight;
+  void Function()? onTap;
 
   SoundContainer({
     Key? key,
@@ -14,6 +14,7 @@ class SoundContainer extends StatelessWidget {
     required this.time,
     required this.color,
     required this.buttonRight,
+    this.onTap,
   }) : super(key: key);
 
   @override
@@ -35,16 +36,19 @@ class SoundContainer extends StatelessWidget {
                 padding: const EdgeInsets.only(
                   left: 5.0,
                 ),
-                child: ColorFiltered(
-                  child: Image.asset(
-                    AppIcons.playRecord,
-                    width: 50.0,
-                    height: 50.0,
+                child: GestureDetector(
+                  child: ColorFiltered(
+                    child: Image.asset(
+                      AppIcons.playRecord,
+                      width: 50.0,
+                      height: 50.0,
+                    ),
+                    colorFilter: ColorFilter.mode(
+                      color,
+                      BlendMode.srcATop,
+                    ),
                   ),
-                  colorFilter: ColorFilter.mode(
-                    color,
-                    BlendMode.srcATop,
-                  ),
+                  onTap: onTap,
                 ),
               ),
               const SizedBox(

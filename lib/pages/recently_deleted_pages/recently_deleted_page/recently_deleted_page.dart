@@ -110,45 +110,67 @@ class RecentlyDeletedPage extends StatelessWidget {
                               String date =
                                   snapshot.data.docs[index]['date'].toString();
 
-                              autoDelete(
-                                snapshot.data.docs[index]['dateDeleted'],
-                                path,
-                                title,
-                                date,
-                              );
-                              return Column(
-                                children: [
-                                  SoundContainer(
-                                    color: const Color(0xff678BD2),
-                                    title: title,
-                                    time:
-                                        (snapshot.data.docs[index]['time'] / 60)
-                                            .toStringAsFixed(1),
-                                    buttonRight: Align(
-                                      alignment:
-                                          const AlignmentDirectional(0.95, 0.0),
-                                      child: IconButton(
-                                        splashColor: Colors.transparent,
-                                        highlightColor: Colors.transparent,
-                                        onPressed: () {
-                                          Database.deleteSound(
-                                            path,
-                                            title,
-                                            date,
-                                          );
-                                        },
-                                        icon: Image.asset(
-                                          AppIcons.delete,
-                                          color: Colors.black,
+                              return StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(LocalDB.uid)
+                                    .snapshots(),
+                                builder:
+                                    (BuildContext context, AsyncSnapshot snap) {
+                                  if (snap.hasData) {
+                                    int totalMemory =
+                                        snap.data?.data()?['totalMemory'];
+                                    int memory =
+                                        snapshot.data.docs[index]['memory'];
+                                    autoDelete(
+                                      snapshot.data.docs[index]['dateDeleted'],
+                                      path,
+                                      title,
+                                      date,
+                                      totalMemory - memory,
+                                    );
+                                    return Column(
+                                      children: [
+                                        SoundContainer(
+                                          color: const Color(0xff678BD2),
+                                          title: title,
+                                          time: (snapshot.data.docs[index]
+                                                      ['time'] /
+                                                  60)
+                                              .toStringAsFixed(1),
+                                          buttonRight: Align(
+                                            alignment:
+                                                const AlignmentDirectional(
+                                                    0.95, 0.0),
+                                            child: IconButton(
+                                              splashColor: Colors.transparent,
+                                              highlightColor:
+                                                  Colors.transparent,
+                                              onPressed: () {
+                                                Database.deleteSound(
+                                                  path,
+                                                  title,
+                                                  date,
+                                                  totalMemory - memory,
+                                                );
+                                              },
+                                              icon: Image.asset(
+                                                AppIcons.delete,
+                                                color: Colors.black,
+                                              ),
+                                              iconSize: 20.0,
+                                            ),
+                                          ),
                                         ),
-                                        iconSize: 20.0,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 7.0,
-                                  ),
-                                ],
+                                        const SizedBox(
+                                          height: 7.0,
+                                        ),
+                                      ],
+                                    );
+                                  } else {
+                                    return Container();
+                                  }
+                                },
                               );
                             },
                           ),
@@ -172,16 +194,13 @@ class RecentlyDeletedPage extends StatelessWidget {
     String path,
     String title,
     String date,
+    int memory,
   ) {
     final DateTime now = DateTime.now();
     final DateTime timeDeleted = timestamp.toDate();
 
     if (now.difference(timeDeleted).inDays >= 15) {
-      Database.deleteSound(
-        path,
-        title,
-        date,
-      );
+      Database.deleteSound(path, title, date, memory);
     }
   }
 }

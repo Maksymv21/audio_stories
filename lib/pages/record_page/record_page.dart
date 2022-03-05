@@ -66,7 +66,6 @@ class _RecordPageState extends State<RecordPage> {
     );
     await _recorder.recorder!
         .setSubscriptionDuration(const Duration(milliseconds: 10));
-
   }
 
   @override
@@ -277,27 +276,47 @@ class _RecordPageState extends State<RecordPage> {
                         ),
                       ),
                       const Spacer(),
-                      TextButton(
-                        onPressed: () {
-                          _recorder.uploadSound(
-                            'Аудиозапись ${snapshot.data?.docs.length + 1}',
-                            _time,
-                            Timestamp.now(),
-                          );
-                          context.read<BlocIndex>().add(
-                                ColorHome(),
+                      StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(LocalDB.uid)
+                              .snapshots(),
+                          builder: (BuildContext context, AsyncSnapshot snap) {
+                            int? memory = snap.data?.data()?['totalMemory'];
+                            memory ??= 0;
+                            if (snap.hasData) {
+                              return TextButton(
+                                onPressed: () {
+                                  _recorder.uploadSound(
+                                    'Аудиозапись ${snapshot.data?.docs.length + 1}',
+                                    _time,
+                                    Timestamp.now(),
+                                    memory!,
+                                  );
+                                  context.read<BlocIndex>().add(
+                                        ColorHome(),
+                                      );
+                                  Utils.globalKey.currentState!
+                                      .pushReplacementNamed(
+                                    HomePage.routName,
+                                  );
+                                },
+                                child: const Text(
+                                  'Сохранить',
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                ),
                               );
-                          Utils.globalKey.currentState!.pushReplacementNamed(
-                            HomePage.routName,
-                          );
-                        },
-                        child: const Text(
-                          'Сохранить',
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
+                            } else {
+                              return const Text(
+                                'Сохранить',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                ),
+                              );
+                            }
+                          }),
                     ],
                   ),
                 ),

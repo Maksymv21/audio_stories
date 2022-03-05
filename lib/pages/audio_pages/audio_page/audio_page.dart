@@ -172,6 +172,9 @@ class AudioPage extends StatelessWidget {
                               url: snapshot.data.docs[index]['song'],
                               date: snapshot.data.docs[index]['date'],
                             ),
+                            onTap: () {
+
+                            },
                           ),
                           const SizedBox(
                             height: 7.0,

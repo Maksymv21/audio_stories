@@ -23,13 +23,19 @@ class DeleteAccButton extends StatelessWidget {
               title: 'После удаления аккаунта все данные будут утеряны',
               onPressedNo: () => Navigator.pop(context, 'Cancel'),
               onPressedYes: () async {
+                FirebaseStorage _storage = FirebaseStorage.instance;
                 try {
-                  await FirebaseStorage.instance
+                  await _storage
                       .ref()
                       .child('Images')
                       .child(
                         LocalDB.uid.toString(),
                       )
+                      .delete();
+                  await _storage
+                      .ref()
+                      .child('Sounds')
+                      .child(LocalDB.uid.toString())
                       .delete();
                 } catch (e) {
                   showDialog<String>(
@@ -40,7 +46,7 @@ class DeleteAccButton extends StatelessWidget {
                       onPressedYes: () {
                         Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
                           AuthPage.routName,
-                              (Route<dynamic> route) => false,
+                          (Route<dynamic> route) => false,
                         );
                         RegistrationPageText.header = 'Авторизация';
                         IsChange.isChange = false;

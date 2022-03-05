@@ -22,16 +22,23 @@ class Database {
     String path,
     String title,
     String date,
+    int memory,
   ) async {
     _user.doc(LocalDB.uid).collection('sounds').doc(path).delete();
     FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
     _firebaseStorage
         .ref()
         .child('Sounds')
+        .child(LocalDB.uid.toString())
         .child(
           title + '.' + date,
         )
         .delete();
+
+    Database.createOrUpdate({
+      'uid': LocalDB.uid,
+      'totalMemory': memory,
+    });
   }
 
   static Future createOrUpdateSound(Map<String, dynamic> map,

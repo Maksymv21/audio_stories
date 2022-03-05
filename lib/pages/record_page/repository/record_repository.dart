@@ -57,7 +57,7 @@ class RecordRepository {
     await _recorder!.stopRecorder().then((value) => foo);
   }
 
-  Future<void> play(void Function() foo) async{
+  Future<void> play(void Function() foo) async {
     await _player!
         .startPlayer(fromURI: _path, whenFinished: foo)
         .then((value) => foo);
@@ -71,13 +71,26 @@ class RecordRepository {
     _player!.resumePlayer().then((value) => foo);
   }
 
-  Future<void> uploadSound(String title, double time, Timestamp date) async {
+  Future<void> uploadSound(
+    String title,
+    double time,
+    Timestamp date,
+    int memory,
+  ) async {
     FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-    Reference reference = _firebaseStorage.ref().child('Sounds').child(
+    Reference reference = _firebaseStorage
+        .ref()
+        .child('Sounds')
+        .child(LocalDB.uid.toString())
+        .child(
           title + '.' + date.toString(),
         );
 
     File sound = await File(_path!).create();
+
+    final int length = sound.lengthSync();
+    memory += length;
+
     await reference.putFile(sound);
     String downloadUrl = await reference.getDownloadURL();
 
@@ -85,12 +98,18 @@ class RecordRepository {
       'song': downloadUrl,
       'title': title,
       'time': time,
-      'date' : date,
-      'deleted' : false,
+      'date': date,
+      'deleted': false,
+      'memory' : length,
+    });
+
+    Database.createOrUpdate({
+      'uid': LocalDB.uid,
+      'totalMemory': memory,
     });
   }
 
-  Future<void> seek(int ms) async{
+  Future<void> seek(int ms) async {
     await _player!.seekToPlayer(Duration(milliseconds: ms));
   }
 }

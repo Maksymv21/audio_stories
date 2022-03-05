@@ -71,9 +71,11 @@ class PhoneAuthRepository {
 
   Future<User?> changeSMSVerificationCode(
       {required String verificationId,
-        required String smsVerificationCode}) async {
-    final PhoneAuthCredential credential = _getChangeAuthCredentialFromVerificationCode(
-        verificationId: verificationId, verificationCode: smsVerificationCode);
+      required String smsVerificationCode}) async {
+    final PhoneAuthCredential credential =
+        _getChangeAuthCredentialFromVerificationCode(
+            verificationId: verificationId,
+            verificationCode: smsVerificationCode);
     return await updateNumberWithCredential(credential: credential);
   }
 
@@ -137,11 +139,13 @@ class PhoneAuthRepository {
     }
   }
 
-  Future<User?> createUser() async {
+  Future<void> createUser() async {
     final User? user = _firebaseAuth.currentUser;
     LocalDB.uid = user?.uid;
     LocalDB.phoneNumber = user?.phoneNumber;
-    await Database.createOrUpdate(
-        {'uid': LocalDB.uid, 'phoneNumber': LocalDB.phoneNumber});
+    await Database.createOrUpdate({
+      'uid': LocalDB.uid,
+      'phoneNumber': LocalDB.phoneNumber,
+    });
   }
 }
