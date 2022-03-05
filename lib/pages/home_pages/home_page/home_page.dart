@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart';
+import 'package:audio_stories/pages/main_pages/widgets/popup_menu_sound_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -246,6 +247,7 @@ class _HomePageState extends State<HomePage> {
                           .collection('users')
                           .doc(LocalDB.uid)
                           .collection('sounds')
+                          .where('deleted', isEqualTo: false)
                           .orderBy(
                             'date',
                             descending: true,
@@ -289,9 +291,12 @@ class _HomePageState extends State<HomePage> {
                                     time:
                                         (snapshot.data.docs[index]['time'] / 60)
                                             .toStringAsFixed(1),
-                                    id: snapshot.data.docs[index].id,
-                                    url: snapshot.data.docs[index]['song'],
-                                    date: snapshot.data.docs[index]['date'],
+                                    buttonRight: PopupMenuSoundContainer(
+                                      title: snapshot.data.docs[index]['title'],
+                                      id: snapshot.data.docs[index].id,
+                                      url: snapshot.data.docs[index]['song'],
+                                      date: snapshot.data.docs[index]['date'],
+                                    ),
                                   ),
                                   const SizedBox(
                                     height: 7.0,

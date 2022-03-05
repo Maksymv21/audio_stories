@@ -86,6 +86,7 @@ class RecordRepository {
       'title': title,
       'time': time,
       'date' : date,
+      'deleted' : false,
     });
   }
 
