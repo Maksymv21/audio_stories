@@ -49,8 +49,7 @@ class ProfilePage extends StatelessWidget {
               String? _name = snapshot.data?.data()?['name'];
               int? memoryInt = snapshot.data?.data()?['totalMemory'];
               memoryInt ??= 0;
-              String? memory = (memoryInt / pow(10, 6))
-                  .toStringAsFixed(0);
+              String? memory = (memoryInt / pow(10, 6)).toStringAsFixed(0);
               if (_name == '') {
                 _name = 'Ваше имя';
               }
@@ -84,7 +83,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const Spacer(
-                      flex: 2,
+                      flex: 3,
                     ),
                     Container(
                       width: 230.0,
@@ -154,7 +153,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const Spacer(
-                      flex: 2,
+                      flex: 3,
                     ),
                     Expanded(
                       flex: 4,
@@ -170,17 +169,11 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Spacer(),
                     Expanded(
-                      child: Container(
-                        width: 300.0,
-                        height: 24.0,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
+                      flex: 3,
+                      child: _customProgress(
+                        context,
+                        memoryInt.toDouble(),
                       ),
                     ),
                     const Spacer(),
@@ -193,7 +186,9 @@ class ProfilePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Spacer(),
+                    const Spacer(
+                      flex: 2,
+                    ),
                     Expanded(
                       flex: 4,
                       child: Row(
@@ -245,6 +240,42 @@ class ProfilePage extends StatelessWidget {
           RegistrationPageText.header = 'Регистрация';
           IsChange.isChange = false;
         },
+      ),
+    );
+  }
+
+  Widget _customProgress(BuildContext context, double value) {
+    Color color = const Color(0xffF1B488);
+    final double max = (5 * pow(10, 8)).toDouble();
+    if (value > max) {
+      value = max;
+      color = Colors.red;
+    }
+    double width = MediaQuery.of(context).size.width * 0.78;
+    double padding = width * (1.0 - value / max);
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(15.0),
+      child: Container(
+        width: width,
+        color: Colors.black,
+        child: Padding(
+          padding: const EdgeInsets.all(2.5),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: EdgeInsets.only(right: padding),
+                child: ClipRRect(
+                  child: Container(
+                    color: color,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

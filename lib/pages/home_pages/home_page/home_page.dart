@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                     flex: 9,
                   ),
                   Expanded(
-                    flex: 8,
+                    flex: 9,
                     child: Column(
                       children: const [
                         Spacer(),
