@@ -4,10 +4,11 @@ import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_state.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/utils/local_db.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../main.dart';
 
 class AuthPage extends StatelessWidget {
   static const routName = '/auth';
@@ -25,7 +26,7 @@ class AuthPage extends StatelessWidget {
           User? _user = FirebaseAuth.instance.currentUser;
           LocalDB.phoneNumber = _user?.phoneNumber;
           LocalDB.refactorNumber();
-          Utils.firstKey.currentState!.pushReplacementNamed(
+          MyApp.firstKey.currentState!.pushReplacementNamed(
             MainPage.routName,
           );
         }
@@ -78,7 +79,7 @@ class AuthPage extends StatelessWidget {
           splashFactory: NoSplash.splashFactory,
         ),
         onPressed: () {
-          Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+          MyApp.firstKey.currentState!.pushNamedAndRemoveUntil(
             MainPage.routName,
             (Route<dynamic> route) => false,
           );

@@ -1,19 +1,20 @@
-import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
+import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/main_pages/widgets/foot_button.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
-import 'package:audio_stories/pages/profile_pages/profile_page/test_rieastore_page.dart';
 import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../main.dart';
+import '../../audio_pages/audio_page/audio_page.dart';
 
 class MyNavigationBar extends StatelessWidget {
   const MyNavigationBar({
@@ -61,8 +62,8 @@ class MyNavigationBar extends StatelessWidget {
                   color: index == 0 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
                     if (index != 0) {
-                      Utils.globalKey.currentState!
-                          .pushReplacementNamed(MainPage.routName);
+                      MainPage.globalKey.currentState!
+                          .pushReplacementNamed(HomePage.routName);
                       context.read<BlocIndex>().add(
                             ColorHome(),
                           );
@@ -76,7 +77,7 @@ class MyNavigationBar extends StatelessWidget {
                   onPressed: () {
                     // if index != 1
                     if (index != 1) {
-                      Utils.globalKey.currentState!
+                      MainPage.globalKey.currentState!
                           .pushReplacementNamed(CategoryPage.routName);
                       context.read<BlocIndex>().add(
                             ColorCategory(),
@@ -87,7 +88,7 @@ class MyNavigationBar extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     if (index != 2) {
-                      Utils.globalKey.currentState!
+                      MainPage.globalKey.currentState!
                           .pushReplacementNamed(RecordPage.routName);
                       context.read<BlocIndex>().add(
                             ColorRecord(),
@@ -125,8 +126,8 @@ class MyNavigationBar extends StatelessWidget {
                   color: index == 3 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
                     if (index != 3) {
-                      Utils.globalKey.currentState!
-                          .pushReplacementNamed(TestPage.routName);
+                      MainPage.globalKey.currentState!
+                          .pushReplacementNamed(AudioPage.routName);
                       context.read<BlocIndex>().add(
                             ColorAudio(),
                           );
@@ -141,13 +142,13 @@ class MyNavigationBar extends StatelessWidget {
                     if (index != 4) {
                       User? _user = FirebaseAuth.instance.currentUser;
                       if (_user != null) {
-                        Utils.globalKey.currentState!
+                        MainPage.globalKey.currentState!
                             .pushReplacementNamed(ProfilePage.routName);
                         context.read<BlocIndex>().add(
                               ColorProfile(),
                             );
                       } else {
-                        Utils.firstKey.currentState!
+                        MyApp.firstKey.currentState!
                             .pushReplacementNamed(AuthPage.routName);
                       }
                     }

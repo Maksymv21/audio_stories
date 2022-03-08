@@ -26,13 +26,10 @@ class PopupMenuSoundContainer extends StatelessWidget {
       alignment: const AlignmentDirectional(0.9, -1.0),
       child: PopupMenuButton(
         shape: ShapeBorder.lerp(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(0.0),
-              ),
-            ),
-            const CircleBorder(),
-            0.3),
+          const RoundedRectangleBorder(),
+          const CircleBorder(),
+          0.2,
+        ),
         itemBuilder: (context) => [
           PopupMenuItem(
             child: const Text(
@@ -161,7 +158,6 @@ class PopupMenuSoundContainer extends StatelessWidget {
       url,
       path,
       // "${dir.path}/$name.aac",
-      //"sdcard/Download/$name.aac",
     );
   }
 }

@@ -7,7 +7,6 @@ import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_i
 import 'package:audio_stories/pages/main_pages/widgets/button_menu.dart';
 import 'package:audio_stories/pages/record_page/repository/record_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +19,7 @@ import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../utils/local_db.dart';
+import '../main_pages/main_page/main_page.dart';
 
 class RecordPage extends StatefulWidget {
   static const routName = '/record';
@@ -163,7 +163,7 @@ class _RecordPageState extends State<RecordPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Utils.globalKey.currentState!
+                        MainPage.globalKey.currentState!
                             .pushReplacementNamed(HomePage.routName);
                         context.read<BlocIndex>().add(
                               ColorHome(),
@@ -282,8 +282,6 @@ class _RecordPageState extends State<RecordPage> {
                               .doc(LocalDB.uid)
                               .snapshots(),
                           builder: (BuildContext context, AsyncSnapshot snap) {
-                            int? memory = snap.data?.data()?['totalMemory'];
-                            memory ??= 0;
                             if (snap.hasData) {
                               return TextButton(
                                 onPressed: () {
@@ -291,12 +289,11 @@ class _RecordPageState extends State<RecordPage> {
                                     'Аудиозапись ${snapshot.data?.docs.length + 1}',
                                     _time,
                                     Timestamp.now(),
-                                    memory!,
                                   );
                                   context.read<BlocIndex>().add(
                                         ColorHome(),
                                       );
-                                  Utils.globalKey.currentState!
+                                  MainPage.globalKey.currentState!
                                       .pushReplacementNamed(
                                     HomePage.routName,
                                   );

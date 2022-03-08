@@ -1,11 +1,11 @@
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
+import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/edit_deleted_page.dart';
 import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
 import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/splash_pages/splash_page/splash_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +27,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
+  static GlobalKey<NavigatorState> firstKey = GlobalKey();
   const MyApp({Key? key}) : super(key: key);
 
   @override
@@ -42,7 +43,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           fontFamily: 'TTNorms',
         ),
-        navigatorKey: Utils.firstKey,
+        navigatorKey: firstKey,
         initialRoute: SplashPage.routName,
         routes: {
           SplashPage.routName: (context) => SplashPage(
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
           AuthPage.routName: (context) => AuthPage(),
           MainPage.routName: (context) => const MainPage(),
           SplashGladPage.routName: (context) => SplashGladPage(),
+          MainEditDeletedPage.routName: (context) => const MainEditDeletedPage(),
         },
       ),
     );

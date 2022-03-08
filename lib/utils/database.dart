@@ -37,7 +37,7 @@ class Database {
 
     Database.createOrUpdate({
       'uid': LocalDB.uid,
-      'totalMemory': memory,
+      'totalMemory': FieldValue.increment(-memory),
     });
   }
 
@@ -52,4 +52,3 @@ class Database {
         );
   }
 }
-

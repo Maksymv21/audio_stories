@@ -13,19 +13,23 @@ import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
 import 'package:audio_stories/utils/local_db.dart';
-import 'package:audio_stories/utils/utils.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+
 class MainPage extends StatelessWidget {
+  static GlobalKey<NavigatorState> globalKey = GlobalKey();
   static const routName = '/main';
 
-  const MainPage({Key? key}) : super(key: key);
+  const MainPage({
+    Key? key,
+  }) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
+    rebuildAllChildren(context);
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     User? _user = firebaseAuth.currentUser;
     if (_user != null) {
@@ -38,14 +42,14 @@ class MainPage extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Navigator(
-          key: Utils.globalKey,
+          key: globalKey,
           initialRoute: MainPage.routName,
           onGenerateRoute: (RouteSettings settings) {
             Widget page;
 
             switch (settings.name) {
               case HomePage.routName:
-                page = HomePage();
+                page = const HomePage();
                 break;
               case AudioPage.routName:
                 page = const AudioPage();
@@ -75,7 +79,7 @@ class MainPage extends StatelessWidget {
                 page = const TestPage();
                 break;
               default:
-                page = HomePage();
+                page = const HomePage();
                 break;
             }
 
@@ -92,4 +96,13 @@ class MainPage extends StatelessWidget {
       ),
     );
   }
+
+  void rebuildAllChildren(BuildContext context) {
+    void rebuild(Element el) {
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
+    (context as Element).visitChildren(rebuild);
+  }
 }
+

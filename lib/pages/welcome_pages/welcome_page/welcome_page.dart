@@ -1,10 +1,9 @@
+import 'package:audio_stories/main.dart';
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
-import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_state.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,7 +85,7 @@ class WelcomePage extends StatelessWidget {
             ),
             ContinueButton(
               onPressed: () {
-                Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+                MyApp.firstKey.currentState!.pushNamedAndRemoveUntil(
                   AuthPage.routName,
                   (Route<dynamic> route) => false,
                 );

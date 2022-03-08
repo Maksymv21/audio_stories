@@ -12,6 +12,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/local_db.dart';
 import '../../main_pages/widgets/button_menu.dart';
+import '../../recently_deleted_pages/recently_deleted_page/edit_deleted_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routName = '/home';

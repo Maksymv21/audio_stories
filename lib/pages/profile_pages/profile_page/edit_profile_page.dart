@@ -9,7 +9,6 @@ import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart
 import 'package:audio_stories/pages/profile_pages/repository/profile_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/dialog_profile.dart';
 import 'package:audio_stories/widgets/number_form.dart';
@@ -17,6 +16,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../main.dart';
+import '../../main_pages/main_page/main_page.dart';
 
 class EditProfilePage extends StatelessWidget {
   static const routName = '/editProfile';
@@ -61,7 +63,7 @@ class EditProfilePage extends StatelessWidget {
                   alignment: const AlignmentDirectional(-1.1, -0.9),
                   child: IconButton(
                     onPressed: () {
-                      Utils.globalKey.currentState!
+                      MainPage.globalKey.currentState!
                           .pushReplacementNamed(ProfilePage.routName);
                     },
                     icon: Image.asset(AppIcons.back),
@@ -222,7 +224,7 @@ class EditProfilePage extends StatelessWidget {
                                           avatar: _currentImage,
                                           name: _editNameController.text),
                                     );
-                                Utils.globalKey.currentState!
+                                MainPage.globalKey.currentState!
                                     .pushReplacementNamed(
                                   ProfilePage.routName,
                                 );
@@ -260,7 +262,7 @@ class EditProfilePage extends StatelessWidget {
           Navigator.pop(context, 'Cancel');
         },
         onPressedYes: () {
-          Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+          MyApp.firstKey.currentState!.pushNamedAndRemoveUntil(
             AuthPage.routName,
             (Route<dynamic> route) => false,
           );

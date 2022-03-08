@@ -9,11 +9,12 @@ import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
 import 'package:audio_stories/pages/subscription_pages/subscription_page/subscription_page.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../main.dart';
 
 class BurgerMenu extends StatelessWidget {
   const BurgerMenu({Key? key}) : super(key: key);
@@ -63,7 +64,7 @@ class BurgerMenu extends StatelessWidget {
                   icon: AppIcons.home,
                   title: 'Главная',
                   onTap: () {
-                    Utils.globalKey.currentState!
+                    MainPage.globalKey.currentState!
                         .pushReplacementNamed(MainPage.routName);
                     Scaffold.of(context).openEndDrawer();
                     context.read<BlocIndex>().add(
@@ -77,14 +78,14 @@ class BurgerMenu extends StatelessWidget {
                   onTap: () {
                     User? _user = FirebaseAuth.instance.currentUser;
                     if (_user != null) {
-                      Utils.globalKey.currentState!
+                      MainPage.globalKey.currentState!
                           .pushReplacementNamed(ProfilePage.routName);
                       Scaffold.of(context).openEndDrawer();
                       context.read<BlocIndex>().add(
                         ColorProfile(),
                       );
                     } else {
-                      Utils.firstKey.currentState!
+                      MyApp.firstKey.currentState!
                           .pushReplacementNamed(AuthPage.routName);
                     }
                   },
@@ -93,7 +94,7 @@ class BurgerMenu extends StatelessWidget {
                   icon: AppIcons.category,
                   title: 'Подборки',
                   onTap: () {
-                    Utils.globalKey.currentState!
+                    MainPage.globalKey.currentState!
                         .pushReplacementNamed(CategoryPage.routName);
                     Scaffold.of(context).openEndDrawer();
                     context.read<BlocIndex>().add(
@@ -105,7 +106,7 @@ class BurgerMenu extends StatelessWidget {
                   icon: AppIcons.paper,
                   title: 'Все аудиофайлы',
                   onTap: () {
-                    Utils.globalKey.currentState!
+                    MainPage.globalKey.currentState!
                         .pushReplacementNamed(AudioPage.routName);
                     Scaffold.of(context).openEndDrawer();
                     context.read<BlocIndex>().add(
@@ -117,7 +118,7 @@ class BurgerMenu extends StatelessWidget {
                   icon: AppIcons.search,
                   title: 'Поиск',
                   onTap: () {
-                    Utils.globalKey.currentState!
+                    MainPage.globalKey.currentState!
                         .pushReplacementNamed(SearchPage.routName);
                     Scaffold.of(context).openEndDrawer();
                     context.read<BlocIndex>().add(
@@ -129,7 +130,7 @@ class BurgerMenu extends StatelessWidget {
                   icon: AppIcons.delete,
                   title: 'Недавно удаленные',
                   onTap: () {
-                    Utils.globalKey.currentState!
+                    MainPage.globalKey.currentState!
                         .pushReplacementNamed(RecentlyDeletedPage.routName);
                     Scaffold.of(context).openEndDrawer();
                     context.read<BlocIndex>().add(
@@ -147,7 +148,7 @@ class BurgerMenu extends StatelessWidget {
               icon: AppIcons.wallet,
               title: 'Подписка',
               onTap: () {
-                Utils.globalKey.currentState!
+                MainPage.globalKey.currentState!
                     .pushReplacementNamed(SubscriptionPage.routName);
                 Scaffold.of(context).openEndDrawer();
                 context.read<BlocIndex>().add(

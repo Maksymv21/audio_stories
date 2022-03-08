@@ -7,12 +7,14 @@ import 'package:audio_stories/pages/profile_pages/profile_page/edit_profile_page
 import 'package:audio_stories/pages/profile_pages/widgets/delete_acc_button.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
-import 'package:audio_stories/utils/utils.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/dialog_profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
+import '../../../main.dart';
+import '../../main_pages/main_page/main_page.dart';
 
 class ProfilePage extends StatelessWidget {
   static const routName = '/profile';
@@ -140,7 +142,7 @@ class ProfilePage extends StatelessWidget {
                       flex: 4,
                       child: TextButton(
                         onPressed: () {
-                          Utils.globalKey.currentState!
+                          MainPage.globalKey.currentState!
                               .pushReplacementNamed(EditProfilePage.routName);
                         },
                         child: const Text(
@@ -233,7 +235,7 @@ class ProfilePage extends StatelessWidget {
         onPressedNo: () => Navigator.pop(context, 'Cancel'),
         onPressedYes: () {
           FirebaseAuth.instance.signOut();
-          Utils.firstKey.currentState!.pushNamedAndRemoveUntil(
+          MyApp.firstKey.currentState!.pushNamedAndRemoveUntil(
             AuthPage.routName,
             (Route<dynamic> route) => false,
           );

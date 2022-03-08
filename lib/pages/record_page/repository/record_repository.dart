@@ -75,7 +75,6 @@ class RecordRepository {
     String title,
     double time,
     Timestamp date,
-    int memory,
   ) async {
     FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
     Reference reference = _firebaseStorage
@@ -89,7 +88,6 @@ class RecordRepository {
     File sound = await File(_path!).create();
 
     final int length = sound.lengthSync();
-    memory += length;
 
     await reference.putFile(sound);
     String downloadUrl = await reference.getDownloadURL();
@@ -105,7 +103,7 @@ class RecordRepository {
 
     Database.createOrUpdate({
       'uid': LocalDB.uid,
-      'totalMemory': memory,
+      'totalMemory': FieldValue.increment(length),
     });
   }
 
