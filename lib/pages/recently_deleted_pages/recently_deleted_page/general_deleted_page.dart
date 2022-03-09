@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
+import 'package:audio_stories/pages/recently_deleted_pages/widgets/delete_bottom_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -25,6 +26,8 @@ class GeneralDeletedPage extends StatefulWidget {
 }
 
 class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
+  List<bool> chek = [];
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -36,6 +39,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           .orderBy('date', descending: false)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
+        int length = 0;
         Widget _list;
         Widget _popup;
 
@@ -58,14 +62,14 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           _list = _soundList(snapshot);
         }
         if (snapshot.hasData) {
+          length = snapshot.data.docs.length;
           _popup = widget.edit
-              ? _popupEditMenu()
-              : _popupMenu(snapshot, snapshot.data.docs.length);
+              ? _popupEditMenu(snapshot, length)
+              : _popupMenu(snapshot, length);
         } else {
-          _popup = const Center(
-            child: CircularProgressIndicator(),
-          );
+          _popup = Container();
         }
+
         return Stack(
           children: [
             Column(
@@ -86,9 +90,48 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                     ),
                   ),
                 ),
-                const Spacer(
-                  flex: 5,
-                ),
+                widget.edit
+                    ? Expanded(
+                        flex: 6,
+                        child: Align(
+                          alignment: AlignmentDirectional.bottomCenter,
+                          child: DeleteBottomBar(
+                            rees: () {
+                              for (int i = 0; i < length; i++) {
+                                if (chek[i]) {
+                                  final String id = snapshot.data.docs[i].id;
+                                  Database.createOrUpdateSound(
+                                    {
+                                      'deleted': false,
+                                    },
+                                    id: id,
+                                  );
+                                  chek[i] = false;
+                                }
+                              }
+                            },
+                            delete: () {
+                              for (int i = 0; i < length; i++) {
+                                if (chek[i]) {
+                                  final String path = snapshot.data.docs[i].id;
+                                  final String title =
+                                      snapshot.data.docs[i]['title'];
+                                  final String date =
+                                      snapshot.data.docs[i]['date'].toString();
+                                  final int memory =
+                                      snapshot.data.docs[i]['memory'];
+                                  Database.deleteSound(
+                                      path, title, date, memory);
+                                  chek[i] = false;
+                                }
+                              }
+                            },
+                          ),
+                        ),
+                      )
+                    : const Spacer(
+                        flex: 5,
+                      ),
               ],
             ),
             Center(
@@ -122,10 +165,11 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
 
   Widget _soundList(AsyncSnapshot snapshot) {
     if (snapshot.hasData) {
+      final int length = snapshot.data.docs.length;
       return Padding(
-        padding: const EdgeInsets.only(top: 85.0, bottom: 10.0),
+        padding: const EdgeInsets.only(top: 85.0, bottom: 80.0),
         child: ListView.builder(
-          itemCount: snapshot.data.docs.length,
+          itemCount: length,
           itemBuilder: (context, index) {
             String path = snapshot.data.docs[index].id;
             String title = snapshot.data.docs[index]['title'];
@@ -140,6 +184,16 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
               memory,
             );
 
+            for (int i = 0; i < length; i++) {
+              chek.add(false);
+            }
+
+            // Widget _chekBox = _all
+            //     ? CustomCheckBox(value: true)
+            //     : CustomCheckBox(value: false);
+
+            // _chek[index] = CustomCheckBox().val ? 1 : 0;
+
             return Column(
               children: [
                 SoundContainer(
@@ -148,7 +202,13 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                   time: (snapshot.data.docs[index]['time'] / 60)
                       .toStringAsFixed(1),
                   buttonRight: widget.edit
-                      ? const CustomCheckBox()
+                      ? CustomCheckBox(
+                          value: chek[index],
+                          onTap: () {
+                            setState(() {
+                              chek[index] = !chek[index];
+                            });
+                          })
                       : _deletedButton(
                           path,
                           title,
@@ -191,7 +251,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           ),
           onTap: () {
             MyApp.firstKey.currentState!.pushNamed(
-              MainEditDeletedPage.routName,
+              EditDeletedPage.routName,
             );
           },
         ),
@@ -243,7 +303,10 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
     );
   }
 
-  Widget _popupEditMenu() {
+  Widget _popupEditMenu(
+    AsyncSnapshot snapshot,
+    int length,
+  ) {
     return PopupMenuButton(
       shape: ShapeBorder.lerp(
         const RoundedRectangleBorder(),
@@ -253,21 +316,33 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
       itemBuilder: (_) => [
         PopupMenuItem(
           child: const Text(
-            'Удалить',
+            'Выбрать все',
             style: TextStyle(
               fontSize: 14.0,
             ),
           ),
-          onTap: () {},
+          onTap: () {
+            setState(() {
+              for (int i = 0; i < length; i++) {
+                chek[i] = true;
+              }
+            });
+          },
         ),
         PopupMenuItem(
           child: const Text(
-            'Восстановить',
+            'Сбросить выбор',
             style: TextStyle(
               fontSize: 14.0,
             ),
           ),
-          onTap: () {},
+          onTap: () {
+            setState(() {
+              for (int i = 0; i < length; i++) {
+                chek[i] = false;
+              }
+            });
+          },
         ),
       ],
       child: const Text(

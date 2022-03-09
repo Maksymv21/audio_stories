@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
           AuthPage.routName: (context) => AuthPage(),
           MainPage.routName: (context) => const MainPage(),
           SplashGladPage.routName: (context) => SplashGladPage(),
-          MainEditDeletedPage.routName: (context) => const MainEditDeletedPage(),
+          EditDeletedPage.routName: (context) => const EditDeletedPage(),
         },
       ),
     );

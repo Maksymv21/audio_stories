@@ -30,6 +30,7 @@ class AppIcons {
   static const String download = '$_path/download.png';
   static const String back15 = '$_path/back15.png';
   static const String forward15 = '$_path/forward15.png';
+  static const String arrows = '$_path/arrows.png';
 
 
   static const String pauseRecord = '$_path/pause.png';

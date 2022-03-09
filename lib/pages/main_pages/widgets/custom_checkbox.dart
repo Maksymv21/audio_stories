@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 
 class CustomCheckBox extends StatefulWidget {
-  const CustomCheckBox({Key? key}) : super(key: key);
+  bool value;
+  void Function()? onTap;
+
+  CustomCheckBox({
+    Key? key,
+    required this.value,
+    required this.onTap,
+  }) : super(key: key);
 
   @override
   _CustomCheckBoxState createState() => _CustomCheckBoxState();
 }
 
 class _CustomCheckBoxState extends State<CustomCheckBox> {
-  bool _value = false;
 
   @override
   Widget build(BuildContext context) {
-    return  Align(
+    return Align(
       alignment: const AlignmentDirectional(0.95, 0.0),
       child: Padding(
         padding: const EdgeInsets.only(right: 3.0),
@@ -21,11 +27,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
           child: InkWell(
             highlightColor: Colors.transparent,
             splashColor: Colors.transparent,
-            onTap: () {
-              setState(() {
-                _value = !_value;
-              });
-            },
+            onTap: widget.onTap,
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
@@ -39,7 +41,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
                 child: Icon(
                   Icons.check,
                   size: 30.0,
-                  color: _value ? Colors.black87 : Colors.white,
+                  color: widget.value ? Colors.black87 : Colors.white,
                 ),
               ),
             ),
