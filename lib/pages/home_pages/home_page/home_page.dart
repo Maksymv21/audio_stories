@@ -7,12 +7,12 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/local_db.dart';
 import '../../main_pages/widgets/button_menu.dart';
-import '../../recently_deleted_pages/recently_deleted_page/edit_deleted_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routName = '/home';
@@ -210,114 +210,124 @@ class _HomePageState extends State<HomePage> {
         ),
         Align(
           alignment: const AlignmentDirectional(0.0, 1.05),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 0.96,
-            height: MediaQuery.of(context).size.height * 0.38,
-            decoration: const BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey,
-                  blurRadius: 5.0,
-                ),
-              ],
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(25.0),
-                topRight: Radius.circular(25.0),
-              ),
-            ),
-            child: Stack(
-              children: [
-                const Align(
-                  alignment: AlignmentDirectional(-0.9, -0.9),
-                  child: Text(
-                    'Аудиозаписи',
-                    style: TextStyle(fontSize: 24.0),
-                  ),
-                ),
-                const Align(
-                  alignment: AlignmentDirectional(1.0, -0.92),
-                  child: OpenAllButton(
-                    color: Colors.black,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 50.0, bottom: 10.0),
-                  child: StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection('users')
-                          .doc(LocalDB.uid)
-                          .collection('sounds')
-                          .where('deleted', isEqualTo: false)
-                          .orderBy(
-                            'date',
-                            descending: true,
-                          )
-                          .snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.data?.docs.length == 0) {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10.0),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const Text(
-                                    'Как только ты запишешь'
-                                    '\nаудио, она появится здесь.',
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      color: Colors.grey,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  Image(
-                                    image: Image.asset(AppIcons.arrow).image,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        if (snapshot.hasData) {
-                          return ListView.builder(
-                            itemCount: snapshot.data.docs.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                children: [
-                                  SoundContainer(
-                                    color: AppColor.active,
-                                    title: snapshot.data.docs[index]['title'],
-                                    time:
-                                        (snapshot.data.docs[index]['time'] / 60)
-                                            .toStringAsFixed(1),
-                                    buttonRight: PopupMenuSoundContainer(
-                                      title: snapshot.data.docs[index]['title'],
-                                      id: snapshot.data.docs[index].id,
-                                      url: snapshot.data.docs[index]['song'],
-                                      date: snapshot.data.docs[index]['date'],
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 7.0,
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      }),
-                ),
-              ],
-            ),
-          ),
+          child: _soundContainerList(),
         ),
       ],
+    );
+  }
+
+  Widget _soundContainerList() {
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.96,
+      height: MediaQuery.of(context).size.height * 0.38,
+      decoration: const BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            blurRadius: 5.0,
+          ),
+        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25.0),
+          topRight: Radius.circular(25.0),
+        ),
+      ),
+      child: Stack(
+        children: [
+          const Align(
+            alignment: AlignmentDirectional(-0.9, -0.9),
+            child: Text(
+              'Аудиозаписи',
+              style: TextStyle(fontSize: 24.0),
+            ),
+          ),
+          const Align(
+            alignment: AlignmentDirectional(1.0, -0.92),
+            child: OpenAllButton(
+              color: Colors.black,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0, bottom: 10.0),
+            child: StreamBuilder(
+                stream: FirebaseFirestore.instance
+                    .collection('users')
+                    .doc(LocalDB.uid)
+                    .collection('sounds')
+                    .where('deleted', isEqualTo: false)
+                    .orderBy(
+                      'date',
+                      descending: true,
+                    )
+                    .snapshots(),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.data?.docs.length == 0) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 10.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            const Text(
+                              'Как только ты запишешь'
+                              '\nаудио, она появится здесь.',
+                              style: TextStyle(
+                                fontSize: 20.0,
+                                color: Colors.grey,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            Image(
+                              image: Image.asset(AppIcons.arrow).image,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+                  if (snapshot.hasData) {
+                    return ListView.builder(
+                      itemCount: snapshot.data.docs.length,
+                      itemBuilder: (context, index) {
+                        String url = snapshot.data.docs[index]['song'];
+                        return Column(
+                          children: [
+                            SoundContainer(
+                              color: AppColor.active,
+                              title: snapshot.data.docs[index]['title'],
+                              time: (snapshot.data.docs[index]['time'] / 60)
+                                  .toStringAsFixed(1),
+                              onTap: () {
+                                FlutterSoundPlayer().startPlayer(fromURI: url, whenFinished: () {
+                                  setState(() {
+
+                                  });
+                                });
+                              },
+                              buttonRight: PopupMenuSoundContainer(
+                                title: snapshot.data.docs[index]['title'],
+                                id: snapshot.data.docs[index].id,
+                                url: url,
+                                date: snapshot.data.docs[index]['date'],
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 7.0,
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+          ),
+        ],
+      ),
     );
   }
 }

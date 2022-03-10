@@ -276,44 +276,27 @@ class _RecordPageState extends State<RecordPage> {
                         ),
                       ),
                       const Spacer(),
-                      StreamBuilder(
-                          stream: FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(LocalDB.uid)
-                              .snapshots(),
-                          builder: (BuildContext context, AsyncSnapshot snap) {
-                            if (snap.hasData) {
-                              return TextButton(
-                                onPressed: () {
-                                  _recorder.uploadSound(
-                                    'Аудиозапись ${snapshot.data?.docs.length + 1}',
-                                    _time,
-                                    Timestamp.now(),
-                                  );
-                                  context.read<BlocIndex>().add(
-                                        ColorHome(),
-                                      );
-                                  MainPage.globalKey.currentState!
-                                      .pushReplacementNamed(
-                                    HomePage.routName,
-                                  );
-                                },
-                                child: const Text(
-                                  'Сохранить',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                ),
+                      TextButton(
+                        onPressed: () {
+                          _recorder.uploadSound(
+                            'Аудиозапись ${snapshot.data?.docs.length + 1}',
+                            _time,
+                            Timestamp.now(),
+                          );
+                          context.read<BlocIndex>().add(
+                                ColorHome(),
                               );
-                            } else {
-                              return const Text(
-                                'Сохранить',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                ),
-                              );
-                            }
-                          }),
+                          MainPage.globalKey.currentState!.pushReplacementNamed(
+                            HomePage.routName,
+                          );
+                        },
+                        child: const Text(
+                          'Сохранить',
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
