@@ -95,8 +95,7 @@ class _SearchPageState extends State<SearchPage> {
                 controller: controller,
                 onChanged: (String text) {},
               ),
-              const Spacer(
-              ),
+              const Spacer(),
               Expanded(
                 flex: 17,
                 child: StreamBuilder(
@@ -139,10 +138,12 @@ class _SearchPageState extends State<SearchPage> {
                         return ListView.builder(
                           itemCount: snapshot.data.docs.length,
                           itemBuilder: (context, index) {
+                            String icon = AppIcons.playRecord;
                             return Column(
                               children: [
                                 SoundContainer(
                                   color: AppColor.active,
+                                  icon: icon,
                                   title: snapshot.data.docs[index]['title'],
                                   time: (snapshot.data.docs[index]['time'] / 60)
                                       .toStringAsFixed(1),

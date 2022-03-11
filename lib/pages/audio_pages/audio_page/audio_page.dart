@@ -159,10 +159,12 @@ class AudioPage extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
+                      String icon = AppIcons.playRecord;
                       return Column(
                         children: [
                           SoundContainer(
                             color: const Color(0xff678BD2),
+                            icon: icon,
                             title: snapshot.data.docs[index]['title'],
                             time: (snapshot.data.docs[index]['time'] / 60)
                                 .toStringAsFixed(1),

@@ -11,6 +11,7 @@ import '../../../widgets/background.dart';
 import '../../main_pages/widgets/sound_container.dart';
 import 'edit_deleted_page.dart';
 
+//ignore: must_be_immutable
 class GeneralDeletedPage extends StatefulWidget {
   Widget button;
   bool edit;
@@ -166,11 +167,17 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
   Widget _soundList(AsyncSnapshot snapshot) {
     if (snapshot.hasData) {
       final int length = snapshot.data.docs.length;
+      if (chek.isEmpty) {
+        for (int i = 0; i < length; i++) {
+          chek.add(false);
+        }
+      }
       return Padding(
         padding: const EdgeInsets.only(top: 85.0, bottom: 80.0),
         child: ListView.builder(
           itemCount: length,
           itemBuilder: (context, index) {
+            String icon = AppIcons.playRecord;
             String path = snapshot.data.docs[index].id;
             String title = snapshot.data.docs[index]['title'];
             String date = snapshot.data.docs[index]['date'].toString();
@@ -184,20 +191,11 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
               memory,
             );
 
-            for (int i = 0; i < length; i++) {
-              chek.add(false);
-            }
-
-            // Widget _chekBox = _all
-            //     ? CustomCheckBox(value: true)
-            //     : CustomCheckBox(value: false);
-
-            // _chek[index] = CustomCheckBox().val ? 1 : 0;
-
             return Column(
               children: [
                 SoundContainer(
                   color: const Color(0xff678BD2),
+                  icon: icon,
                   title: title,
                   time: (snapshot.data.docs[index]['time'] / 60)
                       .toStringAsFixed(1),

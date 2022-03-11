@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+//ignore: must_be_immutable
 class CustomCheckBox extends StatefulWidget {
   bool value;
   void Function()? onTap;

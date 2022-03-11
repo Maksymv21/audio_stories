@@ -1,13 +1,12 @@
 import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart';
+import 'package:audio_stories/pages/main_pages/widgets/player_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/popup_menu_sound_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
@@ -24,7 +23,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Dio dio = Dio();
+  List<bool> current = [];
 
   @override
   void initState() {
@@ -36,6 +35,8 @@ class _HomePageState extends State<HomePage> {
     await Permission.storage.request();
     await Permission.manageExternalStorage.request();
   }
+
+  Widget _player = const Text('');
 
   @override
   Widget build(BuildContext context) {
@@ -287,9 +288,19 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                   if (snapshot.hasData) {
+                    int length = snapshot.data.docs.length;
+                    if (current.isEmpty) {
+                      for (int i = 0; i < length; i++) {
+                        current.add(false);
+                      }
+                    }
                     return ListView.builder(
-                      itemCount: snapshot.data.docs.length,
+                      itemCount: length,
                       itemBuilder: (context, index) {
+                        String icon = current[index]
+                            ? AppIcons.pauseRecord
+                            : AppIcons.playRecord;
+
                         String url = snapshot.data.docs[index]['song'];
                         return Column(
                           children: [
@@ -298,12 +309,45 @@ class _HomePageState extends State<HomePage> {
                               title: snapshot.data.docs[index]['title'],
                               time: (snapshot.data.docs[index]['time'] / 60)
                                   .toStringAsFixed(1),
+                              icon: icon,
                               onTap: () {
-                                FlutterSoundPlayer().startPlayer(fromURI: url, whenFinished: () {
+                                if (!current[index]) {
+                                  _zeroing(length);
                                   setState(() {
-
+                                    _player = const Text('');
                                   });
-                                });
+
+                                  Future.delayed(
+                                      const Duration(milliseconds: 50), () {
+                                    setState(() {
+                                      current[index] = true;
+                                      _player = PlayerContainer(
+                                          title: snapshot.data.docs[index]
+                                              ['title'],
+                                          color: AppColor.active,
+                                          url: url);
+                                    });
+                                  });
+                                }
+                                // if (!_isStart) {
+                                //   setState(() {
+                                //     _player = const Text('');
+                                //   });
+                                //
+                                //   Future.delayed(
+                                //       const Duration(milliseconds: 10), () {
+                                //     setState(() {
+                                //       _player = PlayerContainer(
+                                //           title: snapshot.data.docs[index]
+                                //               ['title'],
+                                //           color: AppColor.active,
+                                //           url: url);
+                                //       _isStart = true;
+                                //     });
+                                //   }).whenComplete(
+                                //     () => _isStart = false,
+                                //   );
+                                // }
                               },
                               buttonRight: PopupMenuSoundContainer(
                                 title: snapshot.data.docs[index]['title'],
@@ -326,8 +370,21 @@ class _HomePageState extends State<HomePage> {
                   }
                 }),
           ),
+          Align(
+            alignment: AlignmentDirectional.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 15.0),
+              child: _player,
+            ),
+          ),
         ],
       ),
     );
+  }
+
+  void _zeroing(int length) {
+    for (int i = 0; i < length; i++) {
+      current[i] = false;
+    }
   }
 }

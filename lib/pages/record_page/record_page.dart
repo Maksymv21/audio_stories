@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
+import 'package:audio_stories/pages/main_pages/resources/thumb_shape.dart';
 import 'package:audio_stories/pages/main_pages/widgets/button_menu.dart';
 import 'package:audio_stories/pages/record_page/repository/record_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -15,7 +16,6 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:noise_meter/noise_meter.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../utils/local_db.dart';
@@ -321,7 +321,7 @@ class _RecordPageState extends State<RecordPage> {
                         value: _onChanged ? val : sliderCurrentPosition,
                         min: 0.0,
                         max: maxDuration,
-                        thumbShape: _SfThumbShape(),
+                        thumbShape: ThumbShape(),
                         activeColor: Colors.black,
                         inactiveColor: Colors.black,
                         onChanged: (value) {
@@ -512,24 +512,5 @@ class _RecordPageState extends State<RecordPage> {
   }
 }
 
-class _SfThumbShape extends SfThumbShape {
-  @override
-  void paint(PaintingContext context, Offset center,
-      {required RenderBox parentBox,
-      required RenderBox? child,
-      required SfSliderThemeData themeData,
-      SfRangeValues? currentValues,
-      dynamic currentValue,
-      required Paint? paint,
-      required Animation<double> enableAnimation,
-      required TextDirection textDirection,
-      required SfThumb? thumb}) {
-    final Path path = Path();
 
-    path.addOval(Rect.fromLTRB(
-        center.dx - 10, center.dy - 7, center.dx + 10, center.dy + 7));
 
-    path.close();
-    context.canvas.drawPath(path, Paint());
-  }
-}

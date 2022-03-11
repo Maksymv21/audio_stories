@@ -4,6 +4,7 @@ import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
 import '../../main_pages/widgets/foot_button.dart';
 
+//ignore: must_be_immutable
 class DeleteBottomBar extends StatelessWidget {
   void Function() rees;
   void Function() delete;

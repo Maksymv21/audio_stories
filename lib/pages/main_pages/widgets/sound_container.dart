@@ -1,9 +1,11 @@
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:flutter/material.dart';
 
+//ignore: must_be_immutable
 class SoundContainer extends StatelessWidget {
   String title;
   String time;
+  String icon;
   Color color;
   Widget buttonRight;
   void Function()? onTap;
@@ -12,6 +14,7 @@ class SoundContainer extends StatelessWidget {
     Key? key,
     required this.title,
     required this.time,
+    required this.icon,
     required this.color,
     required this.buttonRight,
     this.onTap,
@@ -39,7 +42,7 @@ class SoundContainer extends StatelessWidget {
                 child: GestureDetector(
                   child: ColorFiltered(
                     child: Image.asset(
-                      AppIcons.playRecord,
+                      icon,
                       width: 50.0,
                       height: 50.0,
                     ),
