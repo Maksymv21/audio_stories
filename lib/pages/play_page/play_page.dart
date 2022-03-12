@@ -2,12 +2,21 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../resources/app_icons.dart';
+import '../../utils/local_db.dart';
+import '../audio_pages/audio_page/audio_page.dart';
+import '../category_pages/category_page/category_page.dart';
+import '../home_pages/home_page/home_page.dart';
+import '../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
+import '../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import '../main_pages/repositories/player_repository.dart';
 import '../main_pages/resources/thumb_shape.dart';
 import '../main_pages/widgets/popup_menu_sound_container.dart';
@@ -149,6 +158,9 @@ class _PlayPageState extends State<PlayPage> {
                           onPressed: () {
                             MainPage.globalKey.currentState!
                                 .pushReplacementNamed(widget.page!);
+                            context.read<BlocIndex>().add(
+                                  _bloc(widget.page!),
+                                );
                           },
                           icon: Image.asset(
                             AppIcons.arrowCircle,
@@ -161,49 +173,71 @@ class _PlayPageState extends State<PlayPage> {
                     ],
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  height: MediaQuery.of(context).size.height * 0.5,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.0),
-                    image: DecorationImage(
-                      image: Image.asset(
-                        AppIcons.headphones,
-                      ).image,
-                      fit: BoxFit.cover,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 5.0,
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Text(
-                        'Название подборки',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 25.0,
+                StreamBuilder(
+                  stream: FirebaseFirestore.instance
+                      .collection('users')
+                      .doc(LocalDB.uid)
+                      .collection('sounds')
+                      .doc(widget.id)
+                      .snapshots(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.hasData) {
+                      return Container(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24.0),
+                          image: DecorationImage(
+                            image: Image.asset(
+                              AppIcons.headphones,
+                            ).image,
+                            fit: BoxFit.cover,
+                          ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 5.0,
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        widget.title!,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15.0,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'Название подборки',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 25.0,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            Text(
+                              snapshot.data?.data()?['title'],
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 15.0,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 15.0,
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(
-                        height: 15.0,
-                      ),
-                    ],
-                  ),
+                      );
+                    } else {
+                      return SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.5,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColor.active,
+                          ),
+                        ),
+                      );
+                    }
+                  },
                 ),
                 const Spacer(),
                 Expanded(
@@ -330,24 +364,7 @@ class _PlayPageState extends State<PlayPage> {
             url: widget.url!,
             id: widget.id!,
             title: widget.title!,
-            pop: () {
-              MainPage.globalKey.currentState!
-                  .pushReplacementNamed(widget.page!);
-              print('pop');
-            },
-            edit: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => PlayPage(
-                    url: widget.url,
-                    title: widget.title,
-                    id: widget.id,
-                    time: widget.time,
-                    page: widget.page,
-                  ),
-                ),
-              );
-            },
+            page: widget.page!,
           ),
         ),
       ],
@@ -382,5 +399,19 @@ class _PlayPageState extends State<PlayPage> {
       setState(() {});
     });
     _isPause = false;
+  }
+
+  IndexEvent _bloc(String page) {
+    IndexEvent event;
+    if (page == HomePage.routName) {
+      event = ColorHome();
+    } else if (page == CategoryPage.routName) {
+      event = ColorCategory();
+    } else if (page == AudioPage.routName) {
+      event = ColorAudio();
+    } else {
+      event = NoColor();
+    }
+    return event;
   }
 }

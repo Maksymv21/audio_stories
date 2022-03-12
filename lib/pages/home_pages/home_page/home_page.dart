@@ -27,7 +27,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<bool> current = [];
 
   @override
   void initState() {
@@ -292,7 +291,8 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                   if (snapshot.hasData) {
-                    int length = snapshot.data.docs.length;
+                    List<bool> current = [];
+                    final int length = snapshot.data.docs.length;
                     if (current.isEmpty) {
                       for (int i = 0; i < length; i++) {
                         current.add(false);
@@ -317,7 +317,9 @@ class _HomePageState extends State<HomePage> {
                               time: (time / 60).toStringAsFixed(1),
                               onTap: () {
                                 if (!current[index]) {
-                                  _zeroing(length);
+                                  for (int i = 0; i < length; i++) {
+                                    current[i] = false;
+                                  }
                                   setState(() {
                                     _player = const Text('');
                                   });
@@ -336,9 +338,9 @@ class _HomePageState extends State<HomePage> {
                                           setState(() {
                                             _player = const Text('');
                                           });
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (context) => PlayPage(
+                                          Navigator.of(context).pushReplacement(
+                                            PageRouteBuilder(
+                                              pageBuilder: (_, __, ___) => PlayPage(
                                                 url: url,
                                                 title: title,
                                                 id: id,
@@ -357,7 +359,8 @@ class _HomePageState extends State<HomePage> {
                                 }
                               },
                               buttonRight: Align(
-                                alignment: const AlignmentDirectional(0.9, -1.0),
+                                alignment:
+                                    const AlignmentDirectional(0.9, -1.0),
                                 child: PopupMenuSoundContainer(
                                   size: 30.0,
                                   title: snapshot.data.docs[index]['title'],
@@ -390,11 +393,5 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
-  }
-
-  void _zeroing(int length) {
-    for (int i = 0; i < length; i++) {
-      current[i] = false;
-    }
   }
 }

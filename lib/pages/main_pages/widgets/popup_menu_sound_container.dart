@@ -1,10 +1,17 @@
+import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
+import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
+import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
+import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../../utils/database.dart';
 import '../../../widgets/dialog_sound.dart';
+import '../main_blocs/bloc_icon_color/bloc_index.dart';
+import '../main_page/main_page.dart';
 
 //ignore: must_be_immutable
 class PopupMenuSoundContainer extends StatelessWidget {
@@ -12,8 +19,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
   String id;
   String title;
   double size;
-  void Function()? pop;
-  void Function()? edit;
+  String? page;
 
   PopupMenuSoundContainer({
     Key? key,
@@ -21,8 +27,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
     required this.id,
     required this.title,
     required this.size,
-    this.pop,
-    this.edit,
+    this.page,
   }) : super(key: key);
 
   @override
@@ -33,7 +38,27 @@ class PopupMenuSoundContainer extends StatelessWidget {
         const CircleBorder(),
         0.2,
       ),
-      itemBuilder: (context) => [
+      onSelected: (value) async {
+        if (value == 4) {
+          if (page != null) {
+            MainPage.globalKey.currentState!.pushReplacementNamed(page!);
+            context.read<BlocIndex>().add(
+                  _bloc(page!),
+                );
+          }
+          Database.createOrUpdateSound(
+            {
+              'deleted': true,
+              'dateDeleted': Timestamp.now(),
+            },
+            id: id,
+          );
+        }
+        if (value == 1) {
+          _dialog(context, title, id);
+        }
+      },
+      itemBuilder: (_) => [
         PopupMenuItem(
           child: const Text(
             'Добавить в подборку',
@@ -43,17 +68,15 @@ class PopupMenuSoundContainer extends StatelessWidget {
           ),
           onTap: () {},
         ),
-        PopupMenuItem(
-            child: const Text(
-              'Редактировать название',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
+        const PopupMenuItem(
+          value: 1,
+          child: Text(
+            'Редактировать название',
+            style: TextStyle(
+              fontSize: 14.0,
             ),
-            onTap: () {
-              _dialog(context, title, id);
-              edit;
-            }),
+          ),
+        ),
         PopupMenuItem(
           child: const Text(
             'Поделиться',
@@ -80,23 +103,14 @@ class PopupMenuSoundContainer extends StatelessWidget {
             );
           },
         ),
-        PopupMenuItem(
-          child: const Text(
+        const PopupMenuItem(
+          value: 4,
+          child: Text(
             'Удалить',
             style: TextStyle(
               fontSize: 14.0,
             ),
           ),
-          onTap: () {
-            pop;
-            Database.createOrUpdateSound(
-              {
-                'deleted': true,
-                'dateDeleted': Timestamp.now(),
-              },
-              id: id,
-            );
-          },
         ),
       ],
       child: Text(
@@ -165,5 +179,19 @@ class PopupMenuSoundContainer extends StatelessWidget {
       path,
       // "${dir.path}/$name.aac",
     );
+  }
+
+  IndexEvent _bloc(String page) {
+    IndexEvent event;
+    if (page == HomePage.routName) {
+      event = ColorHome();
+    } else if (page == CategoryPage.routName) {
+      event = ColorCategory();
+    } else if (page == AudioPage.routName) {
+      event = ColorAudio();
+    } else {
+      event = NoColor();
+    }
+    return event;
   }
 }

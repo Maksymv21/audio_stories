@@ -7,6 +7,7 @@ import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_i
 import 'package:audio_stories/pages/main_pages/resources/thumb_shape.dart';
 import 'package:audio_stories/pages/main_pages/widgets/button_menu.dart';
 import 'package:audio_stories/pages/record_page/repository/record_repository.dart';
+import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -423,7 +424,11 @@ class _RecordPageState extends State<RecordPage> {
               ],
             );
           } else {
-            return const CircularProgressIndicator();
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColor.active,
+              ),
+            );
           }
         });
 
@@ -514,6 +519,3 @@ class _RecordPageState extends State<RecordPage> {
     setState(() {});
   }
 }
-
-
-
