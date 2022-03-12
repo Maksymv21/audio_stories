@@ -317,27 +317,30 @@ class _RecordPageState extends State<RecordPage> {
                   flex: 7,
                   child: Column(
                     children: [
-                      SfSlider(
-                        value: _onChanged ? val : sliderCurrentPosition,
-                        min: 0.0,
-                        max: maxDuration,
-                        thumbShape: ThumbShape(),
-                        activeColor: Colors.black,
-                        inactiveColor: Colors.black,
-                        onChanged: (value) {
-                          if (_isPause) {
-                            sliderCurrentPosition = value;
-                          } else {
-                            val = value;
-                          }
-                          refreshTimer(value);
-                          _onChanged = true;
-                        },
-                        onChangeEnd: (value) async {
-                          await seek(value.toInt());
-                          val = sliderCurrentPosition;
-                          _onChanged = false;
-                        },
+                      Transform.scale(
+                        scaleY: 0.8,
+                        child: SfSlider(
+                          value: _onChanged ? val : sliderCurrentPosition,
+                          min: 0.0,
+                          max: maxDuration,
+                          thumbShape: ThumbShape(),
+                          activeColor: Colors.black,
+                          inactiveColor: Colors.black,
+                          onChanged: (value) {
+                            if (_isPause) {
+                              sliderCurrentPosition = value;
+                            } else {
+                              val = value;
+                            }
+                            refreshTimer(value);
+                            _onChanged = true;
+                          },
+                          onChangeEnd: (value) async {
+                            await seek(value.toInt());
+                            val = sliderCurrentPosition;
+                            _onChanged = false;
+                          },
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(
@@ -433,7 +436,7 @@ class _RecordPageState extends State<RecordPage> {
                 height: 375.0,
                 image: AppIcons.up,
                 child: Align(
-                  alignment: AlignmentDirectional(-1.1, -0.7),
+                  alignment: AlignmentDirectional(-1.1, -0.95),
                   child: ButtonMenu(),
                 ),
               ),
@@ -444,7 +447,7 @@ class _RecordPageState extends State<RecordPage> {
         Align(
           alignment: const AlignmentDirectional(0.0, 1.1),
           child: Container(
-            width: 380.0,
+            width: MediaQuery.of(context).size.width * 0.96,
             height: MediaQuery.of(context).size.height * 0.7,
             decoration: const BoxDecoration(
               boxShadow: [

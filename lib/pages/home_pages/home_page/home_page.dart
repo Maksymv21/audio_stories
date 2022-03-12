@@ -7,11 +7,15 @@ import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/local_db.dart';
+import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
+import '../../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import '../../main_pages/widgets/button_menu.dart';
+import '../../play_page/play_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routName = '/home';
@@ -160,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(15.0),
-                              color: const Color.fromRGBO(241, 180, 136, 1.0),
+                              color: const Color(0xffF1B488),
                             ),
                             width: 160.0,
                             height: 112.0,
@@ -297,19 +301,20 @@ class _HomePageState extends State<HomePage> {
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (context, index) {
-                        String icon = current[index]
-                            ? AppIcons.pauseRecord
-                            : AppIcons.playRecord;
+                        Color color = current[index]
+                            ? const Color(0xffF1B488)
+                            : AppColor.active;
 
                         String url = snapshot.data.docs[index]['song'];
+                        String id = snapshot.data.docs[index].id;
+                        String title = snapshot.data.docs[index]['title'];
+                        double time = snapshot.data.docs[index]['time'];
                         return Column(
                           children: [
                             SoundContainer(
-                              color: AppColor.active,
-                              title: snapshot.data.docs[index]['title'],
-                              time: (snapshot.data.docs[index]['time'] / 60)
-                                  .toStringAsFixed(1),
-                              icon: icon,
+                              color: color,
+                              title: title,
+                              time: (time / 60).toStringAsFixed(1),
                               onTap: () {
                                 if (!current[index]) {
                                   _zeroing(length);
@@ -322,38 +327,43 @@ class _HomePageState extends State<HomePage> {
                                     setState(() {
                                       current[index] = true;
                                       _player = PlayerContainer(
-                                          title: snapshot.data.docs[index]
-                                              ['title'],
-                                          color: AppColor.active,
-                                          url: url);
+                                        title: snapshot.data.docs[index]
+                                            ['title'],
+                                        color: AppColor.active,
+                                        url: url,
+                                        id: id,
+                                        onPressed: () {
+                                          setState(() {
+                                            _player = const Text('');
+                                          });
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) => PlayPage(
+                                                url: url,
+                                                title: title,
+                                                id: id,
+                                                time: time,
+                                                page: HomePage.routName,
+                                              ),
+                                            ),
+                                          );
+                                          context.read<BlocIndex>().add(
+                                                NoColor(),
+                                              );
+                                        },
+                                      );
                                     });
                                   });
                                 }
-                                // if (!_isStart) {
-                                //   setState(() {
-                                //     _player = const Text('');
-                                //   });
-                                //
-                                //   Future.delayed(
-                                //       const Duration(milliseconds: 10), () {
-                                //     setState(() {
-                                //       _player = PlayerContainer(
-                                //           title: snapshot.data.docs[index]
-                                //               ['title'],
-                                //           color: AppColor.active,
-                                //           url: url);
-                                //       _isStart = true;
-                                //     });
-                                //   }).whenComplete(
-                                //     () => _isStart = false,
-                                //   );
-                                // }
                               },
-                              buttonRight: PopupMenuSoundContainer(
-                                title: snapshot.data.docs[index]['title'],
-                                id: snapshot.data.docs[index].id,
-                                url: url,
-                                date: snapshot.data.docs[index]['date'],
+                              buttonRight: Align(
+                                alignment: const AlignmentDirectional(0.9, -1.0),
+                                child: PopupMenuSoundContainer(
+                                  size: 30.0,
+                                  title: snapshot.data.docs[index]['title'],
+                                  id: id,
+                                  url: url,
+                                ),
                               ),
                             ),
                             const SizedBox(

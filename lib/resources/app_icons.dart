@@ -31,11 +31,11 @@ class AppIcons {
   static const String back15 = '$_path/back15.png';
   static const String forward15 = '$_path/forward15.png';
   static const String arrows = '$_path/arrows.png';
-
+  static const String arrowCircle = '$_path/arrow_circle.png';
 
   static const String pauseRecord = '$_path/pause.png';
   static const String playRecord = '$_path/play_record.png';
 
-  static const String owl = '$_path/owl.jpg';
+  static const String headphones = '$_path/headphones.jpg';
   static const String photo = '$_path/photo.png';
 }

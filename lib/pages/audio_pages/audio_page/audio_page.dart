@@ -159,20 +159,21 @@ class AudioPage extends StatelessWidget {
                   child: ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
-                      String icon = AppIcons.playRecord;
                       return Column(
                         children: [
                           SoundContainer(
                             color: const Color(0xff678BD2),
-                            icon: icon,
                             title: snapshot.data.docs[index]['title'],
                             time: (snapshot.data.docs[index]['time'] / 60)
                                 .toStringAsFixed(1),
-                            buttonRight: PopupMenuSoundContainer(
-                              title: snapshot.data.docs[index]['title'],
-                              id: snapshot.data.docs[index].id,
-                              url: snapshot.data.docs[index]['song'],
-                              date: snapshot.data.docs[index]['date'],
+                            buttonRight: Align(
+                              alignment: const AlignmentDirectional(0.9, -1.0),
+                              child: PopupMenuSoundContainer(
+                                size: 30.0,
+                                title: snapshot.data.docs[index]['title'],
+                                id: snapshot.data.docs[index].id,
+                                url: snapshot.data.docs[index]['song'],
+                              ),
                             ),
                             onTap: () {
 

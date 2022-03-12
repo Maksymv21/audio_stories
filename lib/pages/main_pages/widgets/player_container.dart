@@ -14,12 +14,16 @@ class PlayerContainer extends StatefulWidget {
   Color color;
   String title;
   String url;
+  String id;
+  void Function()? onPressed;
 
   PlayerContainer({
     Key? key,
     required this.color,
     required this.url,
     required this.title,
+    required this.id,
+    this.onPressed,
   }) : super(key: key);
 
   @override
@@ -93,10 +97,10 @@ class _PlayerContainerState extends State<PlayerContainer> {
     }
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.86,
+      width: MediaQuery.of(context).size.width * 0.9,
       height: 70.0,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.blue[100],
         borderRadius: BorderRadius.circular(41.0),
         border: Border.all(
           color: Colors.grey[400]!,
@@ -130,32 +134,55 @@ class _PlayerContainerState extends State<PlayerContainer> {
                   },
                 ),
               ),
-              Column(
-                children: [
-                  Text(widget.title),
-                  SfSlider(
-                    value: _onChanged ? val : sliderCurrentPosition,
-                    min: 0.0,
-                    max: maxDuration,
-                    thumbShape: ThumbShape(),
-                    activeColor: Colors.black,
-                    inactiveColor: Colors.black,
-                    onChanged: (value) {
-                      if (_isPause) {
-                        sliderCurrentPosition = value;
-                      } else {
-                        val = value;
-                      }
-                      refreshTimer(value);
-                      _onChanged = true;
-                    },
-                    onChangeEnd: (value) async {
-                      await seek(value.toInt());
-                      val = sliderCurrentPosition;
-                      _onChanged = false;
-                    },
+              Padding(
+                padding: const EdgeInsets.only(left: 25.0, right: 10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(
+                      height: 3.0,
+                    ),
+                    Text(
+                      widget.title,
+                    ),
+                    Transform.scale(
+                      scaleY: 0.8,
+                      scaleX: 1.3,
+                      child: SfSlider(
+                        value: _onChanged ? val : sliderCurrentPosition,
+                        min: 0.0,
+                        max: maxDuration,
+                        thumbShape: ThumbShape(),
+                        activeColor: Colors.black,
+                        inactiveColor: Colors.black,
+                        onChanged: (value) {
+                          if (_isPause) {
+                            sliderCurrentPosition = value;
+                          } else {
+                            val = value;
+                          }
+                          refreshTimer(value);
+                          _onChanged = true;
+                        },
+                        onChangeEnd: (value) async {
+                          await seek(value.toInt());
+                          val = sliderCurrentPosition;
+                          _onChanged = false;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: IconButton(
+                  onPressed: widget.onPressed,
+                  icon: const Icon(
+                    Icons.keyboard_arrow_up,
+                    size: 40.0,
                   ),
-                ],
+                ),
               ),
             ],
           ),

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 class SoundContainer extends StatelessWidget {
   String title;
   String time;
-  String icon;
   Color color;
   Widget buttonRight;
   void Function()? onTap;
@@ -14,7 +13,6 @@ class SoundContainer extends StatelessWidget {
     Key? key,
     required this.title,
     required this.time,
-    required this.icon,
     required this.color,
     required this.buttonRight,
     this.onTap,
@@ -42,7 +40,7 @@ class SoundContainer extends StatelessWidget {
                 child: GestureDetector(
                   child: ColorFiltered(
                     child: Image.asset(
-                      icon,
+                      AppIcons.playRecord,
                       width: 50.0,
                       height: 50.0,
                     ),

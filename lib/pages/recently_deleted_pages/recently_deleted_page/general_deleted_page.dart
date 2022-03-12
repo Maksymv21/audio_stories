@@ -177,7 +177,6 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
         child: ListView.builder(
           itemCount: length,
           itemBuilder: (context, index) {
-            String icon = AppIcons.playRecord;
             String path = snapshot.data.docs[index].id;
             String title = snapshot.data.docs[index]['title'];
             String date = snapshot.data.docs[index]['date'].toString();
@@ -195,7 +194,6 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
               children: [
                 SoundContainer(
                   color: const Color(0xff678BD2),
-                  icon: icon,
                   title: title,
                   time: (snapshot.data.docs[index]['time'] / 60)
                       .toStringAsFixed(1),

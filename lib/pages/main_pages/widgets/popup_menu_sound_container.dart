@@ -11,95 +11,100 @@ class PopupMenuSoundContainer extends StatelessWidget {
   String url;
   String id;
   String title;
-  Timestamp date;
+  double size;
+  void Function()? pop;
+  void Function()? edit;
 
   PopupMenuSoundContainer({
     Key? key,
     required this.url,
     required this.id,
     required this.title,
-    required this.date,
+    required this.size,
+    this.pop,
+    this.edit,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: const AlignmentDirectional(0.9, -1.0),
-      child: PopupMenuButton(
-        shape: ShapeBorder.lerp(
-          const RoundedRectangleBorder(),
-          const CircleBorder(),
-          0.2,
-        ),
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            child: const Text(
-              'Добавить в подборку',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
+    return PopupMenuButton(
+      shape: ShapeBorder.lerp(
+        const RoundedRectangleBorder(),
+        const CircleBorder(),
+        0.2,
+      ),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text(
+            'Добавить в подборку',
+            style: TextStyle(
+              fontSize: 14.0,
             ),
-            onTap: () {},
           ),
-          PopupMenuItem(
+          onTap: () {},
+        ),
+        PopupMenuItem(
             child: const Text(
               'Редактировать название',
               style: TextStyle(
                 fontSize: 14.0,
               ),
             ),
-            onTap: () => _dialog(context, title, id),
-          ),
-          PopupMenuItem(
-            child: const Text(
-              'Поделиться',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-            onTap: () {},
-          ),
-          PopupMenuItem(
-            child: const Text(
-              'Скачать',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
             onTap: () {
-              download2(url, title).then(
-                (value) => _showSnackBar(
-                  context: context,
-                  title: 'Файл сохранен.'
-                      '\nDownload/$title.aac',
-                ),
-              );
-            },
+              _dialog(context, title, id);
+              edit;
+            }),
+        PopupMenuItem(
+          child: const Text(
+            'Поделиться',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
           ),
-          PopupMenuItem(
-              child: const Text(
-                'Удалить',
-                style: TextStyle(
-                  fontSize: 14.0,
-                ),
+          onTap: () {},
+        ),
+        PopupMenuItem(
+          child: const Text(
+            'Скачать',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+          onTap: () {
+            download2(url, title).then(
+              (value) => _showSnackBar(
+                context: context,
+                title: 'Файл сохранен.'
+                    '\nDownload/$title.aac',
               ),
-              onTap: () {
-                Database.createOrUpdateSound(
-                  {
-                    'deleted': true,
-                    'dateDeleted': Timestamp.now(),
-                  },
-                  id: id,
-                );
-              }),
-        ],
-        child: const Text(
-          '...',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 30.0,
-            letterSpacing: 1.0,
+            );
+          },
+        ),
+        PopupMenuItem(
+          child: const Text(
+            'Удалить',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
           ),
+          onTap: () {
+            pop;
+            Database.createOrUpdateSound(
+              {
+                'deleted': true,
+                'dateDeleted': Timestamp.now(),
+              },
+              id: id,
+            );
+          },
+        ),
+      ],
+      child: Text(
+        '...',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: size,
+          letterSpacing: 1.0,
         ),
       ),
     );
