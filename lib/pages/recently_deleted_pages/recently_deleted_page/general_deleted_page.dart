@@ -1,14 +1,18 @@
 import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
+import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/widgets/delete_bottom_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../../main.dart';
+import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
 import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
+import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
+import '../../play_page/play_page.dart';
 import 'edit_deleted_page.dart';
 
 //ignore: must_be_immutable
@@ -28,6 +32,10 @@ class GeneralDeletedPage extends StatefulWidget {
 
 class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
   List<bool> chek = [];
+  double _bottom = 10.0;
+  double _bottomEdit = 80.0;
+
+  Widget _player = const Text('');
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +166,15 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                 ],
               ),
             ),
+            Align(
+              alignment: AlignmentDirectional.bottomCenter,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: widget.edit ? 80.0 : 10.0,
+                ),
+                child: _player,
+              ),
+            ),
           ],
         );
       },
@@ -172,15 +189,29 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           chek.add(false);
         }
       }
+
+      List<bool> _current = [];
+      if (_current.isEmpty) {
+        for (int i = 0; i < length; i++) {
+          _current.add(false);
+        }
+      }
       return Padding(
-        padding: const EdgeInsets.only(top: 85.0, bottom: 80.0),
+        padding: EdgeInsets.only(
+          top: 85.0,
+          bottom: widget.edit ? _bottomEdit : _bottom,
+        ),
         child: ListView.builder(
           itemCount: length,
           itemBuilder: (context, index) {
-            String path = snapshot.data.docs[index].id;
-            String title = snapshot.data.docs[index]['title'];
-            String date = snapshot.data.docs[index]['date'].toString();
-            int memory = snapshot.data.docs[index]['memory'];
+            Color color =
+                _current[index] ? const Color(0xffF1B488) : AppColor.active;
+
+            final String path = snapshot.data.docs[index].id;
+            final String title = snapshot.data.docs[index]['title'];
+            final String date = snapshot.data.docs[index]['date'].toString();
+            final String url = snapshot.data.docs[index]['song'];
+            final int memory = snapshot.data.docs[index]['memory'];
 
             autoDelete(
               snapshot.data.docs[index]['dateDeleted'],
@@ -193,7 +224,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
             return Column(
               children: [
                 SoundContainer(
-                  color: const Color(0xff678BD2),
+                  color: color,
                   title: title,
                   time: (snapshot.data.docs[index]['time'] / 60)
                       .toStringAsFixed(1),
@@ -211,6 +242,44 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                           date,
                           memory,
                         ),
+                  onTap: () {
+                    if (!_current[index]) {
+                      for (int i = 0; i < length; i++) {
+                        _current[i] = false;
+                      }
+                      setState(() {
+                        _player = const Text('');
+                        widget.edit ? _bottomEdit = 160.0 : _bottom = 85.0;
+                      });
+
+                      Future.delayed(const Duration(milliseconds: 50), () {
+                        setState(() {
+                          _current[index] = true;
+                          _player = PlayerContainer(
+                            title: title,
+                            color: AppColor.active,
+                            url: url,
+                            id: path,
+                            onPressed: () {
+                              setState(() {
+                                _player = const Text('');
+                              });
+                              Navigator.of(context).pushReplacement(
+                                PageRouteBuilder(
+                                  pageBuilder: (_, __, ___) => PlayPage(
+                                    url: url,
+                                    title: title,
+                                    id: path,
+                                    page: RecentlyDeletedPage.routName,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        });
+                      });
+                    }
+                  },
                 ),
                 const SizedBox(
                   height: 7.0,

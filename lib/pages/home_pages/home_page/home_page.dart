@@ -27,6 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  double _bottom = 10.0;
 
   @override
   void initState() {
@@ -253,7 +254,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 50.0, bottom: 10.0),
+            padding: EdgeInsets.only(top: 50.0, bottom: _bottom),
             child: StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('users')
@@ -291,24 +292,24 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                   if (snapshot.hasData) {
-                    List<bool> current = [];
+                    List<bool> _current = [];
                     final int length = snapshot.data.docs.length;
-                    if (current.isEmpty) {
+                    if (_current.isEmpty) {
                       for (int i = 0; i < length; i++) {
-                        current.add(false);
+                        _current.add(false);
                       }
                     }
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (context, index) {
-                        Color color = current[index]
+                        Color color = _current[index]
                             ? const Color(0xffF1B488)
                             : AppColor.active;
 
-                        String url = snapshot.data.docs[index]['song'];
-                        String id = snapshot.data.docs[index].id;
-                        String title = snapshot.data.docs[index]['title'];
-                        double time = snapshot.data.docs[index]['time'];
+                        final String url = snapshot.data.docs[index]['song'];
+                        final String id = snapshot.data.docs[index].id;
+                        final String title = snapshot.data.docs[index]['title'];
+                        final double time = snapshot.data.docs[index]['time'];
                         return Column(
                           children: [
                             SoundContainer(
@@ -316,21 +317,21 @@ class _HomePageState extends State<HomePage> {
                               title: title,
                               time: (time / 60).toStringAsFixed(1),
                               onTap: () {
-                                if (!current[index]) {
+                                if (!_current[index]) {
                                   for (int i = 0; i < length; i++) {
-                                    current[i] = false;
+                                    _current[i] = false;
                                   }
                                   setState(() {
                                     _player = const Text('');
+                                    _bottom = 85.0;
                                   });
 
                                   Future.delayed(
                                       const Duration(milliseconds: 50), () {
                                     setState(() {
-                                      current[index] = true;
+                                      _current[index] = true;
                                       _player = PlayerContainer(
-                                        title: snapshot.data.docs[index]
-                                            ['title'],
+                                        title: title,
                                         color: AppColor.active,
                                         url: url,
                                         id: id,
@@ -340,11 +341,11 @@ class _HomePageState extends State<HomePage> {
                                           });
                                           Navigator.of(context).pushReplacement(
                                             PageRouteBuilder(
-                                              pageBuilder: (_, __, ___) => PlayPage(
+                                              pageBuilder: (_, __, ___) =>
+                                                  PlayPage(
                                                 url: url,
                                                 title: title,
                                                 id: id,
-                                                time: time,
                                                 page: HomePage.routName,
                                               ),
                                             ),
@@ -363,7 +364,7 @@ class _HomePageState extends State<HomePage> {
                                     const AlignmentDirectional(0.9, -1.0),
                                 child: PopupMenuSoundContainer(
                                   size: 30.0,
-                                  title: snapshot.data.docs[index]['title'],
+                                  title: title,
                                   id: id,
                                   url: url,
                                 ),

@@ -4,15 +4,28 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../utils/local_db.dart';
+import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
+import '../../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import '../../main_pages/widgets/button_menu.dart';
+import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
+import '../../play_page/play_page.dart';
 
-class AudioPage extends StatelessWidget {
+class AudioPage extends StatefulWidget {
   static const routName = '/audio';
 
   const AudioPage({Key? key}) : super(key: key);
+
+  @override
+  State<AudioPage> createState() => _AudioPageState();
+}
+
+class _AudioPageState extends State<AudioPage> {
+  double _bottom = 10.0;
+  Widget _player = const Text('');
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +39,13 @@ class AudioPage extends StatelessWidget {
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
+            List<bool> _current = [];
+            final int length = snapshot.data.docs.length;
+            if (_current.isEmpty) {
+              for (int i = 0; i < length; i++) {
+                _current.add(false);
+              }
+            }
             return Stack(
               children: [
                 Column(
@@ -155,28 +175,74 @@ class AudioPage extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 225.0, bottom: 10.0),
+                  padding: EdgeInsets.only(top: 225.0, bottom: _bottom),
                   child: ListView.builder(
                     itemCount: snapshot.data.docs.length,
                     itemBuilder: (context, index) {
+                      Color color = _current[index]
+                          ? const Color(0xffF1B488)
+                          : AppColor.active;
+                      final String url = snapshot.data.docs[index]['song'];
+                      final String id = snapshot.data.docs[index].id;
+                      final String title = snapshot.data.docs[index]['title'];
                       return Column(
                         children: [
                           SoundContainer(
-                            color: const Color(0xff678BD2),
-                            title: snapshot.data.docs[index]['title'],
+                            color: color,
+                            title: title,
                             time: (snapshot.data.docs[index]['time'] / 60)
                                 .toStringAsFixed(1),
                             buttonRight: Align(
                               alignment: const AlignmentDirectional(0.9, -1.0),
                               child: PopupMenuSoundContainer(
                                 size: 30.0,
-                                title: snapshot.data.docs[index]['title'],
-                                id: snapshot.data.docs[index].id,
-                                url: snapshot.data.docs[index]['song'],
+                                title: title,
+                                id: id,
+                                url: url,
                               ),
                             ),
                             onTap: () {
+                              if (!_current[index]) {
+                                for (int i = 0; i < length; i++) {
+                                  _current[i] = false;
+                                }
+                                setState(() {
+                                  _player = const Text('');
+                                  _bottom = 85.0;
+                                });
 
+                                Future.delayed(const Duration(milliseconds: 50),
+                                    () {
+                                  setState(() {
+                                    _current[index] = true;
+                                    _player = PlayerContainer(
+                                      title: title,
+                                      color: AppColor.active,
+                                      url: url,
+                                      id: id,
+                                      onPressed: () {
+                                        setState(() {
+                                          _player = const Text('');
+                                        });
+                                        Navigator.of(context).pushReplacement(
+                                          PageRouteBuilder(
+                                            pageBuilder: (_, __, ___) =>
+                                                PlayPage(
+                                              url: url,
+                                              title: title,
+                                              id: id,
+                                              page: AudioPage.routName,
+                                            ),
+                                          ),
+                                        );
+                                        context.read<BlocIndex>().add(
+                                              NoColor(),
+                                            );
+                                      },
+                                    );
+                                  });
+                                });
+                              }
                             },
                           ),
                           const SizedBox(
@@ -185,6 +251,13 @@ class AudioPage extends StatelessWidget {
                         ],
                       );
                     },
+                  ),
+                ),
+                Align(
+                  alignment: AlignmentDirectional.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 15.0),
+                    child: _player,
                   ),
                 ),
               ],

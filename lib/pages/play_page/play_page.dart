@@ -28,7 +28,6 @@ class PlayPage extends StatefulWidget {
   String? url;
   String? id;
   String? title;
-  double? time;
   String? page;
 
   PlayPage({
@@ -36,7 +35,6 @@ class PlayPage extends StatefulWidget {
     this.url,
     this.id,
     this.title,
-    this.time,
     this.page,
   }) : super(key: key);
 
@@ -75,12 +73,12 @@ class _PlayPageState extends State<PlayPage> {
   }
 
   void valuePlayer() {
-    DateTime _date = DateTime.fromMillisecondsSinceEpoch(maxDuration.toInt());
-    _length = DateFormat('mm:ss', 'en_GB').format(_date);
-
     _playerSubscription = _player.onProgress!.listen((e) {
       maxDuration = e.duration.inMilliseconds.toDouble();
       if (maxDuration <= 0) maxDuration = 0.0;
+
+      DateTime _date = DateTime.fromMillisecondsSinceEpoch(maxDuration.toInt());
+      _length = DateFormat('mm:ss', 'en_GB').format(_date);
 
       sliderCurrentPosition =
           min(e.position.inMilliseconds.toDouble(), maxDuration);
