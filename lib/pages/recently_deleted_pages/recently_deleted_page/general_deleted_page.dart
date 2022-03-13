@@ -32,6 +32,7 @@ class GeneralDeletedPage extends StatefulWidget {
 
 class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
   List<bool> chek = [];
+  List<bool> current = [];
   double _bottom = 10.0;
   double _bottomEdit = 80.0;
 
@@ -118,6 +119,9 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                                   chek[i] = false;
                                 }
                               }
+                              setState(() {
+                                _player = const Text('');
+                              });
                             },
                             delete: () {
                               for (int i = 0; i < length; i++) {
@@ -134,6 +138,9 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                                   chek[i] = false;
                                 }
                               }
+                              setState(() {
+                                _player = const Text('');
+                              });
                             },
                           ),
                         ),
@@ -190,10 +197,9 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
         }
       }
 
-      List<bool> _current = [];
-      if (_current.isEmpty) {
+      if (current.isEmpty) {
         for (int i = 0; i < length; i++) {
-          _current.add(false);
+          current.add(false);
         }
       }
       return Padding(
@@ -205,7 +211,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           itemCount: length,
           itemBuilder: (context, index) {
             Color color =
-                _current[index] ? const Color(0xffF1B488) : AppColor.active;
+                current[index] ? const Color(0xffF1B488) : AppColor.active;
 
             final String path = snapshot.data.docs[index].id;
             final String title = snapshot.data.docs[index]['title'];
@@ -243,9 +249,9 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                           memory,
                         ),
                   onTap: () {
-                    if (!_current[index]) {
+                    if (!current[index]) {
                       for (int i = 0; i < length; i++) {
-                        _current[i] = false;
+                        current[i] = false;
                       }
                       setState(() {
                         _player = const Text('');
@@ -254,7 +260,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
 
                       Future.delayed(const Duration(milliseconds: 50), () {
                         setState(() {
-                          _current[index] = true;
+                          current[index] = true;
                           _player = PlayerContainer(
                             title: title,
                             color: AppColor.active,
@@ -335,6 +341,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
               final int memory = snapshot.data.docs[i]['memory'];
               Database.deleteSound(path, title, date, memory);
             }
+            _player = const Text('');
           },
         ),
         PopupMenuItem(
@@ -354,6 +361,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                 id: id,
               );
             }
+            _player = const Text('');
           },
         ),
       ],
@@ -439,6 +447,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
             date,
             memory,
           );
+          _player = const Text('');
         },
         icon: Image.asset(
           AppIcons.delete,

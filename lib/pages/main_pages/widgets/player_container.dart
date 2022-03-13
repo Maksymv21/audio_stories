@@ -16,6 +16,7 @@ class PlayerContainer extends StatefulWidget {
   String url;
   String id;
   void Function()? onPressed;
+  void Function()? whenComplete;
 
   PlayerContainer({
     Key? key,
@@ -24,6 +25,7 @@ class PlayerContainer extends StatefulWidget {
     required this.title,
     required this.id,
     this.onPressed,
+    this.whenComplete,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class _PlayerContainerState extends State<PlayerContainer> {
   bool _onChanged = false;
   bool _isPause = false;
   bool _isPlay = false;
+  bool _isFinish = false;
   double val = 0.0;
   double sliderCurrentPosition = 0.0;
   double maxDuration = 1.0;
@@ -77,6 +80,13 @@ class _PlayerContainerState extends State<PlayerContainer> {
       setState(() {
         _playTxt = txt.substring(0, 5);
       });
+
+      if (maxDuration - sliderCurrentPosition <= 50.0 && !_isFinish) {
+        if (widget.whenComplete != null) {
+          widget.whenComplete!();
+          _isFinish = true;
+        }
+      }
     });
   }
 

@@ -28,6 +28,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   double _bottom = 10.0;
+  List<bool> current = [];
 
   @override
   void initState() {
@@ -292,17 +293,16 @@ class _HomePageState extends State<HomePage> {
                     );
                   }
                   if (snapshot.hasData) {
-                    List<bool> _current = [];
                     final int length = snapshot.data.docs.length;
-                    if (_current.isEmpty) {
+                    if (current.isEmpty) {
                       for (int i = 0; i < length; i++) {
-                        _current.add(false);
+                        current.add(false);
                       }
                     }
                     return ListView.builder(
                       itemCount: length,
                       itemBuilder: (context, index) {
-                        Color color = _current[index]
+                        Color color = current[index]
                             ? const Color(0xffF1B488)
                             : AppColor.active;
 
@@ -317,9 +317,9 @@ class _HomePageState extends State<HomePage> {
                               title: title,
                               time: (time / 60).toStringAsFixed(1),
                               onTap: () {
-                                if (!_current[index]) {
+                                if (!current[index]) {
                                   for (int i = 0; i < length; i++) {
-                                    _current[i] = false;
+                                    current[i] = false;
                                   }
                                   setState(() {
                                     _player = const Text('');
@@ -329,7 +329,7 @@ class _HomePageState extends State<HomePage> {
                                   Future.delayed(
                                       const Duration(milliseconds: 50), () {
                                     setState(() {
-                                      _current[index] = true;
+                                      current[index] = true;
                                       _player = PlayerContainer(
                                         title: title,
                                         color: AppColor.active,
