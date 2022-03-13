@@ -27,6 +27,7 @@ class _AudioPageState extends State<AudioPage> {
   List<bool> current = [];
   double _bottom = 10.0;
   Widget _player = const Text('');
+  bool _repeat = false;
 
   @override
   Widget build(BuildContext context) {
@@ -139,13 +140,19 @@ class _AudioPageState extends State<AudioPage> {
                                 ),
                                 OutlinedButton(
                                   style: OutlinedButton.styleFrom(
-                                    backgroundColor: AppColor.greyDisActive,
+                                    backgroundColor: _repeat
+                                        ? AppColor.greyActive
+                                        : AppColor.greyDisActive,
                                     minimumSize: const Size(100.0, 46.0),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(50.0),
                                     ),
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    setState(() {
+                                      _repeat = !_repeat;
+                                    });
+                                  },
                                   child: Container(
                                     margin: const EdgeInsets.only(
                                       left: 45.0,
@@ -350,6 +357,23 @@ class _AudioPageState extends State<AudioPage> {
               );
             });
           });
+        }
+        if (index + 1 == length) {
+          if (_repeat) {
+            setState(() {
+              _player = const Text('');
+              current[index] = false;
+            });
+            Future.delayed(const Duration(milliseconds: 50), () {
+              setState(() {
+                _player = _next(
+                  index: 0,
+                  length: length,
+                  snapshot: snapshot,
+                );
+              });
+            });
+          }
         }
       },
     );
