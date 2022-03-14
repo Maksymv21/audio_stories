@@ -145,7 +145,15 @@ class PopupMenuSoundContainer extends StatelessWidget {
         onPressedCancel: () => Navigator.pop(context, 'Cancel'),
         onPressedSave: () {
           if (controller.text != '') {
-            Database.createOrUpdateSound({'title': controller.text}, id: id);
+            List<String> search = [];
+            for (int i = 1; i < controller.text.length + 1; i++) {
+              search.add(controller.text.substring(0, i).toLowerCase());
+            }
+
+            Database.createOrUpdateSound({
+              'title': controller.text,
+              'search': search,
+            }, id: id);
           }
           Navigator.pop(context, 'Cancel');
         },

@@ -92,13 +92,19 @@ class RecordRepository {
     await reference.putFile(sound);
     String downloadUrl = await reference.getDownloadURL();
 
+    List<String> search = [];
+    for (int i = 1; i < title.length + 1; i++) {
+      search.add(title.substring(0, i).toLowerCase());
+    }
+
     Database.createOrUpdateSound({
       'song': downloadUrl,
       'title': title,
       'time': time,
       'date': date,
       'deleted': false,
-      'memory' : length,
+      'memory': length,
+      'search': search,
     });
 
     Database.createOrUpdate({

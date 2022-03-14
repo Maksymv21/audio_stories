@@ -294,7 +294,7 @@ class _HomePageState extends State<HomePage> {
                 }
                 if (snapshot.hasData) {
                   final int length = snapshot.data.docs.length;
-                  if (current.isEmpty) {
+                  if (current.isEmpty || current.length < length) {
                     for (int i = 0; i < length; i++) {
                       current.add(false);
                     }
