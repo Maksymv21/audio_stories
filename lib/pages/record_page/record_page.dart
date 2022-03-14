@@ -324,7 +324,9 @@ class _RecordPageState extends State<RecordPage> {
                           value: _onChanged ? val : sliderCurrentPosition,
                           min: 0.0,
                           max: maxDuration,
-                          thumbShape: ThumbShape(),
+                          thumbShape: ThumbShape(
+                            color: Colors.black,
+                          ),
                           activeColor: Colors.black,
                           inactiveColor: Colors.black,
                           onChanged: (value) {

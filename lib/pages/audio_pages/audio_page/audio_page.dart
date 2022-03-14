@@ -262,7 +262,7 @@ class _AudioPageState extends State<AudioPage> {
                               }
                               setState(() {
                                 _player = const Text('');
-                                _bottom = 85.0;
+                                _bottom = 90.0;
                               });
 
                               Future.delayed(const Duration(milliseconds: 50),
@@ -271,7 +271,6 @@ class _AudioPageState extends State<AudioPage> {
                                   current[index] = true;
                                   _player = PlayerContainer(
                                     title: title,
-                                    color: AppColor.active,
                                     url: url,
                                     id: id,
                                     onPressed: () => _onPressed(
@@ -334,7 +333,6 @@ class _AudioPageState extends State<AudioPage> {
 
     return PlayerContainer(
       title: title,
-      color: AppColor.active,
       url: url,
       id: id,
       onPressed: () => _onPressed(

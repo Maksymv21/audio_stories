@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:audio_stories/pages/main_pages/repositories/player_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
@@ -11,7 +12,6 @@ import '../resources/thumb_shape.dart';
 
 //ignore: must_be_immutable
 class PlayerContainer extends StatefulWidget {
-  Color color;
   String title;
   String url;
   String id;
@@ -20,7 +20,6 @@ class PlayerContainer extends StatefulWidget {
 
   PlayerContainer({
     Key? key,
-    required this.color,
     required this.url,
     required this.title,
     required this.id,
@@ -43,6 +42,7 @@ class _PlayerContainerState extends State<PlayerContainer> {
   double maxDuration = 1.0;
   String _playTxt = '00:00';
   String _playTxtChange = '00:00';
+  String _length = '00:00';
 
   StreamSubscription? _playerSubscription;
 
@@ -67,6 +67,9 @@ class _PlayerContainerState extends State<PlayerContainer> {
     _playerSubscription = _player.onProgress!.listen((e) {
       maxDuration = e.duration.inMilliseconds.toDouble();
       if (maxDuration <= 0) maxDuration = 0.0;
+
+      DateTime _date = DateTime.fromMillisecondsSinceEpoch(maxDuration.toInt());
+      _length = DateFormat('mm:ss', 'en_GB').format(_date);
 
       sliderCurrentPosition =
           min(e.position.inMilliseconds.toDouble(), maxDuration);
@@ -107,14 +110,13 @@ class _PlayerContainerState extends State<PlayerContainer> {
     }
 
     return Container(
-      width: MediaQuery.of(context).size.width * 0.9,
-      height: 70.0,
+      width: MediaQuery.of(context).size.width * 0.95,
+      height: MediaQuery.of(context).size.height * 0.1,
       decoration: BoxDecoration(
-        color: Colors.blue[100],
-        borderRadius: BorderRadius.circular(41.0),
-        border: Border.all(
-          color: Colors.grey[400]!,
+        gradient: const LinearGradient(
+          colors: <Color>[Color(0xff8C84E2), Color(0xff6C689F)],
         ),
+        borderRadius: BorderRadius.circular(41.0),
       ),
       child: Stack(
         children: [
@@ -122,17 +124,17 @@ class _PlayerContainerState extends State<PlayerContainer> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(
-                  left: 5.0,
+                  left: 13.0,
                 ),
                 child: GestureDetector(
                   child: ColorFiltered(
                     child: Image.asset(
                       icon,
-                      width: 58.0,
-                      height: 58.0,
+                      width: 55.0,
+                      height: 55.0,
                     ),
-                    colorFilter: ColorFilter.mode(
-                      widget.color,
+                    colorFilter: const ColorFilter.mode(
+                      Colors.white,
                       BlendMode.srcATop,
                     ),
                   ),
@@ -145,40 +147,73 @@ class _PlayerContainerState extends State<PlayerContainer> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 25.0, right: 10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                padding: const EdgeInsets.only(left: 19.0, right: 6.0),
+                child: Stack(
                   children: [
-                    const SizedBox(
-                      height: 3.0,
+                    Align(
+                      alignment: const AlignmentDirectional(0.0, -0.5),
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    Text(
-                      widget.title,
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12.0, top: 10.0),
+                      child: Transform.scale(
+                        scaleY: 0.6,
+                        scaleX: 1.5,
+                        child: SfSliderTheme(
+                          data: SfSliderThemeData(
+                            thumbColor: Colors.white,
+                          ),
+                          child: SfSlider(
+                            value: _onChanged ? val : sliderCurrentPosition,
+                            min: 0.0,
+                            max: maxDuration,
+                            thumbShape: ThumbShape(
+                              color: Colors.white,
+                            ),
+                            activeColor: Colors.white,
+                            inactiveColor: Colors.white,
+                            onChanged: (value) {
+                              if (_isPause) {
+                                sliderCurrentPosition = value;
+                              } else {
+                                val = value;
+                              }
+                              refreshTimer(value);
+                              _onChanged = true;
+                            },
+                            onChangeEnd: (value) async {
+                              await seek(value.toInt());
+                              val = sliderCurrentPosition;
+                              _onChanged = false;
+                            },
+                          ),
+                        ),
+                      ),
                     ),
-                    Transform.scale(
-                      scaleY: 0.8,
-                      scaleX: 1.3,
-                      child: SfSlider(
-                        value: _onChanged ? val : sliderCurrentPosition,
-                        min: 0.0,
-                        max: maxDuration,
-                        thumbShape: ThumbShape(),
-                        activeColor: Colors.black,
-                        inactiveColor: Colors.black,
-                        onChanged: (value) {
-                          if (_isPause) {
-                            sliderCurrentPosition = value;
-                          } else {
-                            val = value;
-                          }
-                          refreshTimer(value);
-                          _onChanged = true;
-                        },
-                        onChangeEnd: (value) async {
-                          await seek(value.toInt());
-                          val = sliderCurrentPosition;
-                          _onChanged = false;
-                        },
+                    Align(
+                      alignment: const AlignmentDirectional(0.0, 0.6),
+                      child: Text(
+                        _onChanged || _isPause ? _playTxtChange : _playTxt,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: const AlignmentDirectional(0.0, 0.6),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 175.0),
+                        child: Text(
+                          _length.substring(0, 5),
+                          style: const TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -191,6 +226,7 @@ class _PlayerContainerState extends State<PlayerContainer> {
                   icon: const Icon(
                     Icons.keyboard_arrow_up,
                     size: 40.0,
+                    color: Colors.white,
                   ),
                 ),
               ),

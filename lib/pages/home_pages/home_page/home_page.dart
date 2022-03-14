@@ -257,132 +257,131 @@ class _HomePageState extends State<HomePage> {
           Padding(
             padding: EdgeInsets.only(top: 50.0, bottom: _bottom),
             child: StreamBuilder(
-                stream: FirebaseFirestore.instance
-                    .collection('users')
-                    .doc(LocalDB.uid)
-                    .collection('sounds')
-                    .where('deleted', isEqualTo: false)
-                    .orderBy(
-                      'date',
-                      descending: true,
-                    )
-                    .snapshots(),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.data?.docs.length == 0) {
-                    return Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            const Text(
-                              'Как только ты запишешь'
-                              '\nаудио, она появится здесь.',
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                color: Colors.grey,
-                              ),
-                              textAlign: TextAlign.center,
+              stream: FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(LocalDB.uid)
+                  .collection('sounds')
+                  .where('deleted', isEqualTo: false)
+                  .orderBy(
+                    'date',
+                    descending: true,
+                  )
+                  .snapshots(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data?.docs.length == 0) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          const Text(
+                            'Как только ты запишешь'
+                            '\nаудио, она появится здесь.',
+                            style: TextStyle(
+                              fontSize: 20.0,
+                              color: Colors.grey,
                             ),
-                            Image(
-                              image: Image.asset(AppIcons.arrow).image,
-                            ),
-                          ],
-                        ),
+                            textAlign: TextAlign.center,
+                          ),
+                          Image(
+                            image: Image.asset(AppIcons.arrow).image,
+                          ),
+                        ],
                       ),
-                    );
-                  }
-                  if (snapshot.hasData) {
-                    final int length = snapshot.data.docs.length;
-                    if (current.isEmpty) {
-                      for (int i = 0; i < length; i++) {
-                        current.add(false);
-                      }
+                    ),
+                  );
+                }
+                if (snapshot.hasData) {
+                  final int length = snapshot.data.docs.length;
+                  if (current.isEmpty) {
+                    for (int i = 0; i < length; i++) {
+                      current.add(false);
                     }
-                    return ListView.builder(
-                      itemCount: length,
-                      itemBuilder: (context, index) {
-                        Color color = current[index]
-                            ? const Color(0xffF1B488)
-                            : AppColor.active;
+                  }
+                  return ListView.builder(
+                    itemCount: length,
+                    itemBuilder: (context, index) {
+                      Color color = current[index]
+                          ? const Color(0xffF1B488)
+                          : AppColor.active;
 
-                        final String url = snapshot.data.docs[index]['song'];
-                        final String id = snapshot.data.docs[index].id;
-                        final String title = snapshot.data.docs[index]['title'];
-                        final double time = snapshot.data.docs[index]['time'];
-                        return Column(
-                          children: [
-                            SoundContainer(
-                              color: color,
-                              title: title,
-                              time: (time / 60).toStringAsFixed(1),
-                              onTap: () {
-                                if (!current[index]) {
-                                  for (int i = 0; i < length; i++) {
-                                    current[i] = false;
-                                  }
-                                  setState(() {
-                                    _player = const Text('');
-                                    _bottom = 85.0;
-                                  });
-
-                                  Future.delayed(
-                                      const Duration(milliseconds: 50), () {
-                                    setState(() {
-                                      current[index] = true;
-                                      _player = PlayerContainer(
-                                        title: title,
-                                        color: AppColor.active,
-                                        url: url,
-                                        id: id,
-                                        onPressed: () {
-                                          setState(() {
-                                            _player = const Text('');
-                                          });
-                                          Navigator.of(context).pushReplacement(
-                                            PageRouteBuilder(
-                                              pageBuilder: (_, __, ___) =>
-                                                  PlayPage(
-                                                url: url,
-                                                title: title,
-                                                id: id,
-                                                page: HomePage.routName,
-                                              ),
-                                            ),
-                                          );
-                                          context.read<BlocIndex>().add(
-                                                NoColor(),
-                                              );
-                                        },
-                                      );
-                                    });
-                                  });
+                      final String url = snapshot.data.docs[index]['song'];
+                      final String id = snapshot.data.docs[index].id;
+                      final String title = snapshot.data.docs[index]['title'];
+                      final double time = snapshot.data.docs[index]['time'];
+                      return Column(
+                        children: [
+                          SoundContainer(
+                            color: color,
+                            title: title,
+                            time: (time / 60).toStringAsFixed(1),
+                            onTap: () {
+                              if (!current[index]) {
+                                for (int i = 0; i < length; i++) {
+                                  current[i] = false;
                                 }
-                              },
-                              buttonRight: Align(
-                                alignment:
-                                    const AlignmentDirectional(0.9, -1.0),
-                                child: PopupMenuSoundContainer(
-                                  size: 30.0,
-                                  title: title,
-                                  id: id,
-                                  url: url,
-                                ),
+                                setState(() {
+                                  _player = const Text('');
+                                  _bottom = 90.0;
+                                });
+
+                                Future.delayed(const Duration(milliseconds: 50),
+                                    () {
+                                  setState(() {
+                                    current[index] = true;
+                                    _player = PlayerContainer(
+                                      title: title,
+                                      url: url,
+                                      id: id,
+                                      onPressed: () {
+                                        setState(() {
+                                          _player = const Text('');
+                                        });
+                                        Navigator.of(context).pushReplacement(
+                                          PageRouteBuilder(
+                                            pageBuilder: (_, __, ___) =>
+                                                PlayPage(
+                                              url: url,
+                                              title: title,
+                                              id: id,
+                                              page: HomePage.routName,
+                                            ),
+                                          ),
+                                        );
+                                        context.read<BlocIndex>().add(
+                                              NoColor(),
+                                            );
+                                      },
+                                    );
+                                  });
+                                });
+                              }
+                            },
+                            buttonRight: Align(
+                              alignment: const AlignmentDirectional(0.9, -1.0),
+                              child: PopupMenuSoundContainer(
+                                size: 30.0,
+                                title: title,
+                                id: id,
+                                url: url,
                               ),
                             ),
-                            const SizedBox(
-                              height: 7.0,
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  } else {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }),
+                          ),
+                          const SizedBox(
+                            height: 7.0,
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+              },
+            ),
           ),
           Align(
             alignment: AlignmentDirectional.bottomCenter,

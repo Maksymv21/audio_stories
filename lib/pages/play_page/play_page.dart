@@ -248,7 +248,9 @@ class _PlayPageState extends State<PlayPage> {
                           value: _onChanged ? val : sliderCurrentPosition,
                           min: 0.0,
                           max: maxDuration,
-                          thumbShape: ThumbShape(),
+                          thumbShape: ThumbShape(
+                            color: Colors.black,
+                          ),
                           activeColor: Colors.black,
                           inactiveColor: Colors.black,
                           onChanged: (value) {

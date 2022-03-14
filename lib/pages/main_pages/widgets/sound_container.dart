@@ -21,7 +21,7 @@ class SoundContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width:  MediaQuery.of(context).size.width * 0.91,
+      width: MediaQuery.of(context).size.width * 0.91,
       height: 60.0,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(41.0),
@@ -81,6 +81,4 @@ class SoundContainer extends StatelessWidget {
       ),
     );
   }
-
-
 }

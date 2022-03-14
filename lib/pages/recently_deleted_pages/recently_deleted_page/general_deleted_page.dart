@@ -255,7 +255,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                       }
                       setState(() {
                         _player = const Text('');
-                        widget.edit ? _bottomEdit = 160.0 : _bottom = 85.0;
+                        widget.edit ? _bottomEdit = 165.0 : _bottom = 90.0;
                       });
 
                       Future.delayed(const Duration(milliseconds: 50), () {
@@ -263,7 +263,6 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                           current[index] = true;
                           _player = PlayerContainer(
                             title: title,
-                            color: AppColor.active,
                             url: url,
                             id: path,
                             onPressed: () {
