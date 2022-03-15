@@ -1,3 +1,5 @@
+import 'package:audio_stories/pages/compilation_pages/compilation_page/add_compilation_page.dart';
+import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,7 +8,7 @@ import 'package:flutter/material.dart';
 import '../../../utils/local_db.dart';
 
 class CompilationPage extends StatelessWidget {
-  static const routName = '/category';
+  static const routName = '/compilation';
 
   const CompilationPage({Key? key}) : super(key: key);
 
@@ -28,7 +30,10 @@ class CompilationPage extends StatelessWidget {
                     icon: const Icon(
                       Icons.add,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      MainPage.globalKey.currentState!
+                          .pushReplacementNamed(AddCompilationPage.routName);
+                    },
                   ),
                 ),
               ),

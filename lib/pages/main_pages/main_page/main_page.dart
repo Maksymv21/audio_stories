@@ -17,6 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../compilation_pages/compilation_page/add_compilation_page.dart';
 import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 
@@ -58,6 +59,9 @@ class MainPage extends StatelessWidget {
                 break;
               case CompilationPage.routName:
                 page = const CompilationPage();
+                break;
+              case AddCompilationPage.routName:
+                page = const AddCompilationPage();
                 break;
               case ProfilePage.routName:
                 page = const ProfilePage();
