@@ -330,29 +330,24 @@ class _HomePageState extends State<HomePage> {
                                     () {
                                   setState(() {
                                     current[index] = true;
-                                    _player = PlayerContainer(
-                                      title: title,
-                                      url: url,
-                                      id: id,
-                                      onPressed: () {
+                                    _player = Dismissible(
+                                      key: const Key(''),
+                                      direction: DismissDirection.down,
+                                      onDismissed: (direction) {
                                         setState(() {
                                           _player = const Text('');
+                                          _bottom = 10.0;
+                                          current[index] = false;
                                         });
-                                        Navigator.of(context).pushReplacement(
-                                          PageRouteBuilder(
-                                            pageBuilder: (_, __, ___) =>
-                                                PlayPage(
-                                              url: url,
-                                              title: title,
-                                              id: id,
-                                              page: HomePage.routName,
-                                            ),
-                                          ),
-                                        );
-                                        context.read<BlocIndex>().add(
-                                              NoColor(),
-                                            );
                                       },
+                                      child: PlayerContainer(
+                                        title: title,
+                                        url: url,
+                                        id: id,
+                                        onPressed: () {
+                                          _toPlayPage(url, title, id);
+                                        },
+                                      ),
                                     );
                                   });
                                 });
@@ -393,5 +388,28 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  void _toPlayPage(
+    String url,
+    String title,
+    String id,
+  ) {
+    setState(() {
+      _player = const Text('');
+    });
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => PlayPage(
+          url: url,
+          title: title,
+          id: id,
+          page: HomePage.routName,
+        ),
+      ),
+    );
+    context.read<BlocIndex>().add(
+          NoColor(),
+        );
   }
 }

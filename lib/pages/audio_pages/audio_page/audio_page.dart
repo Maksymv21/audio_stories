@@ -269,14 +269,25 @@ class _AudioPageState extends State<AudioPage> {
                                   () {
                                 setState(() {
                                   current[index] = true;
-                                  _player = PlayerContainer(
-                                    title: title,
-                                    url: url,
-                                    id: id,
-                                    onPressed: () => _onPressed(
-                                      url: url,
+                                  _player = Dismissible(
+                                    key: const Key(''),
+                                    direction: DismissDirection.down,
+                                    onDismissed: (direction) {
+                                      setState(() {
+                                        _player = const Text('');
+                                        _bottom = 10.0;
+                                        current[index] = false;
+                                      });
+                                    },
+                                    child: PlayerContainer(
                                       title: title,
+                                      url: url,
                                       id: id,
+                                      onPressed: () => _onPressed(
+                                        url: url,
+                                        title: title,
+                                        id: id,
+                                      ),
                                     ),
                                   );
                                 });
@@ -331,33 +342,27 @@ class _AudioPageState extends State<AudioPage> {
       current[index] = true;
     });
 
-    return PlayerContainer(
-      title: title,
-      url: url,
-      id: id,
-      onPressed: () => _onPressed(
-        url: url,
+    return Dismissible(
+      key: const Key(''),
+      direction: DismissDirection.down,
+      onDismissed: (direction) {
+        setState(() {
+          _player = const Text('');
+          _bottom = 10.0;
+          current[index] = false;
+        });
+      },
+      child: PlayerContainer(
         title: title,
+        url: url,
         id: id,
-      ),
-      whenComplete: () {
-        if (index + 1 < length) {
-          setState(() {
-            _player = const Text('');
-            current[index] = false;
-          });
-          Future.delayed(const Duration(milliseconds: 50), () {
-            setState(() {
-              _player = _next(
-                index: index + 1,
-                length: length,
-                snapshot: snapshot,
-              );
-            });
-          });
-        }
-        if (index + 1 == length) {
-          if (_repeat) {
+        onPressed: () => _onPressed(
+          url: url,
+          title: title,
+          id: id,
+        ),
+        whenComplete: () {
+          if (index + 1 < length) {
             setState(() {
               _player = const Text('');
               current[index] = false;
@@ -365,15 +370,32 @@ class _AudioPageState extends State<AudioPage> {
             Future.delayed(const Duration(milliseconds: 50), () {
               setState(() {
                 _player = _next(
-                  index: 0,
+                  index: index + 1,
                   length: length,
                   snapshot: snapshot,
                 );
               });
             });
           }
-        }
-      },
+          if (index + 1 == length) {
+            if (_repeat) {
+              setState(() {
+                _player = const Text('');
+                current[index] = false;
+              });
+              Future.delayed(const Duration(milliseconds: 50), () {
+                setState(() {
+                  _player = _next(
+                    index: 0,
+                    length: length,
+                    snapshot: snapshot,
+                  );
+                });
+              });
+            }
+          }
+        },
+      ),
     );
   }
 

@@ -21,6 +21,15 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
+  final Query _ref = FirebaseFirestore.instance
+      .collection('users')
+      .doc(LocalDB.uid)
+      .collection('sounds')
+      .where('deleted', isEqualTo: false)
+      .orderBy(
+        'date',
+        descending: true,
+      );
   TextEditingController controller = TextEditingController();
   List<bool> current = [];
   Widget _player = const Text('');
@@ -109,27 +118,10 @@ class _SearchPageState extends State<SearchPage> {
                   children: [
                     StreamBuilder(
                       stream: (controller.text == '')
-                          ? FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(LocalDB.uid)
-                              .collection('sounds')
-                              .where('deleted', isEqualTo: false)
-                              .orderBy(
-                                'date',
-                                descending: true,
-                              )
-                              .snapshots()
-                          : FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(LocalDB.uid)
-                              .collection('sounds')
-                              .where('deleted', isEqualTo: false)
+                          ? _ref.snapshots()
+                          : _ref
                               .where('search',
                                   arrayContains: controller.text.toLowerCase())
-                              .orderBy(
-                                'date',
-                                descending: true,
-                              )
                               .snapshots(),
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         if (snapshot.data?.docs.length == 0) {
@@ -212,29 +204,41 @@ class _SearchPageState extends State<SearchPage> {
                                               () {
                                             setState(() {
                                               current[index] = true;
-                                              _player = PlayerContainer(
-                                                title: title,
-                                                url: url,
-                                                id: id,
-                                                onPressed: () {
+                                              _player = Dismissible(
+                                                key: const Key(''),
+                                                direction:
+                                                    DismissDirection.down,
+                                                onDismissed: (direction) {
                                                   setState(() {
                                                     _player = const Text('');
+                                                    _bottom = 10.0;
+                                                    current[index] = false;
                                                   });
-                                                  Navigator.of(context)
-                                                      .pushReplacement(
-                                                    PageRouteBuilder(
-                                                      pageBuilder:
-                                                          (_, __, ___) =>
-                                                              PlayPage(
-                                                        url: url,
-                                                        title: title,
-                                                        id: id,
-                                                        page:
-                                                            SearchPage.routName,
-                                                      ),
-                                                    ),
-                                                  );
                                                 },
+                                                child: PlayerContainer(
+                                                  title: title,
+                                                  url: url,
+                                                  id: id,
+                                                  onPressed: () {
+                                                    setState(() {
+                                                      _player = const Text('');
+                                                    });
+                                                    Navigator.of(context)
+                                                        .pushReplacement(
+                                                      PageRouteBuilder(
+                                                        pageBuilder:
+                                                            (_, __, ___) =>
+                                                                PlayPage(
+                                                          url: url,
+                                                          title: title,
+                                                          id: id,
+                                                          page: SearchPage
+                                                              .routName,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
                                               );
                                             });
                                           });

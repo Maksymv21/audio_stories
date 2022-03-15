@@ -261,25 +261,36 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                       Future.delayed(const Duration(milliseconds: 50), () {
                         setState(() {
                           current[index] = true;
-                          _player = PlayerContainer(
-                            title: title,
-                            url: url,
-                            id: path,
-                            onPressed: () {
+                          _player = Dismissible(
+                            key: const Key(''),
+                            direction: DismissDirection.down,
+                            onDismissed: (direction) {
                               setState(() {
                                 _player = const Text('');
+                                _bottom = 10.0;
+                                current[index] = false;
                               });
-                              Navigator.of(context).pushReplacement(
-                                PageRouteBuilder(
-                                  pageBuilder: (_, __, ___) => PlayPage(
-                                    url: url,
-                                    title: title,
-                                    id: path,
-                                    page: RecentlyDeletedPage.routName,
-                                  ),
-                                ),
-                              );
                             },
+                            child: PlayerContainer(
+                              title: title,
+                              url: url,
+                              id: path,
+                              onPressed: () {
+                                setState(() {
+                                  _player = const Text('');
+                                });
+                                Navigator.of(context).pushReplacement(
+                                  PageRouteBuilder(
+                                    pageBuilder: (_, __, ___) => PlayPage(
+                                      url: url,
+                                      title: title,
+                                      id: path,
+                                      page: RecentlyDeletedPage.routName,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
                           );
                         });
                       });
