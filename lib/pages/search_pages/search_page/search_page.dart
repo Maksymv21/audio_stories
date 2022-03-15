@@ -140,13 +140,15 @@ class _SearchPageState extends State<SearchPage> {
               .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.data?.docs.length == 0) {
-          return const Center(
+          return Center(
             child: Padding(
-              padding: EdgeInsets.only(right: 10.0),
+              padding: const EdgeInsets.only(right: 10.0),
               child: Text(
-                'Как только ты запишешь'
-                '\nаудио, она появится здесь.',
-                style: TextStyle(
+                controller.text == ''
+                    ? 'Как только ты запишешь'
+                        '\nаудио, она появится здесь.'
+                    : 'Ничего не найдено',
+                style: const TextStyle(
                   fontSize: 24.0,
                   color: Colors.grey,
                 ),

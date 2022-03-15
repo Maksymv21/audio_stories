@@ -1,4 +1,4 @@
-import 'package:audio_stories/pages/compilation_pages/compilation_page/add_compilation_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/create_compilation_page.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -32,7 +32,7 @@ class CompilationPage extends StatelessWidget {
                     ),
                     onPressed: () {
                       MainPage.globalKey.currentState!
-                          .pushReplacementNamed(AddCompilationPage.routName);
+                          .pushReplacementNamed(CreateCompilationPage.routName);
                     },
                   ),
                 ),

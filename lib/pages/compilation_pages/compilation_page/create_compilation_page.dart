@@ -1,20 +1,21 @@
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_search_page.dart';
 import 'package:flutter/material.dart';
 
 import '../../../resources/app_icons.dart';
 import '../../../widgets/background.dart';
 import '../../main_pages/main_page/main_page.dart';
 
-class AddCompilationPage extends StatefulWidget {
+class CreateCompilationPage extends StatefulWidget {
   static const routName = '/addCompilation';
 
-  const AddCompilationPage({Key? key}) : super(key: key);
+  const CreateCompilationPage({Key? key}) : super(key: key);
 
   @override
-  State<AddCompilationPage> createState() => _AddCompilationPageState();
+  State<CreateCompilationPage> createState() => _CreateCompilationPageState();
 }
 
-class _AddCompilationPageState extends State<AddCompilationPage> {
+class _CreateCompilationPageState extends State<CreateCompilationPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
 
@@ -175,7 +176,10 @@ class _AddCompilationPageState extends State<AddCompilationPage> {
                     style: const ButtonStyle(
                       splashFactory: NoSplash.splashFactory,
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      MainPage.globalKey.currentState!
+                          .pushReplacementNamed(CompilationSearchPage.routName);
+                    },
                     child: Container(
                       padding: const EdgeInsets.only(bottom: 1.0),
                       decoration: const BoxDecoration(
