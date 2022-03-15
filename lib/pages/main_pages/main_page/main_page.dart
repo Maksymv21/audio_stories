@@ -1,6 +1,5 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/test_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
-import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
@@ -17,6 +16,8 @@ import 'package:audio_stories/utils/local_db.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 
 class MainPage extends StatelessWidget {
@@ -55,8 +56,8 @@ class MainPage extends StatelessWidget {
               case AudioPage.routName:
                 page = const AudioPage();
                 break;
-              case CategoryPage.routName:
-                page = const CategoryPage();
+              case CompilationPage.routName:
+                page = const CompilationPage();
                 break;
               case ProfilePage.routName:
                 page = const ProfilePage();

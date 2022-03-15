@@ -28,27 +28,6 @@ class EditProfilePage extends StatelessWidget {
   final TextEditingController _editNumberController = TextEditingController();
   final TextEditingController _editNameController = TextEditingController();
 
-  // File? _image;
-  // String? url;
-  //
-  // Future pickImage() async {
-  //   final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-  //   if (image == null) return;
-  //
-  //   setState(() => _image = File(image.path));
-  // }
-  //
-  // Future uploadImage(File _image) async {
-  //   Reference reference = FirebaseStorage.instance.ref().child(
-  //         ModelUser.uid.toString(),
-  //       );
-  //
-  //   await reference.putFile(_image);
-  //   String downloadUrl = await reference.getDownloadURL();
-  //
-  //   await ModelUser.createData('photo', downloadUrl);
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Stack(

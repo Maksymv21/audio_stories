@@ -1,6 +1,5 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
-import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
@@ -15,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
+import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 class BurgerMenu extends StatelessWidget {
   const BurgerMenu({Key? key}) : super(key: key);
@@ -95,7 +95,7 @@ class BurgerMenu extends StatelessWidget {
                   title: 'Подборки',
                   onTap: () {
                     MainPage.globalKey.currentState!
-                        .pushReplacementNamed(CategoryPage.routName);
+                        .pushReplacementNamed(CompilationPage.routName);
                     Scaffold.of(context).openEndDrawer();
                     context.read<BlocIndex>().add(
                           ColorCategory(),

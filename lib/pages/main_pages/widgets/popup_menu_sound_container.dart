@@ -1,5 +1,4 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
-import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../utils/database.dart';
 import '../../../widgets/dialog_sound.dart';
+import '../../compilation_pages/compilation_page/compilation_page.dart';
 import '../main_blocs/bloc_icon_color/bloc_index.dart';
 import '../main_page/main_page.dart';
 
@@ -193,7 +193,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
     IndexEvent event;
     if (page == HomePage.routName) {
       event = ColorHome();
-    } else if (page == CategoryPage.routName) {
+    } else if (page == CompilationPage.routName) {
       event = ColorCategory();
     } else if (page == AudioPage.routName) {
       event = ColorAudio();

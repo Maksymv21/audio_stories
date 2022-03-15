@@ -13,7 +13,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../../resources/app_icons.dart';
 import '../../utils/local_db.dart';
 import '../audio_pages/audio_page/audio_page.dart';
-import '../category_pages/category_page/category_page.dart';
+import '../compilation_pages/compilation_page/compilation_page.dart';
 import '../home_pages/home_page/home_page.dart';
 import '../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import '../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
@@ -405,7 +405,7 @@ class _PlayPageState extends State<PlayPage> {
     IndexEvent event;
     if (page == HomePage.routName) {
       event = ColorHome();
-    } else if (page == CategoryPage.routName) {
+    } else if (page == CompilationPage.routName) {
       event = ColorCategory();
     } else if (page == AudioPage.routName) {
       event = ColorAudio();

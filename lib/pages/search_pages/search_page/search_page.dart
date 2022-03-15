@@ -116,150 +116,7 @@ class _SearchPageState extends State<SearchPage> {
                 flex: 17,
                 child: Stack(
                   children: [
-                    StreamBuilder(
-                      stream: (controller.text == '')
-                          ? _ref.snapshots()
-                          : _ref
-                              .where('search',
-                                  arrayContains: controller.text.toLowerCase())
-                              .snapshots(),
-                      builder: (BuildContext context, AsyncSnapshot snapshot) {
-                        if (snapshot.data?.docs.length == 0) {
-                          return Center(
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 10.0),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                children: [
-                                  const Text(
-                                    'Как только ты запишешь'
-                                    '\nаудио, она появится здесь.',
-                                    style: TextStyle(
-                                      fontSize: 20.0,
-                                      color: Colors.grey,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  Image(
-                                    image: Image.asset(AppIcons.arrow).image,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        }
-                        if (snapshot.hasData) {
-                          final int length = snapshot.data.docs.length;
-                          if (current.isEmpty || current.length < length) {
-                            for (int i = 0; i < length; i++) {
-                              current.add(false);
-                            }
-                          }
-
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: _bottom),
-                            child: ListView.builder(
-                              itemCount: snapshot.data.docs.length,
-                              itemBuilder: (context, index) {
-                                Color color = current[index]
-                                    ? const Color(0xffF1B488)
-                                    : AppColor.active;
-                                final String title =
-                                    snapshot.data.docs[index]['title'];
-                                final String id = snapshot.data.docs[index].id;
-                                final String url =
-                                    snapshot.data.docs[index]['song'];
-
-                                return Column(
-                                  children: [
-                                    SoundContainer(
-                                      color: color,
-                                      title: title,
-                                      time: (snapshot.data.docs[index]['time'] /
-                                              60)
-                                          .toStringAsFixed(1),
-                                      buttonRight: Align(
-                                        alignment: const AlignmentDirectional(
-                                            0.9, -1.0),
-                                        child: PopupMenuSoundContainer(
-                                          size: 30.0,
-                                          title: title,
-                                          id: id,
-                                          url: url,
-                                        ),
-                                      ),
-                                      onTap: () {
-                                        if (!current[index]) {
-                                          for (int i = 0; i < length; i++) {
-                                            current[i] = false;
-                                          }
-                                          setState(() {
-                                            _player = const Text('');
-                                            _bottom = 90.0;
-                                          });
-
-                                          Future.delayed(
-                                              const Duration(milliseconds: 50),
-                                              () {
-                                            setState(() {
-                                              current[index] = true;
-                                              _player = Dismissible(
-                                                key: const Key(''),
-                                                direction:
-                                                    DismissDirection.down,
-                                                onDismissed: (direction) {
-                                                  setState(() {
-                                                    _player = const Text('');
-                                                    _bottom = 10.0;
-                                                    current[index] = false;
-                                                  });
-                                                },
-                                                child: PlayerContainer(
-                                                  title: title,
-                                                  url: url,
-                                                  id: id,
-                                                  onPressed: () {
-                                                    setState(() {
-                                                      _player = const Text('');
-                                                    });
-                                                    Navigator.of(context)
-                                                        .pushReplacement(
-                                                      PageRouteBuilder(
-                                                        pageBuilder:
-                                                            (_, __, ___) =>
-                                                                PlayPage(
-                                                          url: url,
-                                                          title: title,
-                                                          id: id,
-                                                          page: SearchPage
-                                                              .routName,
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              );
-                                            });
-                                          });
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(
-                                      height: 7.0,
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                          );
-                        } else {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        }
-                      },
-                    ),
+                    _soundList(),
                     Align(
                       alignment: AlignmentDirectional.bottomCenter,
                       child: _player,
@@ -271,6 +128,131 @@ class _SearchPageState extends State<SearchPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _soundList() {
+    return StreamBuilder(
+      stream: (controller.text == '')
+          ? _ref.snapshots()
+          : _ref
+              .where('search', arrayContains: controller.text.toLowerCase())
+              .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.data?.docs.length == 0) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.only(right: 10.0),
+              child: Text(
+                'Как только ты запишешь'
+                '\nаудио, она появится здесь.',
+                style: TextStyle(
+                  fontSize: 24.0,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }
+        if (snapshot.hasData) {
+          final int length = snapshot.data.docs.length;
+          if (current.isEmpty || current.length < length) {
+            for (int i = 0; i < length; i++) {
+              current.add(false);
+            }
+          }
+
+          return Padding(
+            padding: EdgeInsets.only(bottom: _bottom),
+            child: ListView.builder(
+              itemCount: length,
+              itemBuilder: (context, index) {
+                Color color =
+                    current[index] ? const Color(0xffF1B488) : AppColor.active;
+                final String title = snapshot.data.docs[index]['title'];
+                final String id = snapshot.data.docs[index].id;
+                final String url = snapshot.data.docs[index]['song'];
+
+                return Column(
+                  children: [
+                    SoundContainer(
+                      color: color,
+                      title: title,
+                      time: (snapshot.data.docs[index]['time'] / 60)
+                          .toStringAsFixed(1),
+                      buttonRight: Align(
+                        alignment: const AlignmentDirectional(0.9, -1.0),
+                        child: PopupMenuSoundContainer(
+                          size: 30.0,
+                          title: title,
+                          id: id,
+                          url: url,
+                        ),
+                      ),
+                      onTap: () {
+                        if (!current[index]) {
+                          for (int i = 0; i < length; i++) {
+                            current[i] = false;
+                          }
+                          setState(() {
+                            _player = const Text('');
+                            _bottom = 90.0;
+                          });
+
+                          Future.delayed(const Duration(milliseconds: 50), () {
+                            setState(() {
+                              current[index] = true;
+                              _player = Dismissible(
+                                key: const Key(''),
+                                direction: DismissDirection.down,
+                                onDismissed: (direction) {
+                                  setState(() {
+                                    _player = const Text('');
+                                    _bottom = 10.0;
+                                    current[index] = false;
+                                  });
+                                },
+                                child: PlayerContainer(
+                                  title: title,
+                                  url: url,
+                                  id: id,
+                                  onPressed: () {
+                                    setState(() {
+                                      _player = const Text('');
+                                    });
+                                    Navigator.of(context).pushReplacement(
+                                      PageRouteBuilder(
+                                        pageBuilder: (_, __, ___) => PlayPage(
+                                          url: url,
+                                          title: title,
+                                          id: id,
+                                          page: SearchPage.routName,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            });
+                          });
+                        }
+                      },
+                    ),
+                    const SizedBox(
+                      height: 7.0,
+                    ),
+                  ],
+                );
+              },
+            ),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
     );
   }
 

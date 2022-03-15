@@ -1,5 +1,4 @@
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
-import 'package:audio_stories/pages/category_pages/category_page/category_page.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
@@ -15,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
 import '../../audio_pages/audio_page/audio_page.dart';
+import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 class MyNavigationBar extends StatelessWidget {
   const MyNavigationBar({
@@ -78,7 +78,7 @@ class MyNavigationBar extends StatelessWidget {
                     // if index != 1
                     if (index != 1) {
                       MainPage.globalKey.currentState!
-                          .pushReplacementNamed(CategoryPage.routName);
+                          .pushReplacementNamed(CompilationPage.routName);
                       context.read<BlocIndex>().add(
                             ColorCategory(),
                           );
