@@ -104,28 +104,35 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                       id.add(snapshot.data.docs[i].id);
                                     }
                                   }
-                                  if (state is ImageState) {
-                                    context.read<AddInCompilationBloc>().add(
-                                          AddListWithImage(
-                                            id: id,
-                                            image: state.image,
-                                            text: state.text,
-                                            title: state.title,
-                                          ),
-                                        );
+                                  if (id.isEmpty) {
+                                    _showSnackBar(
+                                      context: context,
+                                      title: 'Не выбрано ни одной аудиозаписи',
+                                    );
+                                  } else {
+                                    if (state is ImageState) {
+                                      context.read<AddInCompilationBloc>().add(
+                                            AddListWithImage(
+                                              id: id,
+                                              image: state.image,
+                                              text: state.text,
+                                              title: state.title,
+                                            ),
+                                          );
+                                    }
+                                    if (state is TextState) {
+                                      context.read<AddInCompilationBloc>().add(
+                                            AddListWithoutImage(
+                                              id: id,
+                                              text: state.text,
+                                              title: state.title,
+                                            ),
+                                          );
+                                    }
+                                    MainPage.globalKey.currentState!
+                                        .pushReplacementNamed(
+                                            CreateCompilationPage.routName);
                                   }
-                                  if (state is TextState) {
-                                    context.read<AddInCompilationBloc>().add(
-                                          AddListWithoutImage(
-                                            id: id,
-                                            text: state.text,
-                                            title: state.title,
-                                          ),
-                                        );
-                                  }
-                                  MainPage.globalKey.currentState!
-                                      .pushReplacementNamed(
-                                          CreateCompilationPage.routName);
                                 },
                                 child: const Text(
                                   'Добавить',
@@ -365,5 +372,19 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
         search.add(i);
       }
     }
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String title,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

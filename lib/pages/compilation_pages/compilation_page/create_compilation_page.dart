@@ -34,10 +34,10 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
   Widget build(BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
     final double _height = MediaQuery.of(context).size.height;
-    _titleController.text = 'Название';
 
     return BlocBuilder<AddInCompilationBloc, AddInCompilationState>(
         builder: (context, state) {
+      // _titleController.text = 'Название';
       Widget _list = Expanded(
         flex: 4,
         child: Container(),
@@ -174,6 +174,12 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                         letterSpacing: 1.0,
                       ),
                       decoration: const InputDecoration(
+                        hintText: 'Название',
+                        hintStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                          letterSpacing: 1.0,
+                        ),
                         border: InputBorder.none,
                       ),
                     ),
@@ -281,12 +287,13 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             return ListView.builder(
+              padding: EdgeInsets.zero,
               itemCount: id.length,
               itemBuilder: (context, index) {
                 String? title;
                 double? time;
-                for(int i = 0; i < snapshot.data.docs.length; i++) {
-                  if(snapshot.data.docs[i].id == id[index]) {
+                for (int i = 0; i < snapshot.data.docs.length; i++) {
+                  if (snapshot.data.docs[i].id == id[index]) {
                     title = snapshot.data.docs[i]['title'];
                     time = snapshot.data.docs[i]['time'];
                   }
@@ -296,8 +303,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     SoundContainer(
                       color: AppColor.active,
                       title: title!,
-                      time: (time! / 60)
-                          .toStringAsFixed(1),
+                      time: (time! / 60).toStringAsFixed(1),
                       onTap: () {},
                       buttonRight: Container(),
                     ),
