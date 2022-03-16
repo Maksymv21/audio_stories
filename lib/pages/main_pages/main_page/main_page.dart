@@ -1,5 +1,6 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/test_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_bloc.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
@@ -41,8 +42,15 @@ class MainPage extends StatelessWidget {
 
       PhoneAuthRepository(firebaseAuth: firebaseAuth).createUser();
     }
-    return BlocProvider(
-      create: (context) => BlocIndex(0),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => BlocIndex(0),
+        ),
+        BlocProvider(
+          create: (context) => AddInCompilationBloc(),
+        ),
+      ],
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: Navigator(
