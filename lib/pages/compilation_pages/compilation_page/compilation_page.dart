@@ -99,7 +99,7 @@ class CompilationPage extends StatelessWidget {
           .collection('users')
           .doc(LocalDB.uid)
           .collection('compilations')
-          //.orderBy('date', descending: false)
+          .orderBy('date', descending: true)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         final double _width = MediaQuery.of(context).size.width;
@@ -139,52 +139,73 @@ class CompilationPage extends StatelessWidget {
               itemCount: length,
               itemBuilder: (context, index) {
                 return GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    // height: MediaQuery.of(context).size.height * 0.5,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      image: DecorationImage(
-                        image: Image.asset(
-                          AppIcons.headphones,
-                        ).image,
-                        fit: BoxFit.cover,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 5.0,
+                  onTap: () {
+                  },
+                  child: Stack(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
+                          image: DecorationImage(
+                            image: Image.network(
+                                    snapshot.data.docs[index]['image'])
+                                .image,
+                            fit: BoxFit.cover,
+                          ),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.grey,
+                              blurRadius: 5.0,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(9.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: const [
-                          Flexible(
-                            child: Text(
-                              'Title one Title two',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.0,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 3.0,
-                          ),
-                          Text(
-                            '5 audio'
-                            '\nn hours',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.0,
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.4,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                              begin: FractionalOffset.topCenter,
+                              end: FractionalOffset.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                Color(0xff454545),
+                              ],
+                              stops: [
+                                0.0,
+                                1.0
+                              ]),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(9.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  snapshot.data.docs[index]['title'],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 3.0,
+                              ),
+                              Text(
+                                '${snapshot.data.docs[index]['sounds'].length} аудио'
+                                '\n0 часов',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13.0,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
