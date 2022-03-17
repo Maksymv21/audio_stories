@@ -157,10 +157,10 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                 ),
               ),
               onPressed: () {
-                if (_image != null) {
-                  _createCompilation(listId, _image!);
-                  MainPage.globalKey.currentState!
-                      .pushReplacementNamed(CompilationPage.routName);
+                if (state is AddInCompilationInitial) {
+                  _showSnackBar(context: context, title: 'Добавтье аудиофайли');
+                } else {
+                  _ready();
                 }
               },
             ),
@@ -208,24 +208,39 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                   child: Container(
                     width: _width * 0.9,
                     height: _height * 0.3,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      image: DecorationImage(
-                        colorFilter: const ColorFilter.srgbToLinearGamma(),
-                        image: _image == null
-                            ? Image.asset(AppIcons.headphones).image
-                            : Image.file(_image!).image,
-                        fit: BoxFit.cover,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 5.0,
-                        ),
-                      ],
-                    ),
+                    decoration: _image == null
+                        ? BoxDecoration(
+                            color: const Color(0xffF6F6F6),
+                            borderRadius: BorderRadius.circular(15.0),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 5.0,
+                              ),
+                            ],
+                          )
+                        : BoxDecoration(
+                            borderRadius: BorderRadius.circular(15.0),
+                            image: DecorationImage(
+                              colorFilter:
+                                  const ColorFilter.srgbToLinearGamma(),
+                              image: _image == null
+                                  ? Image.asset(AppIcons.headphones).image
+                                  : Image.file(_image!).image,
+                              fit: BoxFit.cover,
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.grey,
+                                blurRadius: 5.0,
+                              ),
+                            ],
+                          ),
                     child: IconButton(
-                      icon: Image.asset(AppIcons.camera),
+                      icon: Image.asset(
+                        AppIcons.camera,
+                        color: Colors.black,
+                      ),
                       onPressed: () {
                         pickImage();
                         setState(() {});
@@ -273,10 +288,11 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        if (_image != null) {
-                          _createCompilation(listId, _image!);
-                          MainPage.globalKey.currentState!
-                              .pushReplacementNamed(CompilationPage.routName);
+                        if (state is AddInCompilationInitial) {
+                          _showSnackBar(
+                              context: context, title: 'Добавтье аудиофайли');
+                        } else {
+                          _ready();
                         }
                       },
                       child: const Text(
@@ -365,5 +381,35 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
       'sounds': listId,
       'date': Timestamp.now(),
     }, image);
+  }
+
+  void _ready() {
+    if (_image == null ||
+        _textController.text == '' ||
+        _titleController.text == '') {
+      _showSnackBar(
+          context: context,
+          title: 'Для создания подборки должно быть выбрано '
+              'название, изображение и описание');
+    }
+    if (_image != null) {
+      _createCompilation(listId, _image!);
+      MainPage.globalKey.currentState!
+          .pushReplacementNamed(CompilationPage.routName);
+    }
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String title,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }
