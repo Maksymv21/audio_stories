@@ -5,9 +5,12 @@ import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_c
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_page.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_search_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
+import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../resources/app_icons.dart';
 import '../../../utils/local_db.dart';
@@ -29,6 +32,14 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
   File? _image;
+  List<String> listId = [];
+
+  Future pickImage() async {
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+
+    setState(() => _image = File(image.path));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +48,6 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
 
     return BlocBuilder<AddInCompilationBloc, AddInCompilationState>(
         builder: (context, state) {
-      // _titleController.text = 'Название';
       Widget _list = Expanded(
         flex: 4,
         child: Container(),
@@ -102,12 +112,14 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
         _list = _soundList(state.id);
         _textController.text = state.text;
         _titleController.text = state.title;
+        listId = state.id;
       }
       if (state is WithImageList) {
         _list = _soundList(state.id);
         _textController.text = state.text;
         _titleController.text = state.title;
         _image = state.image;
+        listId = state.id;
       }
 
       return Stack(
@@ -144,7 +156,13 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                   fontSize: 16.0,
                 ),
               ),
-              onPressed: () {},
+              onPressed: () {
+                if (_image != null) {
+                  _createCompilation(listId, _image!);
+                  MainPage.globalKey.currentState!
+                      .pushReplacementNamed(CompilationPage.routName);
+                }
+              },
             ),
           ),
           Center(
@@ -194,7 +212,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                       borderRadius: BorderRadius.circular(15.0),
                       image: DecorationImage(
                         colorFilter: const ColorFilter.srgbToLinearGamma(),
-                        image: Image.asset(AppIcons.headphones).image,
+                        image: _image == null
+                            ? Image.asset(AppIcons.headphones).image
+                            : Image.file(_image!).image,
                         fit: BoxFit.cover,
                       ),
                       boxShadow: const [
@@ -206,7 +226,10 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     ),
                     child: IconButton(
                       icon: Image.asset(AppIcons.camera),
-                      onPressed: () {},
+                      onPressed: () {
+                        pickImage();
+                        setState(() {});
+                      },
                     ),
                   ),
                 ),
@@ -249,7 +272,13 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                       width: _width * 0.8,
                     ),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        if (_image != null) {
+                          _createCompilation(listId, _image!);
+                          MainPage.globalKey.currentState!
+                              .pushReplacementNamed(CompilationPage.routName);
+                        }
+                      },
                       child: const Text(
                         'Готово',
                         style: TextStyle(
@@ -322,5 +351,19 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
         },
       ),
     );
+  }
+
+  void _createCompilation(List<String> listId, File image) {
+    const Uuid uuid = Uuid();
+
+    final String id = uuid.v1();
+
+    Database.createOrUpdateCompilation({
+      'id': id,
+      'title': _titleController.text,
+      'text': _textController.text,
+      'sounds': listId,
+      'date': Timestamp.now(),
+    }, image);
   }
 }

@@ -43,6 +43,7 @@ dependencies:
   image_picker: ^0.8.4+4
   syncfusion_flutter_sliders: ^19.4.53
   syncfusion_flutter_core: ^19.4.53
+  uuid: ^3.0.6
 
   flutter_sound: ^8.5.0
 

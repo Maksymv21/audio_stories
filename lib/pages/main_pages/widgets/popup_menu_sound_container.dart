@@ -39,6 +39,9 @@ class PopupMenuSoundContainer extends StatelessWidget {
         0.2,
       ),
       onSelected: (value) async {
+        if (value == 1) {
+          _dialog(context, title, id);
+        }
         if (value == 4) {
           if (page != null) {
             MainPage.globalKey.currentState!.pushReplacementNamed(page!);
@@ -53,9 +56,6 @@ class PopupMenuSoundContainer extends StatelessWidget {
             },
             id: id,
           );
-        }
-        if (value == 1) {
-          _dialog(context, title, id);
         }
       },
       itemBuilder: (_) => [

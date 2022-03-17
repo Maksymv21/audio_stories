@@ -107,7 +107,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                   if (id.isEmpty) {
                                     _showSnackBar(
                                       context: context,
-                                      title: 'Не выбрано ни одной аудиозаписи',
+                                      title: 'Сделайте выбор',
                                     );
                                   } else {
                                     if (state is ImageState) {

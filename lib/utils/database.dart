@@ -1,8 +1,12 @@
+import 'dart:io';
+
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-final _user = FirebaseFirestore.instance.collection('users');
+final CollectionReference _user =
+    FirebaseFirestore.instance.collection('users');
+final FirebaseStorage _storage = FirebaseStorage.instance;
 
 class Database {
   static Future createOrUpdate(Map<String, dynamic> map) async {
@@ -25,8 +29,7 @@ class Database {
     int memory,
   ) async {
     _user.doc(LocalDB.uid).collection('sounds').doc(path).delete();
-    FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-    _firebaseStorage
+    _storage
         .ref()
         .child('Sounds')
         .child(LocalDB.uid.toString())
@@ -43,8 +46,31 @@ class Database {
 
   static Future createOrUpdateSound(Map<String, dynamic> map,
       {String? id}) async {
-    final _sounds = _user.doc(LocalDB.uid).collection('sounds');
+    final CollectionReference _sounds =
+        _user.doc(LocalDB.uid).collection('sounds');
     _sounds.doc(id).set(
+          map,
+          SetOptions(
+            merge: true,
+          ),
+        );
+  }
+
+  static Future createOrUpdateCompilation(
+    Map<String, dynamic> map,
+    File image,
+  ) async {
+    Reference reference = _storage
+        .ref()
+        .child('Compilations')
+        .child(LocalDB.uid.toString())
+        .child(map['title'] + '.' + map['date'].toString());
+
+    await reference.putFile(image);
+    String downloadUrl = await reference.getDownloadURL();
+
+    map.addAll({'image': downloadUrl});
+    _user.doc(LocalDB.uid).collection('compilations').doc(map['id']).set(
           map,
           SetOptions(
             merge: true,
