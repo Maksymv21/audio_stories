@@ -13,6 +13,7 @@ class CompilationCurrentBloc
           url: event.url,
           text: event.text,
           title: event.title,
+          date: event.date,
         ),
       );
     });

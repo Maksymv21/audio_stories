@@ -203,19 +203,29 @@ class _AudioPageState extends State<AudioPage> {
                             ),
                             Transform.scale(
                               scale: 1.3,
-                              child: IconButton(
-                                onPressed: () {
-                                  if (!current.contains(true)) {
-                                    setState(() {
-                                      _player = _next(
-                                        index: 0,
-                                        length: length,
-                                        snapshot: snapshot,
-                                      );
-                                    });
-                                  }
-                                },
-                                icon: Image.asset(AppIcons.play),
+                              child: ColorFiltered(
+                                child: IconButton(
+                                  onPressed: () {
+                                    if (!current.contains(true)) {
+                                      setState(() {
+                                        _player = _next(
+                                          index: 0,
+                                          length: length,
+                                          snapshot: snapshot,
+                                        );
+                                      });
+                                    }
+                                  },
+                                  icon: Image.asset(
+                                    current.contains(true)
+                                        ? AppIcons.pauseRecord
+                                        : AppIcons.play,
+                                  ),
+                                ),
+                                colorFilter: const ColorFilter.mode(
+                                  AppColor.active,
+                                  BlendMode.srcATop,
+                                ),
                               ),
                             ),
                           ],
@@ -284,6 +294,7 @@ class _AudioPageState extends State<AudioPage> {
                                       setState(() {
                                         _player = const Text('');
                                         _bottom = 10.0;
+                                        debugPrint(_bottom.toString());
                                         current[index] = false;
                                       });
                                     },

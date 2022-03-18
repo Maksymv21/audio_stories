@@ -148,16 +148,19 @@ class CompilationPage extends StatelessWidget {
                 final String text = snapshot.data.docs[index]['text'];
                 final String image = snapshot.data.docs[index]['image'];
                 final List listId = snapshot.data.docs[index]['sounds'];
+                final Timestamp date = snapshot.data.docs[index]['date'];
                 return GestureDetector(
                   onTap: () {
                     MainPage.globalKey.currentState!
                         .pushReplacementNamed(CurrentCompilationPage.routName);
                     context.read<CompilationCurrentBloc>().add(
                           ToCurrentCompilation(
-                              listId: listId,
-                              url: image,
-                              text: text,
-                              title: title),
+                            listId: listId,
+                            url: image,
+                            text: text,
+                            title: title,
+                            date: date,
+                          ),
                         );
                   },
                   child: Stack(
@@ -206,9 +209,6 @@ class CompilationPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // const SizedBox(
-                              //   width: 3.0,
-                              // ),
                               Text(
                                 '${listId.length} аудио'
                                 '\n0 часов',

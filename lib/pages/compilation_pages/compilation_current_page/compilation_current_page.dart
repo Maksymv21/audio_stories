@@ -28,9 +28,13 @@ class CurrentCompilationPage extends StatefulWidget {
 
 class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
   List<bool> current = [];
+  List<String> listTitle = [];
+  List<String> listUrl = [];
+  List<double> listTime = [];
   double _bottom = 0.0;
   Widget _player = const Text('');
   bool _readMore = false;
+  bool _playAll = false;
 
   @override
   Widget build(BuildContext context) {
@@ -104,28 +108,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  child: Container(
-                    width: _width * 0.9,
-                    height: _height * 0.3,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      image: DecorationImage(
-                        colorFilter: const ColorFilter.srgbToLinearGamma(),
-                        image: Image.network(state.url).image,
-                        fit: BoxFit.cover,
-                      ),
-                      boxShadow: const [
-                        BoxShadow(
-                          color: Colors.grey,
-                          blurRadius: 5.0,
-                        ),
-                      ],
-                    ),
-                    child: Stack(),
-                  ),
-                ),
+                _imageContainer(_width, _height, state),
                 Expanded(
                   flex: _readMore ? 3 : 1,
                   child: Padding(
@@ -193,6 +176,167 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
     });
   }
 
+  Widget _imageContainer(
+    double width,
+    double height,
+    OnCurrentCompilation state,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: Stack(
+        children: [
+          Container(
+            width: width * 0.9,
+            height: height * 0.3,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15.0),
+              image: DecorationImage(
+                image: Image.network(state.url).image,
+                fit: BoxFit.cover,
+              ),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.grey,
+                  blurRadius: 5.0,
+                ),
+              ],
+            ),
+          ),
+          Container(
+            width: width * 0.9,
+            height: height * 0.3,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                begin: FractionalOffset.topCenter,
+                end: FractionalOffset.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Color(0xff454545),
+                ],
+                stops: [0.6, 1.0],
+              ),
+              borderRadius: BorderRadius.circular(15.0),
+            ),
+            child: Stack(
+              children: [
+                Align(
+                  alignment: const AlignmentDirectional(-0.85, -0.9),
+                  child: Text(
+                    _convertDate(state.date),
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+                Align(
+                  alignment: const AlignmentDirectional(-0.85, 0.9),
+                  child: Text(
+                    '${state.listId.length} аудио'
+                    '\n0 часов',
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: const AlignmentDirectional(0.85, 0.85),
+                  child: Stack(
+                    children: [
+                      OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.grey.withOpacity(0.7),
+                          minimumSize: const Size(168.0, 46.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          if (!current.contains(true)) {
+                            setState(() {
+                              _playAll = !_playAll;
+                              _player = _next(
+                                index: 0,
+                                listUrl: listUrl,
+                                listTitle: listTitle,
+                                listId: state.listId,
+                              );
+                            });
+                          } else {
+                            setState(() {
+                              _playAll = !_playAll;
+                              _player = const Text('');
+                              _bottom = 10.0;
+                              for (int i = 0; i < current.length; i++) {
+                                current[i] = false;
+                              }
+                            });
+                          }
+                        },
+                        child: Align(
+                          widthFactor: 0.6,
+                          heightFactor: 0.0,
+                          alignment: AlignmentDirectional.centerStart,
+                          child: Text(
+                            _playAll ? 'Остановить' : 'Запустить все',
+                            textAlign: TextAlign.end,
+                            style: const TextStyle(
+                              fontFamily: 'TTNormsL',
+                              color: Colors.white,
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Transform.scale(
+                        scale: 1.3,
+                        child: ColorFiltered(
+                          child: IconButton(
+                            onPressed: () {
+                              if (!current.contains(true)) {
+                                setState(() {
+                                  _playAll = !_playAll;
+                                  _player = _next(
+                                    index: 0,
+                                    listUrl: listUrl,
+                                    listTitle: listTitle,
+                                    listId: state.listId,
+                                  );
+                                });
+                              } else {
+                                setState(() {
+                                  _playAll = !_playAll;
+                                  _player = const Text('');
+                                  _bottom = 10.0;
+                                  for (int i = 0; i < current.length; i++) {
+                                    current[i] = false;
+                                  }
+                                });
+                              }
+                            },
+                            icon: Image.asset(
+                              _playAll ? AppIcons.pauseRecord : AppIcons.play,
+                            ),
+                          ),
+                          colorFilter: const ColorFilter.mode(
+                            Colors.white,
+                            BlendMode.srcATop,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _soundList(List listId) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
@@ -209,28 +353,30 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         if (snapshot.hasData) {
           _createLists(snapshot, listId.length);
 
+          if (listTitle.isEmpty) {
+            for (int i = 0; i < snapshot.data.docs.length; i++) {
+              for (int j = 0; j < listId.length; j++) {
+                if (snapshot.data.docs[i].id == listId[j]) {
+                  listTitle.add(snapshot.data.docs[i]['title']);
+                  listUrl.add(snapshot.data.docs[i]['song']);
+                  listTime.add(snapshot.data.docs[i]['time']);
+                }
+              }
+            }
+          }
           return ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: listId.length,
             itemBuilder: (context, index) {
-              String? title;
-              String? url;
-              String? id;
-              double? time;
-              for (int i = 0; i < snapshot.data.docs.length; i++) {
-                if (snapshot.data.docs[i].id == listId[index]) {
-                  title = snapshot.data.docs[i]['title'];
-                  time = snapshot.data.docs[i]['time'];
-                  url = snapshot.data.docs[i]['song'];
-                  id = snapshot.data.docs[i].id;
-                }
-              }
+              Color color =
+                  current[index] ? const Color(0xffF1B488) : AppColor.active;
+
               return Column(
                 children: [
                   SoundContainer(
-                    color: AppColor.active,
-                    title: title!,
-                    time: (time! / 60).toStringAsFixed(1),
+                    color: color,
+                    title: listTitle[index],
+                    time: (listTime[index] / 60).toStringAsFixed(1),
                     onTap: () {
                       if (!current[index]) {
                         for (int i = 0; i < listId.length; i++) {
@@ -255,11 +401,15 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                                 });
                               },
                               child: PlayerContainer(
-                                title: title!,
-                                url: url!,
-                                id: id!,
+                                title: listTitle[index],
+                                url: listUrl[index],
+                                id: listId[index],
                                 onPressed: () {
-                                  _toPlayPage(url!, title!, id!);
+                                  _toPlayPage(
+                                    listUrl[index],
+                                    listTitle[index],
+                                    listId[index],
+                                  );
                                 },
                               ),
                             );
@@ -271,11 +421,10 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                       alignment: const AlignmentDirectional(0.9, -1.0),
                       child: PopupMenuSoundContainer(
                         size: 30.0,
-                        title: title,
-                        id: id!,
-                        url: url!,
+                        title: listTitle[index],
+                        id: listId[index],
+                        url: listUrl[index],
                         onDelete: () {
-
                           current.removeAt(index);
                         },
                       ),
@@ -294,6 +443,60 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
           );
         }
       },
+    );
+  }
+
+  Widget _next({
+    required int index,
+    required List<String> listTitle,
+    required List<String> listUrl,
+    required List listId,
+  }) {
+    final String title = listTitle[index];
+    final String url = listUrl[index];
+    final String id = listId[index];
+    setState(() {
+      current[index] = true;
+    });
+
+    return Dismissible(
+      key: const Key(''),
+      direction: DismissDirection.down,
+      onDismissed: (direction) {
+        setState(() {
+          _player = const Text('');
+          _bottom = 10.0;
+          current[index] = false;
+        });
+      },
+      child: PlayerContainer(
+        title: title,
+        url: url,
+        id: id,
+        onPressed: () => _toPlayPage(
+          url,
+          title,
+          id,
+        ),
+        whenComplete: () {
+          if (index + 1 < listId.length) {
+            setState(() {
+              _player = const Text('');
+              current[index] = false;
+            });
+            Future.delayed(const Duration(milliseconds: 50), () {
+              setState(() {
+                _player = _next(
+                  index: index + 1,
+                  listId: listId,
+                  listTitle: listTitle,
+                  listUrl: listUrl,
+                );
+              });
+            });
+          }
+        },
+      ),
     );
   }
 
@@ -331,5 +534,15 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
     context.read<BlocIndex>().add(
           NoColor(),
         );
+  }
+
+  String _convertDate(Timestamp date) {
+    final String dateTime = date.toDate().toString();
+    final String result = dateTime.substring(8, 10) +
+        '.' +
+        dateTime.substring(5, 7) +
+        '.' +
+        dateTime.substring(2, 4);
+    return result;
   }
 }
