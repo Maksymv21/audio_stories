@@ -159,7 +159,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
               ),
               onPressed: () {
                 if (state is AddInCompilationInitial) {
-                  _showSnackBar(context: context, title: 'Добавтье аудиофайли');
+                  _showSnackBar(context: context, title: 'Добавтье аудиофайлы');
                 } else {
                   _ready();
                 }

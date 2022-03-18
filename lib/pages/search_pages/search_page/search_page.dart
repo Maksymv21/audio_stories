@@ -197,6 +197,11 @@ class _SearchPageState extends State<SearchPage> {
                           id: id,
                           url: url,
                           onDelete: () {
+                            if (current[index]) {
+                              setState(() {
+                                _player = const Text('');
+                              });
+                            }
                             current.removeAt(index);
                           },
                         ),

@@ -60,7 +60,10 @@ class CompilationPage extends StatelessWidget {
             child: const Text(
               '...',
               style: TextStyle(
-                  color: Colors.white, fontSize: 48, letterSpacing: 3.0),
+                color: Colors.white,
+                fontSize: 48,
+                letterSpacing: 3.0,
+              ),
             ),
           ),
         ),
@@ -192,6 +195,7 @@ class CompilationPage extends StatelessWidget {
                           padding: const EdgeInsets.all(9.0),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Flexible(
                                 child: Text(
@@ -202,9 +206,9 @@ class CompilationPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 3.0,
-                              ),
+                              // const SizedBox(
+                              //   width: 3.0,
+                              // ),
                               Text(
                                 '${listId.length} аудио'
                                 '\n0 часов',

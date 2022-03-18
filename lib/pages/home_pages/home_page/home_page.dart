@@ -299,7 +299,7 @@ class _HomePageState extends State<HomePage> {
                       current.add(false);
                     }
                   }
-                  if(current.length < length) {
+                  if (current.length < length) {
                     current = List.from(current.reversed);
                     current.add(false);
                     current = List.from(current.reversed);
@@ -367,6 +367,11 @@ class _HomePageState extends State<HomePage> {
                                 id: id,
                                 url: url,
                                 onDelete: () {
+                                  if (current[index]) {
+                                    setState(() {
+                                      _player = const Text('');
+                                    });
+                                  }
                                   current.removeAt(index);
                                 },
                               ),

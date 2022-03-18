@@ -254,6 +254,11 @@ class _AudioPageState extends State<AudioPage> {
                               id: id,
                               url: url,
                               onDelete: () {
+                                if (current[index]) {
+                                  setState(() {
+                                    _player = const Text('');
+                                  });
+                                }
                                 current.removeAt(index);
                               },
                             ),

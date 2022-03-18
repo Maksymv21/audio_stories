@@ -30,6 +30,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
   List<bool> current = [];
   double _bottom = 0.0;
   Widget _player = const Text('');
+  bool _readMore = false;
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
               ],
             ),
             Align(
-              alignment: const AlignmentDirectional(0.95, -0.87),
+              alignment: const AlignmentDirectional(0.95, -0.95),
               child: TextButton(
                 style: const ButtonStyle(
                   splashFactory: NoSplash.splashFactory,
@@ -73,20 +74,26 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                 child: const Text(
                   '...',
                   style: TextStyle(
-                      color: Colors.white, fontSize: 48, letterSpacing: 3.0),
+                    color: Colors.white,
+                    fontSize: 48,
+                    letterSpacing: 3.0,
+                  ),
                 ),
               ),
             ),
-            Center(
-              child: Column(
-                children: [
-                  const Spacer(
-                    flex: 3,
+            Column(
+              children: [
+                const Spacer(
+                  flex: 2,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: _width * 0.05,
+                    bottom: _height * 0.01,
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(left: _width * 0.05),
-                      child: Text(
+                  child: Row(
+                    children: [
+                      Text(
                         state.title,
                         style: const TextStyle(
                           color: Colors.white,
@@ -94,62 +101,83 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                           letterSpacing: 1.0,
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
-                    child: Container(
-                      width: _width * 0.9,
-                      height: _height * 0.3,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        image: DecorationImage(
-                          colorFilter: const ColorFilter.srgbToLinearGamma(),
-                          image: Image.network(state.url).image,
-                          fit: BoxFit.cover,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  child: Container(
+                    width: _width * 0.9,
+                    height: _height * 0.3,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      image: DecorationImage(
+                        colorFilter: const ColorFilter.srgbToLinearGamma(),
+                        image: Image.network(state.url).image,
+                        fit: BoxFit.cover,
+                      ),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 5.0,
                         ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.grey,
-                            blurRadius: 5.0,
-                          ),
-                        ],
-                      ),
-                      child: Stack(),
+                      ],
+                    ),
+                    child: Stack(),
+                  ),
+                ),
+                Expanded(
+                  flex: _readMore ? 3 : 1,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: _width * 0.07,
+                      right: _width * 0.07,
+                    ),
+                    child: Column(
+                      children: [
+                        Flexible(
+                          child: _readMore
+                              ? ListView(
+                                  padding: const EdgeInsets.only(top: 0.0),
+                                  children: [
+                                    Text(
+                                      state.text,
+                                    ),
+                                  ],
+                                )
+                              : Text(
+                                  state.text,
+                                ),
+                        ),
+                      ],
                     ),
                   ),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: _width * 0.07,
-                        right: _width * 0.04,
-                      ),
-                      child: Column(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              state.text,
+                ),
+                _readMore
+                    ? const SizedBox()
+                    : Expanded(
+                        child: TextButton(
+                          child: const Text(
+                            'Подробнее',
+                            style: TextStyle(
+                              color: Colors.grey,
                             ),
                           ),
-                        ],
+                          onPressed: () {
+                            setState(() {
+                              _readMore = true;
+                            });
+                          },
+                        ),
                       ),
-                    ),
+                Expanded(
+                  flex: _readMore ? 3 : 4,
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: _bottom),
+                    child: _soundList(state.listId),
                   ),
-                  Expanded(
-                    child: TextButton(
-                      child: Text('Podrobnee'),
-                      onPressed: () {},
-                    ),
-                  ),
-                  Expanded(
-                    flex: 4,
-                    child: Padding(
-                      padding: EdgeInsets.only(bottom: _bottom),
-                      child: _soundList(state.listId),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
             Align(
               alignment: AlignmentDirectional.bottomCenter,
@@ -247,6 +275,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                         id: id!,
                         url: url!,
                         onDelete: () {
+
                           current.removeAt(index);
                         },
                       ),
