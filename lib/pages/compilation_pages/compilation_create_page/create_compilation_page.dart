@@ -1,9 +1,7 @@
 import 'dart:io';
 
-import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_bloc.dart';
-import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_state.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_page.dart';
-import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_search_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_create_page/compilation_search_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,7 +15,10 @@ import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
 import '../../main_pages/main_page/main_page.dart';
 import '../../main_pages/widgets/sound_container.dart';
-import '../compilation_blocs/add_in_compilation_event.dart';
+
+import 'compilation_blocs/add_in_compilation_bloc.dart';
+import 'compilation_blocs/add_in_compilation_event.dart';
+import 'compilation_blocs/add_in_compilation_state.dart';
 
 class CreateCompilationPage extends StatefulWidget {
   static const routName = '/addCompilation';
@@ -224,9 +225,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                             image: DecorationImage(
                               colorFilter:
                                   const ColorFilter.srgbToLinearGamma(),
-                              image: _image == null
-                                  ? Image.asset(AppIcons.headphones).image
-                                  : Image.file(_image!).image,
+                              image: Image.file(_image!).image,
                               fit: BoxFit.cover,
                             ),
                             boxShadow: const [

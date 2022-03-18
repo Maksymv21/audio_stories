@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_search_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_create_page/compilation_search_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -366,6 +367,7 @@ class _PlayPageState extends State<PlayPage> {
             id: widget.id!,
             title: widget.title!,
             page: widget.page!,
+            onDelete: () {},
           ),
         ),
       ],
@@ -407,7 +409,8 @@ class _PlayPageState extends State<PlayPage> {
     if (page == HomePage.routName) {
       event = ColorHome();
     } else if (page == CompilationPage.routName ||
-        page == CompilationSearchPage.routName) {
+        page == CompilationSearchPage.routName ||
+        page == CurrentCompilationPage.routName) {
       event = ColorCategory();
     } else if (page == AudioPage.routName) {
       event = ColorAudio();

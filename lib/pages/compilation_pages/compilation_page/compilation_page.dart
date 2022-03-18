@@ -1,5 +1,7 @@
-import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_event.dart';
-import 'package:audio_stories/pages/compilation_pages/compilation_page/create_compilation_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_create_page/create_compilation_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_event.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -8,7 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../utils/local_db.dart';
-import '../compilation_blocs/add_in_compilation_bloc.dart';
+import '../compilation_create_page/compilation_blocs/add_in_compilation_bloc.dart';
+import '../compilation_create_page/compilation_blocs/add_in_compilation_event.dart';
 
 class CompilationPage extends StatelessWidget {
   static const routName = '/compilation';
@@ -138,8 +141,21 @@ class CompilationPage extends StatelessWidget {
               ),
               itemCount: length,
               itemBuilder: (context, index) {
+                final String title = snapshot.data.docs[index]['title'];
+                final String text = snapshot.data.docs[index]['text'];
+                final String image = snapshot.data.docs[index]['image'];
+                final List listId = snapshot.data.docs[index]['sounds'];
                 return GestureDetector(
                   onTap: () {
+                    MainPage.globalKey.currentState!
+                        .pushReplacementNamed(CurrentCompilationPage.routName);
+                    context.read<CompilationCurrentBloc>().add(
+                          ToCurrentCompilation(
+                              listId: listId,
+                              url: image,
+                              text: text,
+                              title: title),
+                        );
                   },
                   child: Stack(
                     children: [
@@ -147,9 +163,7 @@ class CompilationPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(15.0),
                           image: DecorationImage(
-                            image: Image.network(
-                                    snapshot.data.docs[index]['image'])
-                                .image,
+                            image: Image.network(image).image,
                             fit: BoxFit.cover,
                           ),
                           boxShadow: const [
@@ -164,16 +178,14 @@ class CompilationPage extends StatelessWidget {
                         height: MediaQuery.of(context).size.height * 0.4,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                              begin: FractionalOffset.topCenter,
-                              end: FractionalOffset.bottomCenter,
-                              colors: [
-                                Colors.transparent,
-                                Color(0xff454545),
-                              ],
-                              stops: [
-                                0.0,
-                                1.0
-                              ]),
+                            begin: FractionalOffset.topCenter,
+                            end: FractionalOffset.bottomCenter,
+                            colors: [
+                              Colors.transparent,
+                              Color(0xff454545),
+                            ],
+                            stops: [0.5, 1.0],
+                          ),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                         child: Padding(
@@ -183,7 +195,7 @@ class CompilationPage extends StatelessWidget {
                             children: [
                               Flexible(
                                 child: Text(
-                                  snapshot.data.docs[index]['title'],
+                                  title,
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.0,
@@ -194,7 +206,7 @@ class CompilationPage extends StatelessWidget {
                                 width: 3.0,
                               ),
                               Text(
-                                '${snapshot.data.docs[index]['sounds'].length} аудио'
+                                '${listId.length} аудио'
                                 '\n0 часов',
                                 style: const TextStyle(
                                   color: Colors.white,

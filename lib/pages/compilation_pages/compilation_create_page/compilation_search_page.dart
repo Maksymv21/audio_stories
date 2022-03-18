@@ -1,4 +1,3 @@
-import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_bloc.dart';
 import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +11,9 @@ import '../../main_pages/main_page/main_page.dart';
 import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
 import '../../play_page/play_page.dart';
-import '../compilation_blocs/add_in_compilation_event.dart';
-import '../compilation_blocs/add_in_compilation_state.dart';
+import 'compilation_blocs/add_in_compilation_bloc.dart';
+import 'compilation_blocs/add_in_compilation_event.dart';
+import 'compilation_blocs/add_in_compilation_state.dart';
 import 'create_compilation_page.dart';
 
 class CompilationSearchPage extends StatefulWidget {

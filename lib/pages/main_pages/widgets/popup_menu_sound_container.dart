@@ -20,6 +20,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
   String title;
   double size;
   String? page;
+  void Function() onDelete;
 
   PopupMenuSoundContainer({
     Key? key,
@@ -27,6 +28,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
     required this.id,
     required this.title,
     required this.size,
+    required this.onDelete,
     this.page,
   }) : super(key: key);
 
@@ -56,6 +58,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
             },
             id: id,
           );
+          onDelete();
         }
       },
       itemBuilder: (_) => [

@@ -294,11 +294,17 @@ class _HomePageState extends State<HomePage> {
                 }
                 if (snapshot.hasData) {
                   final int length = snapshot.data.docs.length;
-                  if (current.isEmpty || current.length < length) {
+                  if (current.isEmpty) {
                     for (int i = 0; i < length; i++) {
                       current.add(false);
                     }
                   }
+                  if(current.length < length) {
+                    current = List.from(current.reversed);
+                    current.add(false);
+                    current = List.from(current.reversed);
+                  }
+
                   return ListView.builder(
                     itemCount: length,
                     itemBuilder: (context, index) {
@@ -360,6 +366,9 @@ class _HomePageState extends State<HomePage> {
                                 title: title,
                                 id: id,
                                 url: url,
+                                onDelete: () {
+                                  current.removeAt(index);
+                                },
                               ),
                             ),
                           ),

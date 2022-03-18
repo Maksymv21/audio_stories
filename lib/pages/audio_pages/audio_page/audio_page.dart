@@ -253,6 +253,9 @@ class _AudioPageState extends State<AudioPage> {
                               title: title,
                               id: id,
                               url: url,
+                              onDelete: () {
+                                current.removeAt(index);
+                              },
                             ),
                           ),
                           onTap: () {

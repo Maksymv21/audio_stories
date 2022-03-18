@@ -1,6 +1,7 @@
-import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_event.dart';
-import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'add_in_compilation_event.dart';
+import 'add_in_compilation_state.dart';
 
 class AddInCompilationBloc
     extends Bloc<AddInCompilationEvent, AddInCompilationState> {

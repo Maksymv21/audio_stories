@@ -1,6 +1,5 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/test_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
-import 'package:audio_stories/pages/compilation_pages/compilation_blocs/add_in_compilation_bloc.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
@@ -18,10 +17,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../compilation_pages/compilation_page/create_compilation_page.dart';
+import '../../compilation_pages/compilation_create_page/compilation_blocs/add_in_compilation_bloc.dart';
+import '../../compilation_pages/compilation_create_page/create_compilation_page.dart';
+import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
+import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';
 import '../../compilation_pages/compilation_page/compilation_page.dart';
-import '../../compilation_pages/compilation_page/compilation_search_page.dart';
-
+import '../../compilation_pages/compilation_create_page/compilation_search_page.dart';
 
 class MainPage extends StatelessWidget {
   static GlobalKey<NavigatorState> globalKey = GlobalKey();
@@ -30,7 +31,6 @@ class MainPage extends StatelessWidget {
   const MainPage({
     Key? key,
   }) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +50,9 @@ class MainPage extends StatelessWidget {
         BlocProvider(
           create: (context) => AddInCompilationBloc(),
         ),
+        BlocProvider(
+          create: (context) => CompilationCurrentBloc(),
+        ),
       ],
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -68,6 +71,9 @@ class MainPage extends StatelessWidget {
                 break;
               case CompilationPage.routName:
                 page = const CompilationPage();
+                break;
+              case CurrentCompilationPage.routName:
+                page = const CurrentCompilationPage();
                 break;
               case CreateCompilationPage.routName:
                 page = const CreateCompilationPage();
@@ -123,7 +129,7 @@ class MainPage extends StatelessWidget {
       el.markNeedsBuild();
       el.visitChildren(rebuild);
     }
+
     (context as Element).visitChildren(rebuild);
   }
 }
-

@@ -159,10 +159,16 @@ class _SearchPageState extends State<SearchPage> {
         }
         if (snapshot.hasData) {
           final int length = snapshot.data.docs.length;
-          if (current.isEmpty || current.length < length) {
+
+          if (current.isEmpty) {
             for (int i = 0; i < length; i++) {
               current.add(false);
             }
+          }
+          if (current.length < length) {
+            current = List.from(current.reversed);
+            current.add(false);
+            current = List.from(current.reversed);
           }
 
           return Padding(
@@ -190,6 +196,9 @@ class _SearchPageState extends State<SearchPage> {
                           title: title,
                           id: id,
                           url: url,
+                          onDelete: () {
+                            current.removeAt(index);
+                          },
                         ),
                       ),
                       onTap: () {
