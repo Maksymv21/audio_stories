@@ -149,6 +149,8 @@ class CompilationPage extends StatelessWidget {
                 final String image = snapshot.data.docs[index]['image'];
                 final List listId = snapshot.data.docs[index]['sounds'];
                 final Timestamp date = snapshot.data.docs[index]['date'];
+                final String id = snapshot.data.docs[index]['id'];
+
                 return GestureDetector(
                   onTap: () {
                     MainPage.globalKey.currentState!
@@ -160,6 +162,7 @@ class CompilationPage extends StatelessWidget {
                             text: text,
                             title: title,
                             date: date,
+                            id: id,
                           ),
                         );
                   },

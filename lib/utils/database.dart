@@ -9,7 +9,9 @@ final CollectionReference _user =
 final FirebaseStorage _storage = FirebaseStorage.instance;
 
 class Database {
-  static Future createOrUpdate(Map<String, dynamic> map) async {
+  static Future createOrUpdate(
+    Map<String, dynamic> map,
+  ) async {
     _user.doc(map['uid']).set(
           map,
           SetOptions(
@@ -71,6 +73,18 @@ class Database {
 
     map.addAll({'image': downloadUrl});
     _user.doc(LocalDB.uid).collection('compilations').doc(map['id']).set(
+          map,
+          SetOptions(
+            merge: true,
+          ),
+        );
+  }
+
+  static Future deleteSoundInCompilation(
+    Map<String, dynamic> map,
+    String id,
+  ) async {
+    _user.doc(LocalDB.uid).collection('compilations').doc(id).set(
           map,
           SetOptions(
             merge: true,

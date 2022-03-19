@@ -14,6 +14,7 @@ class ToCurrentCompilation extends CompilationCurrentEvent{
   final String title;
   final String url;
   final Timestamp date;
+  final String id;
 
   const ToCurrentCompilation({
     required this.listId,
@@ -21,6 +22,7 @@ class ToCurrentCompilation extends CompilationCurrentEvent{
     required this.text,
     required this.title,
     required this.date,
+    required this.id,
   });
 
   @override

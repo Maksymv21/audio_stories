@@ -14,6 +14,7 @@ class CompilationCurrentBloc
           text: event.text,
           title: event.title,
           date: event.date,
+          id: event.id,
         ),
       );
     });

@@ -1,5 +1,6 @@
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_state.dart';
+import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -157,7 +158,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                   flex: _readMore ? 3 : 4,
                   child: Padding(
                     padding: EdgeInsets.only(bottom: _bottom),
-                    child: _soundList(state.listId),
+                    child: _soundList(state.listId, state.id),
                   ),
                 ),
               ],
@@ -337,7 +338,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
     );
   }
 
-  Widget _soundList(List listId) {
+  Widget _soundList(List listId, String id) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -425,6 +426,14 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                         id: listId[index],
                         url: listUrl[index],
                         onDelete: () {
+                          listTitle.removeAt(index);
+                          listUrl.removeAt(index);
+                          listTime.removeAt(index);
+                          listId.removeAt(index);
+                          Database.deleteSoundInCompilation(
+                            {'sounds': listId},
+                            id,
+                          );
                           current.removeAt(index);
                         },
                       ),

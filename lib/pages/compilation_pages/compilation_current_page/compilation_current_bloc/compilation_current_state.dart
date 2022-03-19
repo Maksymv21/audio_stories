@@ -16,6 +16,7 @@ class OnCurrentCompilation extends CompilationCurrentState {
   final String title;
   final String url;
   final Timestamp date;
+  final String id;
 
   const OnCurrentCompilation({
     required this.listId,
@@ -23,6 +24,7 @@ class OnCurrentCompilation extends CompilationCurrentState {
     required this.text,
     required this.title,
     required this.date,
+    required this.id,
   });
 
   @override
