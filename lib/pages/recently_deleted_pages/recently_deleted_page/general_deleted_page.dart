@@ -113,7 +113,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                                   Database.createOrUpdateSound(
                                     {
                                       'deleted': false,
-                                      'id' : id,
+                                      'id': id,
                                     },
                                   );
                                   chek[i] = false;
@@ -236,6 +236,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                       .toStringAsFixed(1),
                   buttonRight: widget.edit
                       ? CustomCheckBox(
+                          color: Colors.black87,
                           value: chek[index],
                           onTap: () {
                             setState(() {
@@ -367,7 +368,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
               Database.createOrUpdateSound(
                 {
                   'deleted': false,
-                  'id' : id,
+                  'id': id,
                 },
               );
             }

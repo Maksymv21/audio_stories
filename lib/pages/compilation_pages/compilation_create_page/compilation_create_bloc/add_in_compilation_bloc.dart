@@ -6,7 +6,7 @@ import 'add_in_compilation_state.dart';
 class AddInCompilationBloc
     extends Bloc<AddInCompilationEvent, AddInCompilationState> {
   AddInCompilationBloc() : super(AddInCompilationInitial()) {
-    on<InitialCompilation>((event, emit) async {
+    on<ToCreateCompilation>((event, emit) async {
       emit(
         AddInCompilationInitial(),
       );

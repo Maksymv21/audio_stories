@@ -14,6 +14,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 class BurgerMenu extends StatelessWidget {
@@ -100,6 +102,9 @@ class BurgerMenu extends StatelessWidget {
                     context.read<BlocIndex>().add(
                           ColorCategory(),
                         );
+                    context.read<CompilationBloc>().add(
+                      ToInitialCompilation(),
+                    );
                   },
                 ),
                 BurgerButton(

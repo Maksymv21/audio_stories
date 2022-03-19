@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 //ignore: must_be_immutable
 class CustomCheckBox extends StatefulWidget {
   bool value;
+  Color color;
   void Function()? onTap;
 
   CustomCheckBox({
     Key? key,
     required this.value,
     required this.onTap,
+    required this.color,
   }) : super(key: key);
 
   @override
@@ -34,7 +36,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   width: 1.5,
-                  color: Colors.black87,
+                  color: widget.color,
                 ),
               ),
               child: Transform.scale(
@@ -42,7 +44,7 @@ class _CustomCheckBoxState extends State<CustomCheckBox> {
                 child: Icon(
                   Icons.check,
                   size: 30.0,
-                  color: widget.value ? Colors.black87 : Colors.white,
+                  color: widget.value ? widget.color : Colors.transparent,
                 ),
               ),
             ),

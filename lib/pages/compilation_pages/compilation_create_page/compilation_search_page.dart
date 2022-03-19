@@ -11,9 +11,9 @@ import '../../main_pages/main_page/main_page.dart';
 import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
 import '../../play_page/play_page.dart';
-import 'compilation_create_blocs/add_in_compilation_bloc.dart';
-import 'compilation_create_blocs/add_in_compilation_event.dart';
-import 'compilation_create_blocs/add_in_compilation_state.dart';
+import 'compilation_create_bloc/add_in_compilation_bloc.dart';
+import 'compilation_create_bloc/add_in_compilation_event.dart';
+import 'compilation_create_bloc/add_in_compilation_state.dart';
 import 'create_compilation_page.dart';
 
 class CompilationSearchPage extends StatefulWidget {
@@ -84,7 +84,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                       .pushReplacementNamed(
                                           CreateCompilationPage.routName);
                                   context.read<AddInCompilationBloc>().add(
-                                        InitialCompilation(),
+                                        ToCreateCompilation(),
                                       );
                                 },
                                 icon: Image.asset(AppIcons.back),
@@ -227,6 +227,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                       buttonRight: Align(
                         alignment: const AlignmentDirectional(0.9, -1.0),
                         child: CustomCheckBox(
+                          color: Colors.black87,
                           value: chek[i],
                           onTap: () {
                             setState(() {

@@ -57,10 +57,8 @@ class Database {
         );
   }
 
-  static Future createOrUpdateCompilation(
-    Map<String, dynamic> map,
-    File? image,
-  ) async {
+  static Future createOrUpdateCompilation(Map<String, dynamic> map,
+      {File? image}) async {
     if (image != null) {
       Reference reference = _storage
           .ref()

@@ -2,56 +2,46 @@ import 'package:audio_stories/pages/compilation_pages/compilation_create_page/cr
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_event.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_state.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../utils/local_db.dart';
-import '../compilation_create_page/compilation_create_blocs/add_in_compilation_bloc.dart';
-import '../compilation_create_page/compilation_create_blocs/add_in_compilation_event.dart';
+import '../compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
+import '../compilation_create_page/compilation_create_bloc/add_in_compilation_event.dart';
+import 'compilation_bloc/compilation_event.dart';
 
-
-class CompilationPage extends StatelessWidget {
+class CompilationPage extends StatefulWidget {
   static const routName = '/compilation';
 
   const CompilationPage({Key? key}) : super(key: key);
 
   @override
+  State<CompilationPage> createState() => _CompilationPageState();
+}
+
+class _CompilationPageState extends State<CompilationPage> {
+  List<bool> chek = [];
+  bool ready = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Column(
-          children: [
-            Expanded(
-              child: Background(
-                image: AppIcons.upGreen,
-                height: 325.0,
-                child: Align(
-                  alignment: const AlignmentDirectional(-1.1, -0.9),
-                  child: IconButton(
-                    color: Colors.white,
-                    iconSize: 40.0,
-                    icon: const Icon(
-                      Icons.add,
-                    ),
-                    onPressed: () {
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(CreateCompilationPage.routName);
-                      context.read<AddInCompilationBloc>().add(
-                            InitialCompilation(),
-                          );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            const Spacer(),
-          ],
-        ),
-        Align(
+    return BlocBuilder<CompilationBloc, CompilationState>(
+        builder: (context, state) {
+      String subTitle;
+      Widget topRightButton;
+      bool visible;
+
+      if (state is InitialCompilation) {
+        subTitle = 'Все в одном месте';
+        topRightButton = Align(
           alignment: const AlignmentDirectional(1.0, -0.975),
           child: TextButton(
             style: const ButtonStyle(
@@ -67,40 +57,108 @@ class CompilationPage extends StatelessWidget {
               ),
             ),
           ),
-        ),
-        Center(
-          child: Padding(
-            padding: const EdgeInsets.only(top: 35.0),
-            child: Column(
-              children: const [
-                Text(
-                  'Подборки',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 36.0,
-                    letterSpacing: 3.0,
-                  ),
-                ),
-                Text(
-                  'Все в одном месте',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16.0,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ],
+        );
+        visible = false;
+      } else {
+        subTitle = '';
+        topRightButton = Align(
+          alignment: const AlignmentDirectional(1.0, -0.89),
+          child: TextButton(
+            style: const ButtonStyle(
+              splashFactory: NoSplash.splashFactory,
+            ),
+            onPressed: () {
+              if (chek.contains(true)) {
+                setState(() {
+                  ready = !ready;
+                });
+              } else {
+                _showSnackBar(
+                  context: context,
+                  title: 'Выберите подборку',
+                );
+              }
+            },
+            child: const Text(
+              'Добавить',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 15.0,
+              ),
             ),
           ),
-        ),
-        _listCompilation(),
-      ],
-    );
+        );
+        visible = true;
+      }
+      return Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: Background(
+                  image: AppIcons.upGreen,
+                  height: 325.0,
+                  child: Align(
+                    alignment: const AlignmentDirectional(-1.1, -0.9),
+                    child: IconButton(
+                      color: Colors.white,
+                      iconSize: 40.0,
+                      icon: const Icon(
+                        Icons.add,
+                      ),
+                      onPressed: () {
+                        MainPage.globalKey.currentState!.pushReplacementNamed(
+                            CreateCompilationPage.routName);
+                        context.read<AddInCompilationBloc>().add(
+                              ToCreateCompilation(),
+                            );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              const Spacer(),
+            ],
+          ),
+          topRightButton,
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 35.0),
+              child: Column(
+                children: [
+                  const Text(
+                    'Подборки',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 36.0,
+                      letterSpacing: 3.0,
+                    ),
+                  ),
+                  Text(
+                    subTitle,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16.0,
+                      letterSpacing: 1.0,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          _listCompilation(visible, state, ready),
+        ],
+      );
+    });
   }
 
-  Widget _listCompilation() {
+  Widget _listCompilation(
+    bool visible,
+    CompilationState state,
+    bool ready,
+  ) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -130,6 +188,13 @@ class CompilationPage extends StatelessWidget {
         }
         if (snapshot.hasData) {
           final int length = snapshot.data.docs.length;
+
+          if (chek.isEmpty) {
+            for (int i = 0; i < length; i++) {
+              chek.add(false);
+            }
+          }
+
           return Padding(
             padding: EdgeInsets.only(
               top: _height * 0.15,
@@ -152,20 +217,34 @@ class CompilationPage extends StatelessWidget {
                 final Timestamp date = snapshot.data.docs[index]['date'];
                 final String id = snapshot.data.docs[index]['id'];
 
+                if (ready && state is AddInCompilation && chek[index]) {
+                  if (!listId.contains(state.id)) listId.add(state.id);
+
+                  Database.createOrUpdateCompilation({
+                    'id': id,
+                    'sounds': listId,
+                  });
+                  context.read<CompilationBloc>().add(
+                        ToInitialCompilation(),
+                      );
+                }
+
                 return GestureDetector(
                   onTap: () {
-                    MainPage.globalKey.currentState!
-                        .pushReplacementNamed(CurrentCompilationPage.routName);
-                    context.read<CompilationCurrentBloc>().add(
-                          ToCurrentCompilation(
-                            listId: listId,
-                            url: image,
-                            text: text,
-                            title: title,
-                            date: date,
-                            id: id,
-                          ),
-                        );
+                    if (state is InitialCompilation) {
+                      MainPage.globalKey.currentState!.pushReplacementNamed(
+                          CurrentCompilationPage.routName);
+                      context.read<CompilationCurrentBloc>().add(
+                            ToCurrentCompilation(
+                              listId: listId,
+                              url: image,
+                              text: text,
+                              title: title,
+                              date: date,
+                              id: id,
+                            ),
+                          );
+                    }
                   },
                   child: Stack(
                     children: [
@@ -185,7 +264,7 @@ class CompilationPage extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        height: MediaQuery.of(context).size.height * 0.4,
+                        height: _height * 0.4,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
                             begin: FractionalOffset.topCenter,
@@ -225,6 +304,34 @@ class CompilationPage extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Visibility(
+                        visible: visible,
+                        child: Stack(
+                          children: [
+                            Container(
+                              height: _height * 0.4,
+                              decoration: BoxDecoration(
+                                color: chek[index]
+                                    ? Colors.transparent
+                                    : const Color(0xff454545).withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(15.0),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(right: _width * 0.175),
+                              child: CustomCheckBox(
+                                color: Colors.white,
+                                value: chek[index],
+                                onTap: () {
+                                  setState(() {
+                                    chek[index] = !chek[index];
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -239,6 +346,20 @@ class CompilationPage extends StatelessWidget {
           );
         }
       },
+    );
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String title,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }

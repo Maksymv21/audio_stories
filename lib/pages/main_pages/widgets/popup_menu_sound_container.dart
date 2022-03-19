@@ -1,4 +1,6 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,8 +43,27 @@ class PopupMenuSoundContainer extends StatelessWidget {
         0.2,
       ),
       onSelected: (value) {
+        if (value == 0) {
+          MainPage.globalKey.currentState!
+              .pushReplacementNamed(CompilationPage.routName);
+          context.read<CompilationBloc>().add(
+                ToAddInCompilation(
+                  id: id,
+                ),
+              );
+          context.read<BlocIndex>().add(ColorCategory());
+        }
         if (value == 1) {
           _dialog(context, title, id);
+        }
+        if (value == 3) {
+          download2(url, title).then(
+            (value) => _showSnackBar(
+              context: context,
+              title: 'Файл сохранен.'
+                  '\nDownload/$title.aac',
+            ),
+          );
         }
         if (value == 4) {
           if (page != null) {
@@ -61,17 +82,17 @@ class PopupMenuSoundContainer extends StatelessWidget {
           if (onDelete != null) onDelete!();
         }
       },
-      itemBuilder: (_) => [
+      itemBuilder: (_) => const [
         PopupMenuItem(
-          child: const Text(
+          value: 0,
+          child: Text(
             'Добавить в подборку',
             style: TextStyle(
               fontSize: 14.0,
             ),
           ),
-          onTap: () {},
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 1,
           child: Text(
             'Редактировать название',
@@ -81,32 +102,24 @@ class PopupMenuSoundContainer extends StatelessWidget {
           ),
         ),
         PopupMenuItem(
-          child: const Text(
+          value: 2,
+          child: Text(
             'Поделиться',
             style: TextStyle(
               fontSize: 14.0,
             ),
           ),
-          onTap: () {},
         ),
         PopupMenuItem(
-          child: const Text(
+          value: 3,
+          child: Text(
             'Скачать',
             style: TextStyle(
               fontSize: 14.0,
             ),
           ),
-          onTap: () {
-            download2(url, title).then(
-              (value) => _showSnackBar(
-                context: context,
-                title: 'Файл сохранен.'
-                    '\nDownload/$title.aac',
-              ),
-            );
-          },
         ),
-        const PopupMenuItem(
+        PopupMenuItem(
           value: 4,
           child: Text(
             'Удалить',

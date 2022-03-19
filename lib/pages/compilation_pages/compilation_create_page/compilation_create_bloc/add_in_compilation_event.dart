@@ -41,4 +41,4 @@ class ToCreate extends AddInCompilationEvent {
   List<Object?> get props => [id];
 }
 
-class InitialCompilation extends AddInCompilationEvent {}
+class ToCreateCompilation extends AddInCompilationEvent {}

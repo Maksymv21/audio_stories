@@ -1,4 +1,6 @@
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
@@ -81,6 +83,9 @@ class MyNavigationBar extends StatelessWidget {
                           .pushReplacementNamed(CompilationPage.routName);
                       context.read<BlocIndex>().add(
                             ColorCategory(),
+                          );
+                      context.read<CompilationBloc>().add(
+                            ToInitialCompilation(),
                           );
                     }
                   },

@@ -1,5 +1,6 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/test_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
@@ -17,7 +18,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../compilation_pages/compilation_create_page/compilation_create_blocs/add_in_compilation_bloc.dart';
+import '../../compilation_pages/compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
 import '../../compilation_pages/compilation_create_page/create_compilation_page.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';
@@ -52,6 +53,9 @@ class MainPage extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => CompilationCurrentBloc(),
+        ),
+        BlocProvider(
+          create: (context) => CompilationBloc(),
         ),
       ],
       child: Scaffold(

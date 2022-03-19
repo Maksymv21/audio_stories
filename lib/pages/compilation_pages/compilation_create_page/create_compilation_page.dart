@@ -15,9 +15,9 @@ import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
 import '../../main_pages/main_page/main_page.dart';
 import '../../main_pages/widgets/sound_container.dart';
-import 'compilation_create_blocs/add_in_compilation_bloc.dart';
-import 'compilation_create_blocs/add_in_compilation_event.dart';
-import 'compilation_create_blocs/add_in_compilation_state.dart';
+import 'compilation_create_bloc/add_in_compilation_bloc.dart';
+import 'compilation_create_bloc/add_in_compilation_event.dart';
+import 'compilation_create_bloc/add_in_compilation_state.dart';
 
 class CreateCompilationPage extends StatefulWidget {
   static const routName = '/addCompilation';
@@ -70,20 +70,6 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                                 title: _titleController.text,
                                 image: _image),
                           );
-                      // _image == null
-                      //     ? context.read<AddInCompilationBloc>().add(
-                      //           AddWithoutImage(
-                      //             text: _textController.text,
-                      //             title: _titleController.text,
-                      //           ),
-                      //         )
-                      //     : context.read<AddInCompilationBloc>().add(
-                      //           AddWithImage(
-                      //             image: _image!,
-                      //             text: _textController.text,
-                      //             title: _titleController.text,
-                      //           ),
-                      //         );
 
                       MainPage.globalKey.currentState!
                           .pushReplacementNamed(CompilationSearchPage.routName);
@@ -378,7 +364,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
       'text': _textController.text,
       'sounds': listId,
       'date': Timestamp.now(),
-    }, image);
+    }, image: image);
   }
 
   void _ready() {
