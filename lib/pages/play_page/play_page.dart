@@ -367,7 +367,6 @@ class _PlayPageState extends State<PlayPage> {
             id: widget.id!,
             title: widget.title!,
             page: widget.page!,
-            onDelete: () {},
           ),
         ),
       ],

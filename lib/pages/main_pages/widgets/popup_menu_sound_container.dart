@@ -20,7 +20,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
   String title;
   double size;
   String? page;
-  void Function() onDelete;
+  void Function()? onDelete;
 
   PopupMenuSoundContainer({
     Key? key,
@@ -28,7 +28,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
     required this.id,
     required this.title,
     required this.size,
-    required this.onDelete,
+    this.onDelete,
     this.page,
   }) : super(key: key);
 
@@ -40,7 +40,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
         const CircleBorder(),
         0.2,
       ),
-      onSelected: (value) async {
+      onSelected: (value) {
         if (value == 1) {
           _dialog(context, title, id);
         }
@@ -58,7 +58,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
             },
             id: id,
           );
-          onDelete();
+          if (onDelete != null) onDelete!();
         }
       },
       itemBuilder: (_) => [

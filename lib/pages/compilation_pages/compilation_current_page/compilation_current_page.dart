@@ -369,6 +369,11 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
             padding: EdgeInsets.zero,
             itemCount: listId.length,
             itemBuilder: (context, index) {
+              for (int i = 0; i < snapshot.data.docs.length; i++) {
+                if (snapshot.data.docs[i].id == listId[index]) {
+                  listTitle[index] = snapshot.data.docs[i]['title'];
+                }
+              }
               Color color =
                   current[index] ? const Color(0xffF1B488) : AppColor.active;
 
@@ -436,6 +441,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                           );
                           current.removeAt(index);
                         },
+
                       ),
                     ),
                   ),
