@@ -11,37 +11,20 @@ class AddInCompilationBloc
         AddInCompilationInitial(),
       );
     });
-    on<AddWithImage>((event, emit) async {
+    on<ToChoiseSound>((event, emit) async {
       emit(
-        ImageState(
+        ChoiseSound(
           image: event.image,
           text: event.text,
           title: event.title,
         ),
       );
     });
-    on<AddWithoutImage>((event, emit) async {
+    on<ToCreate>((event, emit) async {
       emit(
-        TextState(
-          text: event.text,
-          title: event.title,
-        ),
-      );
-    });
-    on<AddListWithImage>((event, emit) async {
-      emit(
-        WithImageList(
+        Create(
           id: event.id,
           image: event.image,
-          text: event.text,
-          title: event.title,
-        ),
-      );
-    });
-    on<AddListWithoutImage>((event, emit) async {
-      emit(
-        WithoutImageList(
-          id: event.id,
           text: event.text,
           title: event.title,
         ),

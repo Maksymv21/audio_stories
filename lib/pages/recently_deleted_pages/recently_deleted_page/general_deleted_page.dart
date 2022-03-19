@@ -113,8 +113,8 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                                   Database.createOrUpdateSound(
                                     {
                                       'deleted': false,
+                                      'id' : id,
                                     },
-                                    id: id,
                                   );
                                   chek[i] = false;
                                 }
@@ -367,8 +367,8 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
               Database.createOrUpdateSound(
                 {
                   'deleted': false,
+                  'id' : id,
                 },
-                id: id,
               );
             }
             _player = const Text('');

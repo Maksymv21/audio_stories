@@ -409,9 +409,6 @@ class _HomePageState extends State<HomePage> {
     String title,
     String id,
   ) {
-    setState(() {
-      _player = const Text('');
-    });
     Navigator.of(context).pushReplacement(
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => PlayPage(

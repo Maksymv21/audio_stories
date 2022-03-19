@@ -11,9 +11,9 @@ import '../../main_pages/main_page/main_page.dart';
 import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
 import '../../play_page/play_page.dart';
-import 'compilation_blocs/add_in_compilation_bloc.dart';
-import 'compilation_blocs/add_in_compilation_event.dart';
-import 'compilation_blocs/add_in_compilation_state.dart';
+import 'compilation_create_blocs/add_in_compilation_bloc.dart';
+import 'compilation_create_blocs/add_in_compilation_event.dart';
+import 'compilation_create_blocs/add_in_compilation_state.dart';
 import 'create_compilation_page.dart';
 
 class CompilationSearchPage extends StatefulWidget {
@@ -110,22 +110,13 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                       title: 'Сделайте выбор',
                                     );
                                   } else {
-                                    if (state is ImageState) {
+                                    if (state is ChoiseSound) {
                                       context.read<AddInCompilationBloc>().add(
-                                            AddListWithImage(
+                                            ToCreate(
                                               id: id,
+                                              text: state.text,
+                                              title: state.title,
                                               image: state.image,
-                                              text: state.text,
-                                              title: state.title,
-                                            ),
-                                          );
-                                    }
-                                    if (state is TextState) {
-                                      context.read<AddInCompilationBloc>().add(
-                                            AddListWithoutImage(
-                                              id: id,
-                                              text: state.text,
-                                              title: state.title,
                                             ),
                                           );
                                     }

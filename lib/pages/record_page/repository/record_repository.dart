@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
 
@@ -97,7 +98,11 @@ class RecordRepository {
       search.add(title.substring(0, i).toLowerCase());
     }
 
+    const Uuid uuid = Uuid();
+    final String id = uuid.v1();
+
     Database.createOrUpdateSound({
+      'id': id,
       'song': downloadUrl,
       'title': title,
       'time': time,

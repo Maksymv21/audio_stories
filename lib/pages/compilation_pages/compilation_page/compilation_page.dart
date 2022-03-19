@@ -10,8 +10,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../utils/local_db.dart';
-import '../compilation_create_page/compilation_blocs/add_in_compilation_bloc.dart';
-import '../compilation_create_page/compilation_blocs/add_in_compilation_event.dart';
+import '../compilation_create_page/compilation_create_blocs/add_in_compilation_bloc.dart';
+import '../compilation_create_page/compilation_create_blocs/add_in_compilation_event.dart';
+
 
 class CompilationPage extends StatelessWidget {
   static const routName = '/compilation';

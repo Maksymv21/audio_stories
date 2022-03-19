@@ -46,11 +46,10 @@ class Database {
     });
   }
 
-  static Future createOrUpdateSound(Map<String, dynamic> map,
-      {String? id}) async {
+  static Future createOrUpdateSound(Map<String, dynamic> map) async {
     final CollectionReference _sounds =
         _user.doc(LocalDB.uid).collection('sounds');
-    _sounds.doc(id).set(
+    _sounds.doc(map['id']).set(
           map,
           SetOptions(
             merge: true,
@@ -60,18 +59,21 @@ class Database {
 
   static Future createOrUpdateCompilation(
     Map<String, dynamic> map,
-    File image,
+    File? image,
   ) async {
-    Reference reference = _storage
-        .ref()
-        .child('Compilations')
-        .child(LocalDB.uid.toString())
-        .child(map['title'] + '.' + map['date'].toString());
+    if (image != null) {
+      Reference reference = _storage
+          .ref()
+          .child('Compilations')
+          .child(LocalDB.uid.toString())
+          .child(map['title'] + '.' + map['date'].toString());
 
-    await reference.putFile(image);
-    String downloadUrl = await reference.getDownloadURL();
+      await reference.putFile(image);
+      String downloadUrl = await reference.getDownloadURL();
 
-    map.addAll({'image': downloadUrl});
+      map.addAll({'image': downloadUrl});
+    }
+
     _user.doc(LocalDB.uid).collection('compilations').doc(map['id']).set(
           map,
           SetOptions(

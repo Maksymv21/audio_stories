@@ -17,7 +17,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../compilation_pages/compilation_create_page/compilation_blocs/add_in_compilation_bloc.dart';
+import '../../compilation_pages/compilation_create_page/compilation_create_blocs/add_in_compilation_bloc.dart';
 import '../../compilation_pages/compilation_create_page/create_compilation_page.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';

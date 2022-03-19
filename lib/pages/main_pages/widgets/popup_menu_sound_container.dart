@@ -55,8 +55,8 @@ class PopupMenuSoundContainer extends StatelessWidget {
             {
               'deleted': true,
               'dateDeleted': Timestamp.now(),
+              'id': id,
             },
-            id: id,
           );
           if (onDelete != null) onDelete!();
         }
@@ -153,10 +153,13 @@ class PopupMenuSoundContainer extends StatelessWidget {
               search.add(controller.text.substring(0, i).toLowerCase());
             }
 
-            Database.createOrUpdateSound({
-              'title': controller.text,
-              'search': search,
-            }, id: id);
+            Database.createOrUpdateSound(
+              {
+                'title': controller.text,
+                'search': search,
+                'id': id,
+              },
+            );
           }
           Navigator.pop(context, 'Cancel');
         },
