@@ -109,9 +109,20 @@ class _CompilationPageState extends State<CompilationPage> {
                       onPressed: () {
                         MainPage.globalKey.currentState!.pushReplacementNamed(
                             CreateCompilationPage.routName);
-                        context.read<AddInCompilationBloc>().add(
-                              ToCreateCompilation(),
-                            );
+                        if (state is InitialCompilation) {
+                          context.read<AddInCompilationBloc>().add(
+                                ToCreateCompilation(),
+                              );
+                        }
+                        if (state is AddInCompilation) {
+                          context.read<AddInCompilationBloc>().add(
+                                ToCreate(
+                                  id: [state.id],
+                                  text: '',
+                                  title: '',
+                                ),
+                              );
+                        }
                       },
                     ),
                   ),
@@ -159,13 +170,23 @@ class _CompilationPageState extends State<CompilationPage> {
     CompilationState state,
     bool ready,
   ) {
+    Query query = FirebaseFirestore.instance
+        .collection('users')
+        .doc(LocalDB.uid)
+        .collection('compilations');
+    if (state is AddInCompilation) {
+      query = query.where('sounds', whereNotIn: [
+        [state.id],
+        ''
+      ]);
+    } else {
+      query = query.orderBy(
+        'date',
+        descending: true,
+      );
+    }
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(LocalDB.uid)
-          .collection('compilations')
-          .orderBy('date', descending: true)
-          .snapshots(),
+      stream: query.snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         final double _width = MediaQuery.of(context).size.width;
         final double _height = MediaQuery.of(context).size.height;
@@ -189,7 +210,7 @@ class _CompilationPageState extends State<CompilationPage> {
         if (snapshot.hasData) {
           final int length = snapshot.data.docs.length;
 
-          if (chek.isEmpty) {
+          if (chek.isEmpty || chek.length < length) {
             for (int i = 0; i < length; i++) {
               chek.add(false);
             }

@@ -101,11 +101,13 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
         );
       }
       if(state is Create) {
-        _list = _soundList(state.id);
-        _textController.text = state.text;
-        _titleController.text = state.title;
-        _image = state.image;
-        listId = state.id;
+        if(listId != state.id){
+          listId = state.id;
+          _textController.text = state.text;
+          _titleController.text = state.title;
+          _image = state.image;
+        }
+        _list = _soundList(listId);
       }
 
       return Stack(
