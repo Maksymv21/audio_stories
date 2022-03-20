@@ -30,7 +30,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
   List<bool> current = [];
   List<bool> chek = [];
   Set<int> search = {};
-  List<String> id = [];
+  List<String> listId = [];
   double _bottom = 10.0;
 
   Widget _player = const Text('');
@@ -101,10 +101,10 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                 onPressed: () {
                                   for (int i = 0; i < chek.length; i++) {
                                     if (chek[i]) {
-                                      id.add(snapshot.data.docs[i].id);
+                                      listId.add(snapshot.data.docs[i].id);
                                     }
                                   }
-                                  if (id.isEmpty) {
+                                  if (listId.isEmpty) {
                                     _showSnackBar(
                                       context: context,
                                       title: 'Сделайте выбор',
@@ -113,7 +113,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                     if (state is ChoiseSound) {
                                       context.read<AddInCompilationBloc>().add(
                                             ToCreate(
-                                              id: id,
+                                              listId: listId,
                                               text: state.text,
                                               title: state.title,
                                               image: state.image,

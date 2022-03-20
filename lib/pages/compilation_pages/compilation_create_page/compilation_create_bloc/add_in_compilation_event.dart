@@ -25,20 +25,24 @@ class ToChoiseSound extends AddInCompilationEvent {
 }
 
 class ToCreate extends AddInCompilationEvent {
-  final List<String> id;
+  final List listId;
   final File? image;
   final String text;
   final String title;
+  final String? id;
+  final String? url;
 
   const ToCreate({
-    required this.id,
+    required this.listId,
     required this.text,
     required this.title,
     this.image,
+    this.id,
+    this.url,
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [listId];
 }
 
 class ToCreateCompilation extends AddInCompilationEvent {}

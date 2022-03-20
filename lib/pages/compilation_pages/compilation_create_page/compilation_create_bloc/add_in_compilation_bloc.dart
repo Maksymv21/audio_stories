@@ -23,10 +23,12 @@ class AddInCompilationBloc
     on<ToCreate>((event, emit) async {
       emit(
         Create(
-          id: event.id,
+          listId: event.listId,
           image: event.image,
           text: event.text,
           title: event.title,
+          id: event.id,
+          url: event.url,
         ),
       );
     });

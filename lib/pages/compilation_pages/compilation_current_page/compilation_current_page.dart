@@ -1,9 +1,16 @@
+import 'dart:io';
+import 'dart:math';
+
+import 'package:audio_stories/pages/compilation_pages/compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
+import 'package:audio_stories/pages/compilation_pages/compilation_create_page/create_compilation_page.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_state.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
@@ -16,6 +23,7 @@ import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/popup_menu_sound_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
 import '../../play_page/play_page.dart';
+import '../compilation_create_page/compilation_create_bloc/add_in_compilation_event.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../compilation_page/compilation_bloc/compilation_event.dart';
 import '../compilation_page/compilation_page.dart';
@@ -510,7 +518,21 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         const CircleBorder(),
         0.2,
       ),
-      onSelected: (value) {
+      onSelected: (value) async {
+        if (value == 0) {
+
+          MainPage.globalKey.currentState!
+              .pushReplacementNamed(CreateCompilationPage.routName);
+          context.read<AddInCompilationBloc>().add(
+                ToCreate(
+                  listId: state.listId,
+                  text: state.text,
+                  title: state.title,
+                  url: state.url,
+                  id: state.id,
+                ),
+              );
+        }
         if (value == 2) {
           Database.deleteCompilation({
             'id': state.id,
@@ -571,6 +593,23 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         ),
       ),
     );
+  }
+
+  Future<File> urlToFile(String imageUrl) async {
+    final Random rng = Random();
+
+    final Directory tempDir = await getTemporaryDirectory();
+
+    final String tempPath = tempDir.path;
+
+    final File file = File(tempPath + (rng.nextInt(100)).toString() + '.png');
+    Uri uri = Uri.parse(imageUrl);
+    print(uri);
+    http.Response response = await http.get(uri);
+
+    await file.writeAsBytes(response.bodyBytes);
+
+    return file;
   }
 
   void _createLists(AsyncSnapshot snapshot, int length) {

@@ -346,7 +346,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           ),
           onTap: () {
             for (int i = 0; i < length; i++) {
-              final String path = snapshot.data.docs[i].id;
+              final String path = snapshot.data.docs[i].listId;
               final String title = snapshot.data.docs[i]['title'];
               final String date = snapshot.data.docs[i]['date'].toString();
               final int memory = snapshot.data.docs[i]['memory'];
@@ -364,7 +364,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           ),
           onTap: () {
             for (int i = 0; i < length; i++) {
-              final String id = snapshot.data.docs[i].id;
+              final String id = snapshot.data.docs[i].listId;
               Database.createOrUpdateSound(
                 {
                   'deleted': false,

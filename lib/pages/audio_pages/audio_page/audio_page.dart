@@ -356,7 +356,7 @@ class _AudioPageState extends State<AudioPage> {
   }) {
     final String title = snapshot.data.docs[index]['title'];
     final String url = snapshot.data.docs[index]['song'];
-    final String id = snapshot.data.docs[index].id;
+    final String id = snapshot.data.docs[index].listId;
     setState(() {
       current[index] = true;
     });

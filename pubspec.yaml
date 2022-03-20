@@ -44,6 +44,7 @@ dependencies:
   syncfusion_flutter_sliders: ^19.4.53
   syncfusion_flutter_core: ^19.4.53
   uuid: ^3.0.6
+  http: ^0.13.4
 
   flutter_sound: ^8.5.0
 

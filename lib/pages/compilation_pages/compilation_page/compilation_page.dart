@@ -117,7 +117,7 @@ class _CompilationPageState extends State<CompilationPage> {
                         if (state is AddInCompilation) {
                           context.read<AddInCompilationBloc>().add(
                                 ToCreate(
-                                  id: [state.id],
+                                  listId: [state.id],
                                   text: '',
                                   title: '',
                                 ),

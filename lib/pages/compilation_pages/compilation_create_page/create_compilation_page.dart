@@ -32,10 +32,12 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _textController = TextEditingController();
   File? _image;
-  List<String> listId = [];
+  String? _url;
+  List listId = [];
 
   Future pickImage() async {
-    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final XFile? image =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) return;
 
     setState(() => _image = File(image.path));
@@ -100,12 +102,13 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
           ),
         );
       }
-      if(state is Create) {
-        if(listId != state.id){
-          listId = state.id;
+      if (state is Create) {
+        if (listId != state.listId) {
+          listId = state.listId;
           _textController.text = state.text;
           _titleController.text = state.title;
           _image = state.image;
+          _url = state.url;
         }
         _list = _soundList(listId);
       }
@@ -147,8 +150,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
               onPressed: () {
                 if (state is AddInCompilationInitial) {
                   _showSnackBar(context: context, title: 'Добавтье аудиофайлы');
-                } else {
-                  _ready();
+                }
+                if (state is Create) {
+                  _ready(state);
                 }
               },
             ),
@@ -197,16 +201,32 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     width: _width * 0.9,
                     height: _height * 0.3,
                     decoration: _image == null
-                        ? BoxDecoration(
-                            color: const Color(0xffF6F6F6),
-                            borderRadius: BorderRadius.circular(15.0),
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 5.0,
-                              ),
-                            ],
-                          )
+                        ? _url == null
+                            ? BoxDecoration(
+                                color: const Color(0xffF6F6F6),
+                                borderRadius: BorderRadius.circular(15.0),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                              )
+                            : BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                image: DecorationImage(
+                                  colorFilter:
+                                      const ColorFilter.srgbToLinearGamma(),
+                                  image: Image.network(_url!).image,
+                                  fit: BoxFit.cover,
+                                ),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                              )
                         : BoxDecoration(
                             borderRadius: BorderRadius.circular(15.0),
                             image: DecorationImage(
@@ -252,17 +272,22 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     ],
                   ),
                 ),
-                const Spacer(),
                 Expanded(
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                      left: _width * 0.05,
-                      right: _width * 0.05,
-                    ),
-                    child: TextFormField(
-                      controller: _textController,
-                      style: const TextStyle(
-                        fontSize: 16.0,
+                  flex: 2,
+                  child: ListTile(
+                    title: Card(
+                      child: EditableText(
+                        backgroundCursorColor: Colors.white,
+                        textAlign: TextAlign.start,
+                        focusNode: FocusNode(),
+                        controller: _textController,
+                        maxLines: 5,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                        ),
+                        keyboardType: TextInputType.multiline,
+                        cursorColor: Colors.blue,
                       ),
                     ),
                   ),
@@ -277,8 +302,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                         if (state is AddInCompilationInitial) {
                           _showSnackBar(
                               context: context, title: 'Добавтье аудиофайли');
-                        } else {
-                          _ready();
+                        }
+                        if (state is Create) {
+                          _ready(state);
                         }
                       },
                       child: const Text(
@@ -301,7 +327,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     });
   }
 
-  Widget _soundList(List<String> id) {
+  Widget _soundList(List id) {
     return Expanded(
       flex: 4,
       child: StreamBuilder(
@@ -355,10 +381,16 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     );
   }
 
-  void _createCompilation(List<String> listId, File image) {
-    const Uuid uuid = Uuid();
+  void _createCompilation(
+    List listId,
+    String? id,
+    File? image,
+  ) {
+    if (id == null) {
+      const Uuid uuid = Uuid();
 
-    final String id = uuid.v1();
+      id = uuid.v1();
+    }
 
     Database.createOrUpdateCompilation({
       'id': id,
@@ -369,19 +401,32 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     }, image: image);
   }
 
-  void _ready() {
-    if (_image == null ||
-        _textController.text == '' ||
-        _titleController.text == '') {
-      _showSnackBar(
-          context: context,
-          title: 'Для создания подборки должно быть выбрано '
-              'название, изображение и описание');
+  void _ready(Create state) {
+    if (_image == null && _url == null) {
+      if(_textController.text != '' && _titleController.text != '') {
+        _showSnackBar(
+            context: context,
+            title: 'Выберите излюражение');
+      }
+      if (_textController.text == '' || _titleController.text == '') {
+        _showSnackBar(
+            context: context,
+            title: 'Для создания подборки должно быть выбрано '
+                'название, изображение и описание');
+      }
     }
-    if (_image != null) {
-      _createCompilation(listId, _image!);
-      MainPage.globalKey.currentState!
-          .pushReplacementNamed(CompilationPage.routName);
+    if (_image != null || _url != null) {
+      if(_textController.text == '' || _titleController.text == '') {
+        _showSnackBar(
+            context: context,
+            title: 'Для создания подборки должно быть выбрано '
+                'название и описание');
+      }
+      if (_textController.text != '' && _titleController.text != '') {
+        _createCompilation(listId, state.id, _image);
+        MainPage.globalKey.currentState!
+            .pushReplacementNamed(CompilationPage.routName);
+      }
     }
   }
 
