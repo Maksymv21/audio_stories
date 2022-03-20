@@ -64,7 +64,7 @@ class Database {
           .ref()
           .child('Compilations')
           .child(LocalDB.uid.toString())
-          .child(map['title'] + '.' + map['date'].toString());
+          .child(map['id']);
 
       await reference.putFile(image);
       String downloadUrl = await reference.getDownloadURL();
@@ -99,7 +99,7 @@ class Database {
         .ref()
         .child('Compilations')
         .child(LocalDB.uid.toString())
-        .child(map['title'] + '.' + map['date'].toString())
+        .child(map['id'])
         .delete();
   }
 }

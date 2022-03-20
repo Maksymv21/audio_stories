@@ -106,6 +106,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
         if (listId != state.listId) {
           listId = state.listId;
           _textController.text = state.text;
+          print(state.text);
           _titleController.text = state.title;
           _image = state.image;
           _url = state.url;

@@ -237,7 +237,7 @@ class _CompilationPageState extends State<CompilationPage> {
                 final String image = snapshot.data.docs[index]['image'];
                 final List listId = snapshot.data.docs[index]['sounds'];
                 final Timestamp date = snapshot.data.docs[index]['date'];
-                final String id = snapshot.data.docs[index]['id'];
+                final String id = snapshot.data.docs[index].id;
 
                 if (ready && state is AddInCompilation && chek[index]) {
                   if (!listId.contains(state.id)) listId.add(state.id);
