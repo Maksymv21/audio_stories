@@ -16,6 +16,8 @@ import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/popup_menu_sound_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
 import '../../play_page/play_page.dart';
+import '../compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../compilation_page/compilation_bloc/compilation_event.dart';
 import '../compilation_page/compilation_page.dart';
 
 class CurrentCompilationPage extends StatefulWidget {
@@ -71,20 +73,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
             ),
             Align(
               alignment: const AlignmentDirectional(0.95, -0.95),
-              child: TextButton(
-                style: const ButtonStyle(
-                  splashFactory: NoSplash.splashFactory,
-                ),
-                onPressed: () {},
-                child: const Text(
-                  '...',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 48,
-                    letterSpacing: 3.0,
-                  ),
-                ),
-              ),
+              child: _popupMenu(state),
             ),
             Column(
               children: [
@@ -441,7 +430,6 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                           );
                           current.removeAt(index);
                         },
-
                       ),
                     ),
                   ),
@@ -511,6 +499,76 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
             });
           }
         },
+      ),
+    );
+  }
+
+  Widget _popupMenu(OnCurrentCompilation state) {
+    return PopupMenuButton(
+      shape: ShapeBorder.lerp(
+        const RoundedRectangleBorder(),
+        const CircleBorder(),
+        0.2,
+      ),
+      onSelected: (value) {
+        if (value == 2) {
+          Database.deleteCompilation({
+            'id': state.id,
+            'title': state.title,
+            'date': state.date,
+          });
+          MainPage.globalKey.currentState!
+              .pushReplacementNamed(CompilationPage.routName);
+          context.read<CompilationBloc>().add(
+                ToInitialCompilation(),
+              );
+        }
+      },
+      itemBuilder: (_) => const [
+        PopupMenuItem(
+          value: 0,
+          child: Text(
+            'Редактировать',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 1,
+          child: Text(
+            'Выбрать несколько',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 2,
+          child: Text(
+            'Удалить подборку',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 3,
+          child: Text(
+            'Поделиться',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+      ],
+      child: const Text(
+        '...',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 48,
+          letterSpacing: 3.0,
+        ),
       ),
     );
   }

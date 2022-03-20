@@ -91,4 +91,15 @@ class Database {
           ),
         );
   }
+
+  static Future deleteCompilation(Map<String, dynamic> map) async {
+    _user.doc(LocalDB.uid).collection('compilations').doc(map['id']).delete();
+
+    _storage
+        .ref()
+        .child('Compilations')
+        .child(LocalDB.uid.toString())
+        .child(map['title'] + '.' + map['date'].toString())
+        .delete();
+  }
 }

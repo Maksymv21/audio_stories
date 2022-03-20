@@ -174,6 +174,7 @@ class _CompilationPageState extends State<CompilationPage> {
         .collection('users')
         .doc(LocalDB.uid)
         .collection('compilations');
+
     if (state is AddInCompilation) {
       query = query.where('sounds', whereNotIn: [
         [state.id],
