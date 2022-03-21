@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
@@ -76,46 +77,64 @@ class RecordRepository {
     String title,
     double time,
     Timestamp date,
+    int memory,
+    BuildContext context,
   ) async {
-    FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-    Reference reference = _firebaseStorage
-        .ref()
-        .child('Sounds')
-        .child(LocalDB.uid.toString())
-        .child(
-          title + '.' + date.toString(),
-        );
+
 
     File sound = await File(_path!).create();
-
     final int length = sound.lengthSync();
 
-    await reference.putFile(sound);
-    String downloadUrl = await reference.getDownloadURL();
+    if (memory + length <= 500000000) {
+      FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+      Reference reference = _firebaseStorage
+          .ref()
+          .child('Sounds')
+          .child(LocalDB.uid.toString())
+          .child(
+            title + '.' + date.toString(),
+          );
 
-    List<String> search = [];
-    for (int i = 1; i < title.length + 1; i++) {
-      search.add(title.substring(0, i).toLowerCase());
+      await reference.putFile(sound);
+      String downloadUrl = await reference.getDownloadURL();
+
+      List<String> search = [];
+      for (int i = 1; i < title.length + 1; i++) {
+        search.add(title.substring(0, i).toLowerCase());
+      }
+
+      const Uuid uuid = Uuid();
+      final String id = uuid.v1();
+
+      Database.createOrUpdateSound({
+        'id': id,
+        'song': downloadUrl,
+        'title': title,
+        'time': time,
+        'date': date,
+        'deleted': false,
+        'memory': length,
+        'search': search,
+      });
+
+      Database.createOrUpdate({
+        'uid': LocalDB.uid,
+        'totalMemory': FieldValue.increment(length),
+      });
+    } else {
+      SnackBar snackBar = const SnackBar(
+        content: Text(
+          'Закончилась память для сохранения аудио.'
+          '\nДля увеличения памяти оформите подписку',
+          textAlign: TextAlign.center,
+        ),
+        duration: Duration(seconds: 4),
+      );
+
+      ScaffoldMessenger.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(snackBar);
     }
-
-    const Uuid uuid = Uuid();
-    final String id = uuid.v1();
-
-    Database.createOrUpdateSound({
-      'id': id,
-      'song': downloadUrl,
-      'title': title,
-      'time': time,
-      'date': date,
-      'deleted': false,
-      'memory': length,
-      'search': search,
-    });
-
-    Database.createOrUpdate({
-      'uid': LocalDB.uid,
-      'totalMemory': FieldValue.increment(length),
-    });
   }
 
   Future<void> seek(int ms) async {

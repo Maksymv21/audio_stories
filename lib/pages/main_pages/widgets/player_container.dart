@@ -248,8 +248,10 @@ class _PlayerContainerState extends State<PlayerContainer> {
       _isPlay = false;
       sliderCurrentPosition = maxDuration;
     });
-    valuePlayer();
-    setState(() {});
+
+    setState(() {
+      valuePlayer();
+    });
     _isPlay = true;
   }
 

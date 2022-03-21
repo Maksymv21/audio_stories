@@ -47,6 +47,7 @@ class _HomePageState extends State<HomePage> {
   Future permission() async {
     await Permission.storage.request();
     await Permission.manageExternalStorage.request();
+    Permission.microphone.request();
   }
 
   Widget _player = const Text('');

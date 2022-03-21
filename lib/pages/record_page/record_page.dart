@@ -16,7 +16,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:noise_meter/noise_meter.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../utils/local_db.dart';
@@ -47,7 +46,6 @@ class _RecordPageState extends State<RecordPage> {
   @override
   void initState() {
     super.initState();
-    Permission.microphone.request();
     _recorder.openSession().then((value) {
       _recorder.record(() {
         setState(() {});
@@ -279,16 +277,9 @@ class _RecordPageState extends State<RecordPage> {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          _recorder.uploadSound(
-                            'Аудиозапись ${snapshot.data?.docs.length + 1}',
-                            _time,
-                            Timestamp.now(),
-                          );
-                          context.read<BlocIndex>().add(
-                                ColorHome(),
-                              );
-                          MainPage.globalKey.currentState!.pushReplacementNamed(
-                            HomePage.routName,
+                          _save(
+                            context,
+                            snapshot.data?.docs.length,
                           );
                         },
                         child: const Text(
@@ -519,5 +510,34 @@ class _RecordPageState extends State<RecordPage> {
   Future<void> seek(int ms) async {
     await _recorder.seek(ms);
     setState(() {});
+  }
+
+  Future<void> _save(
+    BuildContext context,
+    int length,
+  ) async {
+    int? memory;
+    final DocumentReference document =
+        FirebaseFirestore.instance.collection('users').doc(LocalDB.uid);
+    await document.get().then<dynamic>((
+      DocumentSnapshot snapshot,
+    ) async {
+      dynamic data = snapshot.data;
+      memory = data()['totalMemory'];
+    });
+
+    _recorder.uploadSound(
+      'Аудиозапись ${length + 1}',
+      _time,
+      Timestamp.now(),
+      memory!,
+      context,
+    );
+    context.read<BlocIndex>().add(
+          ColorHome(),
+        );
+    MainPage.globalKey.currentState!.pushReplacementNamed(
+      HomePage.routName,
+    );
   }
 }
