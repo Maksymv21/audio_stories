@@ -263,9 +263,7 @@ class _HomePageState extends State<HomePage> {
                   ],
                 );
               } else {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return Container();
               }
             }),
         Align(

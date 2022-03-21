@@ -25,13 +25,20 @@ import '../../compilation_pages/compilation_current_page/compilation_current_pag
 import '../../compilation_pages/compilation_page/compilation_page.dart';
 import '../../compilation_pages/compilation_create_page/compilation_search_page.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   static GlobalKey<NavigatorState> globalKey = GlobalKey();
   static const routName = '/main';
 
   const MainPage({
     Key? key,
   }) : super(key: key);
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> {
+  DateTime? lastPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -58,72 +65,100 @@ class MainPage extends StatelessWidget {
           create: (context) => CompilationBloc(),
         ),
       ],
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: Navigator(
-          key: globalKey,
-          initialRoute: MainPage.routName,
-          onGenerateRoute: (RouteSettings settings) {
-            Widget page;
+      child: WillPopScope(
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          body: Navigator(
+            key: MainPage.globalKey,
+            initialRoute: MainPage.routName,
+            onGenerateRoute: (RouteSettings settings) {
+              Widget page;
 
-            switch (settings.name) {
-              case HomePage.routName:
-                page = const HomePage();
-                break;
-              case AudioPage.routName:
-                page = const AudioPage();
-                break;
-              case CompilationPage.routName:
-                page = const CompilationPage();
-                break;
-              case CurrentCompilationPage.routName:
-                page = const CurrentCompilationPage();
-                break;
-              case CreateCompilationPage.routName:
-                page = const CreateCompilationPage();
-                break;
-              case CompilationSearchPage.routName:
-                page = const CompilationSearchPage();
-                break;
-              case ProfilePage.routName:
-                page = const ProfilePage();
-                break;
-              case SearchPage.routName:
-                page = const SearchPage();
-                break;
-              case RecentlyDeletedPage.routName:
-                page = const RecentlyDeletedPage();
-                break;
-              case SubscriptionPage.routName:
-                page = const SubscriptionPage();
-                break;
-              case EditProfilePage.routName:
-                page = EditProfilePage();
-                break;
-              case RecordPage.routName:
-                page = const RecordPage();
-                break;
-              case PlayPage.routName:
-                page = PlayPage();
-                break;
-              case TestPage.routName:
-                page = const TestPage();
-                break;
-              default:
-                page = const HomePage();
-                break;
-            }
+              switch (settings.name) {
+                case HomePage.routName:
+                  page = const HomePage();
+                  break;
+                case AudioPage.routName:
+                  page = const AudioPage();
+                  break;
+                case CompilationPage.routName:
+                  page = const CompilationPage();
+                  break;
+                case CurrentCompilationPage.routName:
+                  page = const CurrentCompilationPage();
+                  break;
+                case CreateCompilationPage.routName:
+                  page = const CreateCompilationPage();
+                  break;
+                case CompilationSearchPage.routName:
+                  page = const CompilationSearchPage();
+                  break;
+                case ProfilePage.routName:
+                  page = const ProfilePage();
+                  break;
+                case SearchPage.routName:
+                  page = const SearchPage();
+                  break;
+                case RecentlyDeletedPage.routName:
+                  page = const RecentlyDeletedPage();
+                  break;
+                case SubscriptionPage.routName:
+                  page = const SubscriptionPage();
+                  break;
+                case EditProfilePage.routName:
+                  page = EditProfilePage();
+                  break;
+                case RecordPage.routName:
+                  page = const RecordPage();
+                  break;
+                case PlayPage.routName:
+                  page = PlayPage();
+                  break;
+                case TestPage.routName:
+                  page = const TestPage();
+                  break;
+                default:
+                  page = const HomePage();
+                  break;
+              }
 
-            return PageRouteBuilder(
-              pageBuilder: (_, __, ___) => page,
-              transitionDuration: const Duration(
-                seconds: 0,
-              ),
-            );
-          },
+              return PageRouteBuilder(
+                pageBuilder: (_, __, ___) => page,
+                transitionDuration: const Duration(
+                  seconds: 0,
+                ),
+              );
+            },
+          ),
+          bottomNavigationBar: const MyNavigationBar(),
+          drawer: const BurgerMenu(),
         ),
-        bottomNavigationBar: const MyNavigationBar(),
-        drawer: const BurgerMenu(),
+        onWillPop: () async {
+          final now = DateTime.now();
+          const maxDuration = Duration(seconds: 2);
+          final isWarning =
+              lastPressed == null || now.difference(lastPressed!) > maxDuration;
+
+          if (isWarning) {
+            lastPressed = DateTime.now();
+
+            const snackBar = SnackBar(
+              content: Text(
+                'Нажмите еще раз чтобы выйти',
+                textAlign: TextAlign.center,
+              ),
+              duration: maxDuration,
+            );
+
+            ScaffoldMessenger.of(context)
+              ..removeCurrentSnackBar()
+              ..showSnackBar(snackBar);
+
+            return false;
+          } else {
+            return true;
+          }
+        },
       ),
     );
   }
