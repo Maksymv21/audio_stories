@@ -26,5 +26,5 @@ class ToCurrentCompilation extends CompilationCurrentEvent{
   });
 
   @override
-  List<Object?> get props => [listId];
+  List<Object?> get props => [listId, url];
 }

@@ -54,6 +54,8 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
         flex: 4,
         child: Container(),
       );
+      String _titlePage = 'Создание';
+
       if (state is AddInCompilationInitial) {
         _list = Expanded(
           flex: 4,
@@ -106,11 +108,11 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
         if (listId != state.listId) {
           listId = state.listId;
           _textController.text = state.text;
-          print(state.text);
           _titleController.text = state.title;
           _image = state.image;
           _url = state.url;
         }
+        if (_url != null) _titlePage = '';
         _list = _soundList(listId);
       }
 
@@ -162,10 +164,10 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
             child: Column(
               children: [
                 const Spacer(),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Создание',
-                    style: TextStyle(
+                    _titlePage,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w700,
                       fontSize: 36.0,
@@ -404,10 +406,8 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
 
   void _ready(Create state) {
     if (_image == null && _url == null) {
-      if(_textController.text != '' && _titleController.text != '') {
-        _showSnackBar(
-            context: context,
-            title: 'Выберите излюражение');
+      if (_textController.text != '' && _titleController.text != '') {
+        _showSnackBar(context: context, title: 'Выберите излюражение');
       }
       if (_textController.text == '' || _titleController.text == '') {
         _showSnackBar(
@@ -417,7 +417,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
       }
     }
     if (_image != null || _url != null) {
-      if(_textController.text == '' || _titleController.text == '') {
+      if (_textController.text == '' || _titleController.text == '') {
         _showSnackBar(
             context: context,
             title: 'Для создания подборки должно быть выбрано '

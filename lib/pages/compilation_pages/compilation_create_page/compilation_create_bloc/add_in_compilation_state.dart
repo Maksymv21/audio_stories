@@ -44,6 +44,5 @@ class Create extends AddInCompilationState {
   });
 
   @override
-  List<Object?> get props => [listId, text];
+  List<Object?> get props => [listId, text, url];
 }
-

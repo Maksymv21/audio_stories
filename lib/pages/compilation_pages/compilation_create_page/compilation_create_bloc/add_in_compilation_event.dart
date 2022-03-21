@@ -42,7 +42,7 @@ class ToCreate extends AddInCompilationEvent {
   });
 
   @override
-  List<Object?> get props => [listId, text];
+  List<Object?> get props => [listId, text, url];
 }
 
 class ToCreateCompilation extends AddInCompilationEvent {}

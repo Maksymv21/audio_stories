@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart';
+import 'package:audio_stories/pages/main_pages/widgets/compilation_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/player_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/popup_menu_sound_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
@@ -12,8 +13,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/local_db.dart';
+import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
+import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_event.dart';
+import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
+import '../../compilation_pages/compilation_page/compilation_page.dart';
 import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
 import '../../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
+import '../../main_pages/main_page/main_page.dart';
 import '../../main_pages/widgets/button_menu.dart';
 import '../../play_page/play_page.dart';
 
@@ -62,158 +70,204 @@ class _HomePageState extends State<HomePage> {
             Spacer(),
           ],
         ),
-        Column(
-          children: [
-            const Spacer(
-              flex: 4,
-            ),
-            Expanded(
-              flex: 3,
-              child: Row(
-                children: [
-                  const Spacer(),
-                  const Expanded(
-                    flex: 11,
-                    child: Text(
-                      'Подборки',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 24.0,
+        StreamBuilder(
+            stream: FirebaseFirestore.instance
+                .collection('users')
+                .doc(LocalDB.uid)
+                .collection('compilations')
+                .orderBy(
+                  'date',
+                  descending: true,
+                )
+                .snapshots(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              Widget _firstContainer;
+              Widget _secondContainer;
+              Widget _thirdContainer;
+
+              if (snapshot.hasData) {
+                final int _length = snapshot.data.docs.length;
+
+                _firstContainer = Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: const Color.fromRGBO(113, 165, 159, 0.75),
+                  ),
+                  child: Column(
+                    children: [
+                      const Spacer(
+                        flex: 2,
                       ),
-                    ),
-                  ),
-                  const Spacer(
-                    flex: 9,
-                  ),
-                  Expanded(
-                    flex: 9,
-                    child: Column(
-                      children: const [
-                        Spacer(),
-                        Expanded(
-                          flex: 5,
-                          child: OpenAllButton(
+                      const Expanded(
+                        flex: 4,
+                        child: Text(
+                          'Здесь будет'
+                          '\nтвой набор '
+                          '\nсказок',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
                             color: Colors.white,
+                            fontSize: 20.0,
                           ),
                         ),
-                      ],
+                      ),
+                      const Spacer(),
+                      Expanded(
+                        flex: 3,
+                        child: TextButton(
+                          style: const ButtonStyle(
+                            splashFactory: NoSplash.splashFactory,
+                          ),
+                          onPressed: () {
+                            MainPage.globalKey.currentState!
+                                .pushReplacementNamed(CompilationPage.routName);
+                            context.read<BlocIndex>().add(
+                                  ColorCategory(),
+                                );
+                            context.read<CompilationBloc>().add(
+                                  ToInitialCompilation(),
+                                );
+                          },
+                          child: const Text(
+                            'Добавить',
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                );
+
+                _secondContainer = Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: const Color(0xffF1B488),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'Тут',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                      ),
                     ),
                   ),
-                  const Spacer(),
-                ],
-              ),
-            ),
-            const Spacer(),
-            Expanded(
-              flex: 12,
-              child: Row(
-                children: [
-                  const Spacer(),
-                  Expanded(
-                    flex: 12,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: const Color.fromRGBO(113, 165, 159, 0.75),
+                );
+
+                _thirdContainer = Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15.0),
+                    color: const Color.fromRGBO(103, 139, 210, 0.75),
+                  ),
+
+                  //color: const Color.fromRGBO(113, 165, 159, 0.75),
+                  child: const Center(
+                    child: Text(
+                      'И тут',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
                       ),
-                      child: Column(
+                    ),
+                  ),
+                );
+
+                if (_length > 0) {
+                  _firstContainer = _compilationContainer(snapshot, 0);
+                  if (_length > 1) {
+                    _secondContainer = _compilationContainer(snapshot, 1);
+                    if (_length > 2) {
+                      _thirdContainer = _compilationContainer(snapshot, 2);
+                    }
+                  }
+                }
+
+                return Column(
+                  children: [
+                    const Spacer(
+                      flex: 4,
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Row(
                         children: [
-                          const Spacer(
-                            flex: 2,
-                          ),
+                          const Spacer(),
                           const Expanded(
-                            flex: 4,
+                            flex: 11,
                             child: Text(
-                              'Здесь будет'
-                              '\nтвой набор '
-                              '\nсказок',
-                              textAlign: TextAlign.center,
+                              'Подборки',
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 20.0,
+                                fontSize: 24.0,
                               ),
                             ),
                           ),
-                          const Spacer(),
+                          const Spacer(
+                            flex: 9,
+                          ),
                           Expanded(
-                            flex: 3,
-                            child: TextButton(
-                              style: const ButtonStyle(
-                                splashFactory: NoSplash.splashFactory,
-                              ),
-                              onPressed: () {},
-                              child: const Text(
-                                'Добавить',
-                                style: TextStyle(
-                                  color: Colors.white,
+                            flex: 9,
+                            child: Column(
+                              children: const [
+                                Spacer(),
+                                Expanded(
+                                  flex: 5,
+                                  child: OpenAllButton(
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
                           ),
                           const Spacer(),
                         ],
                       ),
                     ),
-                  ),
-                  const Spacer(),
-                  Expanded(
-                    flex: 12,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 7,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              color: const Color(0xffF1B488),
-                            ),
-                            width: 160.0,
-                            height: 112.0,
-                            child: const Center(
-                              child: Text(
-                                'Тут',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
+                    const Spacer(),
+                    Expanded(
+                      flex: 12,
+                      child: Row(
+                        children: [
+                          const Spacer(),
+                          Expanded(
+                            flex: 12,
+                            child: _firstContainer,
+                          ),
+                          const Spacer(),
+                          Expanded(
+                            flex: 12,
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  flex: 7,
+                                  child: _secondContainer,
                                 ),
-                              ),
+                                const Spacer(),
+                                Expanded(
+                                  flex: 7,
+                                  child: _thirdContainer,
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                        Expanded(
-                          flex: 7,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              color: const Color.fromRGBO(103, 139, 210, 0.75),
-                            ),
-                            width: 160.0,
-                            height: 112.0,
-                            //color: const Color.fromRGBO(113, 165, 159, 0.75),
-                            child: const Center(
-                              child: Text(
-                                'И тут',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20.0,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                          const Spacer(),
+                        ],
+                      ),
                     ),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-            ),
-            const Spacer(
-              flex: 17,
-            ),
-          ],
-        ),
+                    const Spacer(
+                      flex: 17,
+                    ),
+                  ],
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
         Align(
           alignment: const AlignmentDirectional(0.0, 1.05),
           child: _soundContainerList(),
@@ -400,6 +454,42 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _compilationContainer(AsyncSnapshot snapshot, int index) {
+    final List listId = snapshot.data.docs[index]['sounds'];
+    final String url = snapshot.data.docs[index]['image'];
+    final String text = snapshot.data.docs[index]['text'];
+    final String title = snapshot.data.docs[index]['title'];
+    final Timestamp date = snapshot.data.docs[index]['date'];
+    final String id = snapshot.data.docs[index].id;
+
+    return GestureDetector(
+      onTap: () {
+        MainPage.globalKey.currentState!
+            .pushReplacementNamed(CurrentCompilationPage.routName);
+        context.read<BlocIndex>().add(
+              ColorCategory(),
+            );
+        context.read<CompilationCurrentBloc>().add(
+              ToCurrentCompilation(
+                listId: listId,
+                url: url,
+                text: text,
+                title: title,
+                date: date,
+                id: id,
+              ),
+            );
+      },
+      child: CompilationContainer(
+        url: url,
+        height: double.infinity,
+        width: double.infinity,
+        title: title,
+        length: listId.length,
       ),
     );
   }

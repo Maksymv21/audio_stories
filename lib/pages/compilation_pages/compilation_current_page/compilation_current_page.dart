@@ -520,8 +520,6 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
       ),
       onSelected: (value) async {
         if (value == 0) {
-
-          print(state.text);
           MainPage.globalKey.currentState!
               .pushReplacementNamed(CreateCompilationPage.routName);
           context.read<AddInCompilationBloc>().add(

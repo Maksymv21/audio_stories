@@ -8,7 +8,7 @@ abstract class CompilationCurrentState extends Equatable {
   List<Object?> get props => [];
 }
 
-class CurrentCompilationInitial extends CompilationCurrentState{}
+class CurrentCompilationInitial extends CompilationCurrentState {}
 
 class OnCurrentCompilation extends CompilationCurrentState {
   final List listId;
@@ -28,6 +28,5 @@ class OnCurrentCompilation extends CompilationCurrentState {
   });
 
   @override
-  List<Object?> get props => [listId];
+  List<Object?> get props => [listId, url];
 }
-

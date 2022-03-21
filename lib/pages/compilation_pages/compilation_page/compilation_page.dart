@@ -5,6 +5,7 @@ import 'package:audio_stories/pages/compilation_pages/compilation_current_page/c
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_state.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/main_pages/widgets/compilation_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/database.dart';
@@ -270,61 +271,12 @@ class _CompilationPageState extends State<CompilationPage> {
                   },
                   child: Stack(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15.0),
-                          image: DecorationImage(
-                            image: Image.network(image).image,
-                            fit: BoxFit.cover,
-                          ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        height: _height * 0.4,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: FractionalOffset.topCenter,
-                            end: FractionalOffset.bottomCenter,
-                            colors: [
-                              Colors.transparent,
-                              Color(0xff454545),
-                            ],
-                            stops: [0.5, 1.0],
-                          ),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(9.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  title,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16.0,
-                                  ),
-                                ),
-                              ),
-                              Text(
-                                '${listId.length} аудио'
-                                '\n0 часов',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 13.0,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                      CompilationContainer(
+                        url: image,
+                        height: _height,
+                        width: _width,
+                        title: title,
+                        length: listId.length,
                       ),
                       Visibility(
                         visible: visible,
