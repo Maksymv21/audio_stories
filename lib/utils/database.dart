@@ -22,6 +22,18 @@ class Database {
 
   static Future delete(String uid) async {
     _user.doc(uid).delete();
+
+    final QuerySnapshot snapshotSounds =
+        await _user.doc(uid).collection('sounds').get();
+    for (QueryDocumentSnapshot doc in snapshotSounds.docs) {
+      await doc.reference.delete();
+    }
+
+    final QuerySnapshot snapshotCompilations =
+        await _user.doc(uid).collection('compilations').get();
+    for (QueryDocumentSnapshot doc in snapshotCompilations.docs) {
+      await doc.reference.delete();
+    }
   }
 
   static Future deleteSound(

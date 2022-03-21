@@ -38,6 +38,11 @@ class DeleteAccButton extends StatelessWidget {
                       .child('Sounds')
                       .child(LocalDB.uid.toString())
                       .delete();
+                  await _storage
+                      .ref()
+                      .child('Compilations')
+                      .child(LocalDB.uid.toString())
+                      .delete();
                 } catch (e) {
                   showDialog<String>(
                     context: context,
