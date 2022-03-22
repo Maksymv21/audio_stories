@@ -69,6 +69,9 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                         onPressed: () {
                           MainPage.globalKey.currentState!
                               .pushReplacementNamed(CompilationPage.routName);
+                          context.read<CompilationBloc>().add(
+                                ToInitialCompilation(),
+                              );
                         },
                         icon: Image.asset(AppIcons.back),
                         iconSize: 60.0,
@@ -428,16 +431,26 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                         id: listId[index],
                         url: listUrl[index],
                         onDelete: () {
-                          listTitle.removeAt(index);
-                          listUrl.removeAt(index);
-                          listTime.removeAt(index);
-                          listId.removeAt(index);
-                          Database.deleteSoundInCompilation(
-                            {'sounds': listId},
-                            id,
-                          );
-                          current.removeAt(index);
+                          if (listId.length == 1) {
+                            _showSnackBar(
+                              context: context,
+                              title:
+                                  'В подборке должно оставаться минимум одно аудио',
+                            );
+                          } else {
+                            listTitle.removeAt(index);
+                            listUrl.removeAt(index);
+                            listTime.removeAt(index);
+                            listId.removeAt(index);
+
+                            Database.deleteSoundInCompilation(
+                              {'sounds': listId},
+                              id,
+                            );
+                            current.removeAt(index);
+                          }
                         },
+                        page: CurrentCompilationPage.routName,
                       ),
                     ),
                   ),
@@ -656,4 +669,18 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         dateTime.substring(2, 4);
     return result;
   }
+}
+
+void _showSnackBar({
+  required BuildContext context,
+  required String title,
+}) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(
+        title,
+        textAlign: TextAlign.center,
+      ),
+    ),
+  );
 }

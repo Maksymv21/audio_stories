@@ -80,8 +80,6 @@ class RecordRepository {
     int memory,
     BuildContext context,
   ) async {
-
-
     File sound = await File(_path!).create();
     final int length = sound.lengthSync();
 
@@ -131,9 +129,7 @@ class RecordRepository {
         duration: Duration(seconds: 4),
       );
 
-      ScaffoldMessenger.of(context)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(snackBar);
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
 

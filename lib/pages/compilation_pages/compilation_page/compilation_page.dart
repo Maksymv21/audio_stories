@@ -171,24 +171,16 @@ class _CompilationPageState extends State<CompilationPage> {
     CompilationState state,
     bool ready,
   ) {
-    Query query = FirebaseFirestore.instance
-        .collection('users')
-        .doc(LocalDB.uid)
-        .collection('compilations');
-
-    if (state is AddInCompilation) {
-      query = query.where('sounds', whereNotIn: [
-        [state.id],
-        ''
-      ]);
-    } else {
-      query = query.orderBy(
-        'date',
-        descending: true,
-      );
-    }
     return StreamBuilder(
-      stream: query.snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(LocalDB.uid)
+          .collection('compilations')
+          .orderBy(
+            'date',
+            descending: true,
+          )
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         final double _width = MediaQuery.of(context).size.width;
         final double _height = MediaQuery.of(context).size.height;

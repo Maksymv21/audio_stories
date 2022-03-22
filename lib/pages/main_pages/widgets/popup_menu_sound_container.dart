@@ -11,6 +11,7 @@ import 'package:path_provider/path_provider.dart';
 
 import '../../../utils/database.dart';
 import '../../../widgets/dialog_sound.dart';
+import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';
 import '../../compilation_pages/compilation_page/compilation_page.dart';
 import '../main_blocs/bloc_icon_color/bloc_index.dart';
 import '../main_page/main_page.dart';
@@ -72,13 +73,16 @@ class PopupMenuSoundContainer extends StatelessWidget {
                   _bloc(page!),
                 );
           }
-          Database.createOrUpdateSound(
-            {
-              'deleted': true,
-              'dateDeleted': Timestamp.now(),
-              'id': id,
-            },
-          );
+          if (page != CurrentCompilationPage.routName) {
+            Database.createOrUpdateSound(
+              {
+                'deleted': true,
+                'dateDeleted': Timestamp.now(),
+                'id': id,
+              },
+            );
+          }
+
           if (onDelete != null) onDelete!();
         }
       },
@@ -212,7 +216,8 @@ class PopupMenuSoundContainer extends StatelessWidget {
     IndexEvent event;
     if (page == HomePage.routName) {
       event = ColorHome();
-    } else if (page == CompilationPage.routName) {
+    } else if (page == CompilationPage.routName ||
+        page == CurrentCompilationPage.routName) {
       event = ColorCategory();
     } else if (page == AudioPage.routName) {
       event = ColorAudio();

@@ -323,6 +323,20 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
         const CircleBorder(),
         0.2,
       ),
+      onSelected: (value) {
+        if (value == 2) {
+          for (int i = 0; i < length; i++) {
+            final String id = snapshot.data.docs[i].id;
+            Database.createOrUpdateSound(
+              {
+                'deleted': false,
+                'id': id,
+              },
+            );
+          }
+          _player = const Text('');
+        }
+      },
       itemBuilder: (_) => [
         PopupMenuItem(
           child: const Text(
@@ -346,7 +360,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
           ),
           onTap: () {
             for (int i = 0; i < length; i++) {
-              final String path = snapshot.data.docs[i].listId;
+              final String path = snapshot.data.docs[i].id;
               final String title = snapshot.data.docs[i]['title'];
               final String date = snapshot.data.docs[i]['date'].toString();
               final int memory = snapshot.data.docs[i]['memory'];
@@ -355,25 +369,14 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
             _player = const Text('');
           },
         ),
-        PopupMenuItem(
-          child: const Text(
+        const PopupMenuItem(
+          value: 2,
+          child: Text(
             'Восстановить все',
             style: TextStyle(
               fontSize: 14.0,
             ),
           ),
-          onTap: () {
-            for (int i = 0; i < length; i++) {
-              final String id = snapshot.data.docs[i].listId;
-              Database.createOrUpdateSound(
-                {
-                  'deleted': false,
-                  'id': id,
-                },
-              );
-            }
-            _player = const Text('');
-          },
         ),
       ],
       child: const Text(

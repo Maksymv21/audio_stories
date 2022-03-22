@@ -531,7 +531,7 @@ class _RecordPageState extends State<RecordPage> {
       _time,
       Timestamp.now(),
       memory!,
-      context,
+      MainPage.globalKey.currentContext!,
     );
     context.read<BlocIndex>().add(
           ColorHome(),

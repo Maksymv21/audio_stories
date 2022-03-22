@@ -11,7 +11,7 @@ class AddInCompilationBloc
         AddInCompilationInitial(),
       );
     });
-    on<ToChoiseSound>((event, emit) async {
+    on<ToChoiseSound>((event, emit) {
       emit(
         ChoiseSound(
           image: event.image,
@@ -20,7 +20,7 @@ class AddInCompilationBloc
         ),
       );
     });
-    on<ToCreate>((event, emit) async {
+    on<ToCreate>((event, emit) {
       emit(
         Create(
           listId: event.listId,
