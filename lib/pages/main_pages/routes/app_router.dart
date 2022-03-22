@@ -1,3 +1,4 @@
+import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../../audio_pages/audio_page/audio_page.dart';
@@ -39,6 +40,9 @@ class AppRouter {
         break;
       case CompilationSearchPage.routName:
         page = const CompilationSearchPage();
+        break;
+      case PickFewCompilationPage.routName:
+        page = const PickFewCompilationPage();
         break;
       case ProfilePage.routName:
         page = const ProfilePage();

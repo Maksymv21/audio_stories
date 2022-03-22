@@ -1,5 +1,6 @@
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
+import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/edit_deleted_page.dart';
 import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
 import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
@@ -28,6 +29,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   static GlobalKey<NavigatorState> firstKey = GlobalKey();
+
   const MyApp({Key? key}) : super(key: key);
 
   @override

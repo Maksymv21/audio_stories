@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:audio_stories/pages/compilation_pages/compilation_create_page/compilation_search_page.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
+import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -156,11 +157,19 @@ class _PlayPageState extends State<PlayPage> {
                         flex: 2,
                         child: IconButton(
                           onPressed: () {
-                            MainPage.globalKey.currentState!
-                                .pushReplacementNamed(widget.page!);
-                            context.read<BlocIndex>().add(
-                                  _bloc(widget.page!),
-                                );
+                            if (widget.page ==
+                                PickFewCompilationPage.routName) {
+                              Navigator.of(context).pop();
+                              context.read<BlocIndex>().add(
+                                    ColorCategory(),
+                                  );
+                            } else {
+                              MainPage.globalKey.currentState!
+                                  .pushReplacementNamed(widget.page!);
+                              context.read<BlocIndex>().add(
+                                    _bloc(widget.page!),
+                                  );
+                            }
                           },
                           icon: Image.asset(
                             AppIcons.arrowCircle,
@@ -409,7 +418,8 @@ class _PlayPageState extends State<PlayPage> {
       event = ColorHome();
     } else if (page == CompilationPage.routName ||
         page == CompilationSearchPage.routName ||
-        page == CurrentCompilationPage.routName) {
+        page == CurrentCompilationPage.routName ||
+        page == PickFewCompilationPage.routName) {
       event = ColorCategory();
     } else if (page == AudioPage.routName) {
       event = ColorAudio();

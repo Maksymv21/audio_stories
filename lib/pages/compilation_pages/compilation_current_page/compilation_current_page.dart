@@ -5,6 +5,7 @@ import 'package:audio_stories/pages/compilation_pages/compilation_create_page/co
 import 'package:audio_stories/pages/compilation_pages/compilation_create_page/create_compilation_page.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_state.dart';
+import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../main.dart';
 import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
 import '../../../utils/local_db.dart';
@@ -544,6 +546,20 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                   id: state.id,
                 ),
               );
+        }
+        if (value == 1) {
+          // MyApp.firstKey.currentState!
+          //     .pushNamed(PickFewCompilationPage.routName);
+          Navigator.of(context).push(
+            PageRouteBuilder(
+              pageBuilder: (_, __, ___) => PickFewCompilationPage(
+                title: state.title,
+                url: state.url,
+                listId: state.listId,
+                date: state.date,
+              ),
+            ),
+          );
         }
         if (value == 2) {
           Database.deleteCompilation({
