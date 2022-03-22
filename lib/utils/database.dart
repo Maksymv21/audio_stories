@@ -90,6 +90,34 @@ class Database {
             merge: true,
           ),
         );
+
+    for (int i = 0; i < map['sounds'].length; i++) {
+      final DocumentReference document = FirebaseFirestore.instance
+          .collection('users')
+          .doc(LocalDB.uid)
+          .collection('sounds')
+          .doc(map['sounds'][i]);
+      await document.get().then<dynamic>((
+        DocumentSnapshot snapshot,
+      ) async {
+        dynamic data = snapshot.data;
+        if (data()['compilations'] != null) {
+          List compilations = data()['compilations'];
+          if (!compilations.contains(map['id'])) {
+            compilations.add(map['id']);
+            createOrUpdateSound({
+              'id': map['sounds'][i],
+              'compilations': compilations,
+            });
+          }
+        } else {
+          createOrUpdateSound({
+            'id': map['sounds'][i],
+            'compilations': [map['id']],
+          });
+        }
+      });
+    }
   }
 
   static Future deleteSoundInCompilation(
