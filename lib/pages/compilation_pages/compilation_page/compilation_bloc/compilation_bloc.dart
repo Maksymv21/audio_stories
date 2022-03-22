@@ -13,7 +13,7 @@ class CompilationBloc extends Bloc<CompilationEvent, CompilationState> {
     on<ToAddInCompilation>((event, emit) async {
       emit(
         AddInCompilation(
-          id: event.id,
+          listId: event.listId,
         ),
       );
     });

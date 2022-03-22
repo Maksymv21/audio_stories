@@ -1,10 +1,12 @@
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
+import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
 import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
@@ -14,21 +16,27 @@ import '../../main_pages/widgets/custom_checkbox.dart';
 import '../../main_pages/widgets/player_container.dart';
 import '../../main_pages/widgets/sound_container.dart';
 import '../../play_page/play_page.dart';
+import '../compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../compilation_page/compilation_bloc/compilation_event.dart';
+import '../compilation_page/compilation_page.dart';
 
+//ignore: must_be_immutable
 class PickFewCompilationPage extends StatefulWidget {
   static const routName = '/pickFew';
 
   final String? title;
   final String? url;
-  final List? listId;
+  List? listId;
   final Timestamp? date;
+  final String? id;
 
-  const PickFewCompilationPage({
+  PickFewCompilationPage({
     Key? key,
     this.title,
     this.url,
     this.listId,
     this.date,
+    this.id,
   }) : super(key: key);
 
   @override
@@ -42,6 +50,7 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
   List<String> listTitle = [];
   List<String> listUrl = [];
   List<double> listTime = [];
+  List currentId = [];
   Widget _player = const Text('');
 
   @override
@@ -314,7 +323,96 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         const CircleBorder(),
         0.2,
       ),
-      onSelected: (value) async {},
+      onSelected: (value) async {
+        if (value == 0) {
+          setState(() {
+            for (int i = 0; i < chek.length; i++) {
+              chek[i] = false;
+            }
+          });
+        }
+        if (value == 1) {
+          if (!chek.contains(true)) {
+            _showSnackBar(
+              context: context,
+              title: 'Перед этим нужно сделать выбор',
+            );
+          } else {
+            for (int i = 0; i < widget.listId!.length; i++) {
+              if (chek[i]) currentId.add(widget.listId![i]);
+            }
+            MainPage.globalKey.currentState!
+                .pushReplacementNamed(CompilationPage.routName);
+            context.read<CompilationBloc>().add(
+                  ToAddInCompilation(
+                    listId: currentId,
+                  ),
+                );
+          }
+        }
+        if (value == 2) {
+          if (!chek.contains(true)) {
+            _showSnackBar(
+              context: context,
+              title: 'Перед этим нужно сделать выбор',
+            );
+          } else {}
+        }
+        if (value == 3) {
+          if (!chek.contains(true)) {
+            _showSnackBar(
+              context: context,
+              title: 'Перед этим нужно сделать выбор',
+            );
+          } else {
+            for (int i = 0; i < widget.listId!.length; i++) {
+              if (chek[i]) {
+                _download(listUrl[i], listTitle[i]).then((value) {
+                  _showSnackBar(
+                    context: context,
+                    title: 'Файл сохранен.'
+                        '\nDownload/${listTitle[i]}.aac',
+                  );
+                  setState(() {
+                    chek[i] = false;
+                  });
+                });
+              }
+            }
+          }
+        }
+        if (value == 4) {
+          if (!chek.contains(true)) {
+            _showSnackBar(
+              context: context,
+              title: 'Перед этим нужно сделать выбор',
+            );
+          } else {
+            if (!chek.contains(false)) {
+              _showSnackBar(
+                context: context,
+                title: 'В подборке должно оставаться минимум одно аудио',
+              );
+            } else {
+              for (int i = 0; i < chek.length; i++) {
+                if (chek[i]) {
+                  chek.removeAt(i);
+                  listTitle.removeAt(i);
+                  listUrl.removeAt(i);
+                  listTime.removeAt(i);
+                  widget.listId!.removeAt(i);
+
+                  Database.deleteSoundInCompilation(
+                    {'sounds': widget.listId!},
+                    widget.id!,
+                  );
+                  current.removeAt(i);
+                }
+              }
+            }
+          }
+        }
+      },
       itemBuilder: (_) => const [
         PopupMenuItem(
           value: 0,
@@ -415,6 +513,17 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         );
   }
 
+  Future _download(String url, String name) async {
+    String path = 'storage/emulated/0/Download/$name.aac';
+
+    Dio dio = Dio();
+
+    await dio.download(
+      url,
+      path,
+    );
+  }
+
   String _convertDate(Timestamp date) {
     final String dateTime = date.toDate().toString();
     final String result = dateTime.substring(8, 10) +
@@ -423,5 +532,19 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         '.' +
         dateTime.substring(2, 4);
     return result;
+  }
+
+  void _showSnackBar({
+    required BuildContext context,
+    required String title,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          title,
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
   }
 }

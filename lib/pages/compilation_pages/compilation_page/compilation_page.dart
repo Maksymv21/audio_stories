@@ -118,7 +118,7 @@ class _CompilationPageState extends State<CompilationPage> {
                         if (state is AddInCompilation) {
                           context.read<AddInCompilationBloc>().add(
                                 ToCreate(
-                                  listId: [state.id],
+                                  listId: [state.listId],
                                   text: '',
                                   title: '',
                                 ),
@@ -233,7 +233,11 @@ class _CompilationPageState extends State<CompilationPage> {
                 final String id = snapshot.data.docs[index].id;
 
                 if (ready && state is AddInCompilation && chek[index]) {
-                  if (!listId.contains(state.id)) listId.add(state.id);
+                  for (int i = 0; i < state.listId.length; i++) {
+                    if (!listId.contains(state.listId[i])) {
+                      listId.add(state.listId[i]);
+                    }
+                  }
 
                   Database.createOrUpdateCompilation({
                     'id': id,

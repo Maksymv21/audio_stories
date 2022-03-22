@@ -10,12 +10,12 @@ abstract class CompilationEvent extends Equatable {
 class ToInitialCompilation extends CompilationEvent {}
 
 class ToAddInCompilation extends CompilationEvent {
-  final String id;
+  final List listId;
 
   const ToAddInCompilation({
-    required this.id,
+    required this.listId,
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [listId];
 }

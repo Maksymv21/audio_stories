@@ -557,6 +557,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                 url: state.url,
                 listId: state.listId,
                 date: state.date,
+                id: state.id,
               ),
             ),
           );

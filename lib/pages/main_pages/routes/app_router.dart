@@ -42,7 +42,7 @@ class AppRouter {
         page = const CompilationSearchPage();
         break;
       case PickFewCompilationPage.routName:
-        page = const PickFewCompilationPage();
+        page = PickFewCompilationPage();
         break;
       case ProfilePage.routName:
         page = const ProfilePage();

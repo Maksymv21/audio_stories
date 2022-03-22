@@ -10,12 +10,12 @@ abstract class CompilationState extends Equatable {
 class InitialCompilation extends CompilationState {}
 
 class AddInCompilation extends CompilationState {
-  final String id;
+  final List listId;
 
   const AddInCompilation({
-    required this.id,
+    required this.listId,
   });
 
   @override
-  List<Object?> get props => [id];
+  List<Object?> get props => [listId];
 }

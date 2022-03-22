@@ -49,7 +49,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
               .pushReplacementNamed(CompilationPage.routName);
           context.read<CompilationBloc>().add(
                 ToAddInCompilation(
-                  id: id,
+                  listId: [id],
                 ),
               );
           context.read<BlocIndex>().add(ColorCategory());
@@ -202,13 +202,10 @@ class PopupMenuSoundContainer extends StatelessWidget {
     String path = 'storage/emulated/0/Download/$name.aac';
 
     Dio dio = Dio();
-    var dir = await getApplicationDocumentsDirectory();
-    print("${dir.path}/$name.aac");
 
     await dio.download(
       url,
       path,
-      // "${dir.path}/$name.aac",
     );
   }
 
