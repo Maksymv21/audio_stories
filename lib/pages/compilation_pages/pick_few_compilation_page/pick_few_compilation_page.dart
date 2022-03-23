@@ -396,17 +396,20 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
             } else {
               for (int i = 0; i < chek.length; i++) {
                 if (chek[i]) {
-                  chek.removeAt(i);
-                  listTitle.removeAt(i);
-                  listUrl.removeAt(i);
-                  listTime.removeAt(i);
-                  widget.listId!.removeAt(i);
-
                   Database.deleteSoundInCompilation(
                     {'sounds': widget.listId!},
                     widget.id!,
+                    widget.listId![i],
                   );
-                  current.removeAt(i);
+                  setState(() {
+                    chek.removeAt(i);
+                    listTitle.removeAt(i);
+                    listUrl.removeAt(i);
+                    listTime.removeAt(i);
+                    widget.listId!.removeAt(i);
+
+                    current.removeAt(i);
+                  });
                 }
               }
             }

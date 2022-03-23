@@ -67,6 +67,45 @@ class Database {
             merge: true,
           ),
         );
+
+    if (map.containsValue(true)) {
+      final DocumentReference document = FirebaseFirestore.instance
+          .collection('users')
+          .doc(LocalDB.uid)
+          .collection('sounds')
+          .doc(map['id']);
+      await document.get().then<dynamic>((
+        DocumentSnapshot snapshot,
+      ) async {
+        dynamic data = snapshot.data;
+        if (data()['compilations'] != null) {
+          List compilations = data()['compilations'];
+          for (int i = 0; i < compilations.length; i++) {
+            final DocumentReference documentCompilation = FirebaseFirestore
+                .instance
+                .collection('users')
+                .doc(LocalDB.uid)
+                .collection('compilations')
+                .doc(compilations[i]);
+            await documentCompilation.get().then<dynamic>((
+              DocumentSnapshot snapshot,
+            ) {
+              deleteSoundInCompilation(
+                {
+                  'sounds': FieldValue.arrayRemove([map['id']]),
+                },
+                compilations[i],
+                map['id'],
+              );
+            });
+          }
+        }
+      });
+      createOrUpdateSound({
+        'id': map['id'],
+        'compilations': [],
+      });
+    }
   }
 
   static Future createOrUpdateCompilation(Map<String, dynamic> map,
@@ -99,23 +138,11 @@ class Database {
           .doc(map['sounds'][i]);
       await document.get().then<dynamic>((
         DocumentSnapshot snapshot,
-      ) async {
-        dynamic data = snapshot.data;
-        if (data()['compilations'] != null) {
-          List compilations = data()['compilations'];
-          if (!compilations.contains(map['id'])) {
-            compilations.add(map['id']);
-            createOrUpdateSound({
-              'id': map['sounds'][i],
-              'compilations': compilations,
-            });
-          }
-        } else {
-          createOrUpdateSound({
-            'id': map['sounds'][i],
-            'compilations': [map['id']],
-          });
-        }
+      ) {
+        createOrUpdateSound({
+          'id': map['sounds'][i],
+          'compilations': FieldValue.arrayUnion([map['id']]),
+        });
       });
     }
   }
@@ -123,6 +150,7 @@ class Database {
   static Future deleteSoundInCompilation(
     Map<String, dynamic> map,
     String id,
+    String soundId,
   ) async {
     _user.doc(LocalDB.uid).collection('compilations').doc(id).set(
           map,
@@ -130,6 +158,20 @@ class Database {
             merge: true,
           ),
         );
+
+    final DocumentReference document = FirebaseFirestore.instance
+        .collection('users')
+        .doc(LocalDB.uid)
+        .collection('sounds')
+        .doc(soundId);
+    await document.get().then<dynamic>((
+      DocumentSnapshot snapshot,
+    ) {
+      createOrUpdateSound({
+        'id': soundId,
+        'compilations': FieldValue.arrayRemove([id]),
+      });
+    });
   }
 
   static Future deleteCompilation(Map<String, dynamic> map) async {

@@ -108,21 +108,28 @@ class _CompilationPageState extends State<CompilationPage> {
                         Icons.add,
                       ),
                       onPressed: () {
-                        MainPage.globalKey.currentState!.pushReplacementNamed(
-                            CreateCompilationPage.routName);
-                        if (state is InitialCompilation) {
-                          context.read<AddInCompilationBloc>().add(
-                                ToCreateCompilation(),
-                              );
-                        }
-                        if (state is AddInCompilation) {
-                          context.read<AddInCompilationBloc>().add(
-                                ToCreate(
-                                  listId: [state.listId],
-                                  text: '',
-                                  title: '',
-                                ),
-                              );
+                        if (chek.isEmpty) {
+                          _showSnackBar(
+                            context: context,
+                            title: 'Отсутствуют аудио для создания подборки',
+                          );
+                        } else {
+                          MainPage.globalKey.currentState!.pushReplacementNamed(
+                              CreateCompilationPage.routName);
+                          if (state is InitialCompilation) {
+                            context.read<AddInCompilationBloc>().add(
+                                  ToCreateCompilation(),
+                                );
+                          }
+                          if (state is AddInCompilation) {
+                            context.read<AddInCompilationBloc>().add(
+                                  ToCreate(
+                                    listId: [state.listId],
+                                    text: '',
+                                    title: '',
+                                  ),
+                                );
+                          }
                         }
                       },
                     ),

@@ -174,14 +174,18 @@ class _AudioPageState extends State<AudioPage> {
                                 ),
                               ),
                               onPressed: () {
-                                if (!current.contains(true)) {
-                                  setState(() {
-                                    _player = _next(
-                                      index: 0,
-                                      length: length,
-                                      snapshot: snapshot,
-                                    );
-                                  });
+                                if (current.isEmpty) {
+                                  // show snack bar
+                                } else {
+                                  if (!current.contains(true)) {
+                                    setState(() {
+                                      _player = _next(
+                                        index: 0,
+                                        length: length,
+                                        snapshot: snapshot,
+                                      );
+                                    });
+                                  }
                                 }
                               },
                               child: const Align(
@@ -206,14 +210,18 @@ class _AudioPageState extends State<AudioPage> {
                               child: ColorFiltered(
                                 child: IconButton(
                                   onPressed: () {
-                                    if (!current.contains(true)) {
-                                      setState(() {
-                                        _player = _next(
-                                          index: 0,
-                                          length: length,
-                                          snapshot: snapshot,
-                                        );
-                                      });
+                                    if (current.isEmpty) {
+                                      // show snack bar
+                                    } else {
+                                      if (!current.contains(true)) {
+                                        setState(() {
+                                          _player = _next(
+                                            index: 0,
+                                            length: length,
+                                            snapshot: snapshot,
+                                          );
+                                        });
+                                      }
                                     }
                                   },
                                   icon: Image.asset(
@@ -238,90 +246,107 @@ class _AudioPageState extends State<AudioPage> {
                   ),
                 ],
               ),
-              Padding(
-                padding: EdgeInsets.only(top: 225.0, bottom: _bottom),
-                child: ListView.builder(
-                  itemCount: snapshot.data.docs.length,
-                  itemBuilder: (context, index) {
-                    Color color = current[index]
-                        ? const Color(0xffF1B488)
-                        : AppColor.active;
-                    final String url = snapshot.data.docs[index]['song'];
-                    final String id = snapshot.data.docs[index].id;
-                    final String title = snapshot.data.docs[index]['title'];
-                    return Column(
-                      children: [
-                        SoundContainer(
-                          color: color,
-                          title: title,
-                          time: (snapshot.data.docs[index]['time'] / 60)
-                              .toStringAsFixed(1),
-                          buttonRight: Align(
-                            alignment: const AlignmentDirectional(0.9, -1.0),
-                            child: PopupMenuSoundContainer(
-                              size: 30.0,
-                              title: title,
-                              id: id,
-                              url: url,
-                              onDelete: () {
-                                if (current[index]) {
-                                  setState(() {
-                                    _player = const Text('');
-                                  });
-                                }
-                                current.removeAt(index);
-                              },
-                            ),
+              snapshot.data.docs.length == 0
+                  ? const Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 10.0, top: 100.0),
+                        child: Text(
+                          'Как только ты запишешь аудио,'
+                          '\nони появится здесь.',
+                          style: TextStyle(
+                            fontSize: 24.0,
+                            color: Colors.grey,
                           ),
-                          onTap: () {
-                            if (!current[index]) {
-                              for (int i = 0; i < length; i++) {
-                                current[i] = false;
-                              }
-                              setState(() {
-                                _player = const Text('');
-                                _bottom = 90.0;
-                              });
-
-                              Future.delayed(const Duration(milliseconds: 50),
-                                  () {
-                                setState(() {
-                                  current[index] = true;
-                                  _player = Dismissible(
-                                    key: const Key(''),
-                                    direction: DismissDirection.down,
-                                    onDismissed: (direction) {
-                                      setState(() {
-                                        _player = const Text('');
-                                        _bottom = 10.0;
-                                        debugPrint(_bottom.toString());
-                                        current[index] = false;
-                                      });
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: EdgeInsets.only(top: 225.0, bottom: _bottom),
+                      child: ListView.builder(
+                        itemCount: snapshot.data.docs.length,
+                        itemBuilder: (context, index) {
+                          Color color = current[index]
+                              ? const Color(0xffF1B488)
+                              : AppColor.active;
+                          final String url = snapshot.data.docs[index]['song'];
+                          final String id = snapshot.data.docs[index].id;
+                          final String title =
+                              snapshot.data.docs[index]['title'];
+                          return Column(
+                            children: [
+                              SoundContainer(
+                                color: color,
+                                title: title,
+                                time: (snapshot.data.docs[index]['time'] / 60)
+                                    .toStringAsFixed(1),
+                                buttonRight: Align(
+                                  alignment:
+                                      const AlignmentDirectional(0.9, -1.0),
+                                  child: PopupMenuSoundContainer(
+                                    size: 30.0,
+                                    title: title,
+                                    id: id,
+                                    url: url,
+                                    onDelete: () {
+                                      if (current[index]) {
+                                        setState(() {
+                                          _player = const Text('');
+                                        });
+                                      }
+                                      current.removeAt(index);
                                     },
-                                    child: PlayerContainer(
-                                      title: title,
-                                      url: url,
-                                      id: id,
-                                      onPressed: () => _onPressed(
-                                        url: url,
-                                        title: title,
-                                        id: id,
-                                      ),
-                                    ),
-                                  );
-                                });
-                              });
-                            }
-                          },
-                        ),
-                        const SizedBox(
-                          height: 7.0,
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
+                                  ),
+                                ),
+                                onTap: () {
+                                  if (!current[index]) {
+                                    for (int i = 0; i < length; i++) {
+                                      current[i] = false;
+                                    }
+                                    setState(() {
+                                      _player = const Text('');
+                                      _bottom = 90.0;
+                                    });
+
+                                    Future.delayed(
+                                        const Duration(milliseconds: 50), () {
+                                      setState(() {
+                                        current[index] = true;
+                                        _player = Dismissible(
+                                          key: const Key(''),
+                                          direction: DismissDirection.down,
+                                          onDismissed: (direction) {
+                                            setState(() {
+                                              _player = const Text('');
+                                              _bottom = 10.0;
+                                              debugPrint(_bottom.toString());
+                                              current[index] = false;
+                                            });
+                                          },
+                                          child: PlayerContainer(
+                                            title: title,
+                                            url: url,
+                                            id: id,
+                                            onPressed: () => _onPressed(
+                                              url: url,
+                                              title: title,
+                                              id: id,
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                    });
+                                  }
+                                },
+                              ),
+                              const SizedBox(
+                                height: 7.0,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
               Align(
                 alignment: AlignmentDirectional.bottomCenter,
                 child: Padding(

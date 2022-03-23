@@ -13,7 +13,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../main.dart';
 import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
 import '../../../utils/local_db.dart';
@@ -356,7 +355,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         if (snapshot.hasData) {
           _createLists(snapshot, listId.length);
 
-          if (listTitle.isEmpty) {
+          if (listTitle.isEmpty || listTitle.length < listId.length) {
             for (int i = 0; i < snapshot.data.docs.length; i++) {
               for (int j = 0; j < listId.length; j++) {
                 if (snapshot.data.docs[i].id == listId[j]) {
@@ -440,15 +439,18 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                                   'В подборке должно оставаться минимум одно аудио',
                             );
                           } else {
+                            Database.deleteSoundInCompilation(
+                              {
+                                'sounds': FieldValue.arrayRemove([listId[index]]),
+                              },
+                              id,
+                              listId[index],
+                            );
                             listTitle.removeAt(index);
                             listUrl.removeAt(index);
                             listTime.removeAt(index);
                             listId.removeAt(index);
 
-                            Database.deleteSoundInCompilation(
-                              {'sounds': listId},
-                              id,
-                            );
                             current.removeAt(index);
                           }
                         },
