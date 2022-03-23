@@ -3,6 +3,7 @@ import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_event.dart';
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth_state.dart';
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -31,16 +32,16 @@ class AuthPage extends StatelessWidget {
           );
         }
         if (current is PhoneAuthNumberFailure) {
-          _showSnackBar(
+          GlobalRepo.showSnackBar(
             context: context,
-            text: 'Введен недопустимый номер.'
+            title: 'Введен недопустимый номер.'
                 '\nПроверьте номер и повторите попытку.',
           );
         }
         if (current is PhoneAuthCodeFailure) {
-          _showSnackBar(
+          GlobalRepo.showSnackBar(
             context: context,
-            text: 'Неверный код или истекло время ожидания.'
+            title: 'Неверный код или истекло время ожидания.'
                 '\nПовторите попытку еще раз.',
           );
         }
@@ -124,17 +125,6 @@ class AuthPage extends StatelessWidget {
     context
         .read<PhoneAuthBloc>()
         .add(PhoneAuthNumberVerified(phoneNumber: _phoneNumberController.text));
-  }
-
-  void _showSnackBar({required BuildContext context, required String text}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          text,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 }
 

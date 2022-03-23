@@ -7,6 +7,7 @@ import 'package:audio_stories/pages/compilation_pages/compilation_page/compilati
 import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
 import 'package:audio_stories/pages/main_pages/widgets/compilation_container.dart';
 import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -74,7 +75,7 @@ class _CompilationPageState extends State<CompilationPage> {
                   ready = !ready;
                 });
               } else {
-                _showSnackBar(
+                GlobalRepo.showSnackBar(
                   context: context,
                   title: 'Выберите подборку',
                 );
@@ -109,7 +110,7 @@ class _CompilationPageState extends State<CompilationPage> {
                       ),
                       onPressed: () {
                         if (chek.isEmpty) {
-                          _showSnackBar(
+                          GlobalRepo.showSnackBar(
                             context: context,
                             title: 'Отсутствуют аудио для создания подборки',
                           );
@@ -323,20 +324,6 @@ class _CompilationPageState extends State<CompilationPage> {
           );
         }
       },
-    );
-  }
-
-  void _showSnackBar({
-    required BuildContext context,
-    required String title,
-  }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          title,
-          textAlign: TextAlign.center,
-        ),
-      ),
     );
   }
 }

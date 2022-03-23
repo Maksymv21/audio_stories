@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -105,7 +106,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                     }
                                   }
                                   if (listId.isEmpty) {
-                                    _showSnackBar(
+                                    GlobalRepo.showSnackBar(
                                       context: context,
                                       title: 'Сделайте выбор',
                                     );
@@ -364,19 +365,5 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
         search.add(i);
       }
     }
-  }
-
-  void _showSnackBar({
-    required BuildContext context,
-    required String title,
-  }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          title,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 }

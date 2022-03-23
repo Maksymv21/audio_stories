@@ -6,6 +6,7 @@ import 'package:audio_stories/pages/compilation_pages/compilation_create_page/cr
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_state.dart';
 import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -433,7 +434,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                         url: listUrl[index],
                         onDelete: () {
                           if (listId.length == 1) {
-                            _showSnackBar(
+                            GlobalRepo.showSnackBar(
                               context: context,
                               title:
                                   'В подборке должно оставаться минимум одно аудио',
@@ -441,7 +442,8 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                           } else {
                             Database.deleteSoundInCompilation(
                               {
-                                'sounds': FieldValue.arrayRemove([listId[index]]),
+                                'sounds':
+                                    FieldValue.arrayRemove([listId[index]]),
                               },
                               id,
                               listId[index],
@@ -688,18 +690,4 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         dateTime.substring(2, 4);
     return result;
   }
-}
-
-void _showSnackBar({
-  required BuildContext context,
-  required String title,
-}) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text(
-        title,
-        textAlign: TextAlign.center,
-      ),
-    ),
-  );
 }

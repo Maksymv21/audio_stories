@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_page.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_create_page/compilation_search_page.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -152,7 +153,10 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
               ),
               onPressed: () {
                 if (state is AddInCompilationInitial) {
-                  _showSnackBar(context: context, title: 'Добавтье аудиофайлы');
+                  GlobalRepo.showSnackBar(
+                    context: context,
+                    title: 'Добавтье аудиофайлы',
+                  );
                 }
                 if (state is Create) {
                   _ready(state);
@@ -303,8 +307,10 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     TextButton(
                       onPressed: () {
                         if (state is AddInCompilationInitial) {
-                          _showSnackBar(
-                              context: context, title: 'Добавтье аудиофайли');
+                          GlobalRepo.showSnackBar(
+                            context: context,
+                            title: 'Добавтье аудиофайли',
+                          );
                         }
                         if (state is Create) {
                           _ready(state);
@@ -407,21 +413,26 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
   void _ready(Create state) {
     if (_image == null && _url == null) {
       if (_textController.text != '' && _titleController.text != '') {
-        _showSnackBar(context: context, title: 'Выберите излюражение');
+        GlobalRepo.showSnackBar(
+          context: context,
+          title: 'Выберите излюражение',
+        );
       }
       if (_textController.text == '' || _titleController.text == '') {
-        _showSnackBar(
-            context: context,
-            title: 'Для создания подборки должно быть выбрано '
-                'название, изображение и описание');
+        GlobalRepo.showSnackBar(
+          context: context,
+          title: 'Для создания подборки должно быть выбрано '
+              'название, изображение и описание',
+        );
       }
     }
     if (_image != null || _url != null) {
       if (_textController.text == '' || _titleController.text == '') {
-        _showSnackBar(
-            context: context,
-            title: 'Для создания подборки должно быть выбрано '
-                'название и описание');
+        GlobalRepo.showSnackBar(
+          context: context,
+          title: 'Для создания подборки должно быть выбрано '
+              'название и описание',
+        );
       }
       if (_textController.text != '' && _titleController.text != '') {
         _createCompilation(listId, state.id, _image);
@@ -429,19 +440,5 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
             .pushReplacementNamed(CompilationPage.routName);
       }
     }
-  }
-
-  void _showSnackBar({
-    required BuildContext context,
-    required String title,
-  }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          title,
-          textAlign: TextAlign.center,
-        ),
-      ),
-    );
   }
 }

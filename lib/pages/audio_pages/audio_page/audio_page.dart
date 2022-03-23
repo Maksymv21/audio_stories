@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/main_pages/widgets/popup_menu_sound_container.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -175,7 +176,10 @@ class _AudioPageState extends State<AudioPage> {
                               ),
                               onPressed: () {
                                 if (current.isEmpty) {
-                                  // show snack bar
+                                  GlobalRepo.showSnackBar(
+                                    context: context,
+                                    title: 'Отсутствуют аудио для проигрования',
+                                  );
                                 } else {
                                   if (!current.contains(true)) {
                                     setState(() {
@@ -211,7 +215,11 @@ class _AudioPageState extends State<AudioPage> {
                                 child: IconButton(
                                   onPressed: () {
                                     if (current.isEmpty) {
-                                      // show snack bar
+                                      GlobalRepo.showSnackBar(
+                                        context: context,
+                                        title:
+                                            'Отсутствуют аудио для проигрования',
+                                      );
                                     } else {
                                       if (!current.contains(true)) {
                                         setState(() {

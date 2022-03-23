@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -333,10 +334,7 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         }
         if (value == 1) {
           if (!chek.contains(true)) {
-            _showSnackBar(
-              context: context,
-              title: 'Перед этим нужно сделать выбор',
-            );
+            _choiseSnackBar(context);
           } else {
             for (int i = 0; i < widget.listId!.length; i++) {
               if (chek[i]) currentId.add(widget.listId![i]);
@@ -352,27 +350,22 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         }
         if (value == 2) {
           if (!chek.contains(true)) {
-            _showSnackBar(
-              context: context,
-              title: 'Перед этим нужно сделать выбор',
-            );
+            _choiseSnackBar(context);
           } else {}
         }
         if (value == 3) {
           if (!chek.contains(true)) {
-            _showSnackBar(
-              context: context,
-              title: 'Перед этим нужно сделать выбор',
-            );
+            _choiseSnackBar(context);
           } else {
             for (int i = 0; i < widget.listId!.length; i++) {
               if (chek[i]) {
                 _download(listUrl[i], listTitle[i]).then((value) {
-                  _showSnackBar(
+                  GlobalRepo.showSnackBar(
                     context: context,
                     title: 'Файл сохранен.'
                         '\nDownload/${listTitle[i]}.aac',
                   );
+
                   setState(() {
                     chek[i] = false;
                   });
@@ -383,13 +376,10 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         }
         if (value == 4) {
           if (!chek.contains(true)) {
-            _showSnackBar(
-              context: context,
-              title: 'Перед этим нужно сделать выбор',
-            );
+            _choiseSnackBar(context);
           } else {
             if (!chek.contains(false)) {
-              _showSnackBar(
+              GlobalRepo.showSnackBar(
                 context: context,
                 title: 'В подборке должно оставаться минимум одно аудио',
               );
@@ -537,17 +527,10 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
     return result;
   }
 
-  void _showSnackBar({
-    required BuildContext context,
-    required String title,
-  }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          title,
-          textAlign: TextAlign.center,
-        ),
-      ),
+  void _choiseSnackBar(BuildContext context) {
+    GlobalRepo.showSnackBar(
+      context: context,
+      title: 'Перед этим нужно сделать выбор',
     );
   }
 }
