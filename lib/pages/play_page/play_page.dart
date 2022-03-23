@@ -191,15 +191,19 @@ class _PlayPageState extends State<PlayPage> {
                       .snapshots(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
+                      List<String?> compilation = _compilation(snapshot);
+
                       return Container(
                         width: MediaQuery.of(context).size.width * 0.8,
                         height: MediaQuery.of(context).size.height * 0.5,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.0),
                           image: DecorationImage(
-                            image: Image.asset(
-                              AppIcons.headphones,
-                            ).image,
+                            image: compilation.isEmpty
+                                ? Image.asset(
+                                    AppIcons.headphones,
+                                  ).image
+                                : Image.network(compilation[0]!).image,
                             fit: BoxFit.cover,
                           ),
                           boxShadow: const [
@@ -212,9 +216,11 @@ class _PlayPageState extends State<PlayPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const Text(
-                              'Название подборки',
-                              style: TextStyle(
+                            Text(
+                              compilation.isEmpty
+                                  ? 'Название подборки'
+                                  : compilation[1]!,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 25.0,
                               ),
@@ -274,7 +280,7 @@ class _PlayPageState extends State<PlayPage> {
                             _onChanged = true;
                           },
                           onChangeEnd: (value) async {
-                            await seek(value.toInt());
+                            await _seek(value.toInt());
                             val = sliderCurrentPosition;
                             _onChanged = false;
                           },
@@ -317,7 +323,7 @@ class _PlayPageState extends State<PlayPage> {
                               sliderCurrentPosition = 0.0;
                             }
                             refreshTimer(sliderCurrentPosition);
-                            await seek(sliderCurrentPosition.toInt());
+                            await _seek(sliderCurrentPosition.toInt());
                             setState(() {});
                           },
                           icon: Image.asset(
@@ -352,7 +358,7 @@ class _PlayPageState extends State<PlayPage> {
                               sliderCurrentPosition = maxDuration - 300;
                             }
                             refreshTimer(sliderCurrentPosition);
-                            await seek(sliderCurrentPosition.toInt());
+                            await _seek(sliderCurrentPosition.toInt());
                             setState(() {});
                           },
                           icon: Image.asset(
@@ -382,7 +388,7 @@ class _PlayPageState extends State<PlayPage> {
     );
   }
 
-  Future<void> seek(int ms) async {
+  Future<void> _seek(int ms) async {
     await _player.seek(ms);
     setState(() {});
   }
@@ -410,6 +416,28 @@ class _PlayPageState extends State<PlayPage> {
       setState(() {});
     });
     _isPause = false;
+  }
+
+  List<String?> _compilation(AsyncSnapshot snapshot) {
+    if (snapshot.data.docs['compilations'] != null &&
+        !snapshot.data.docs['compilations'].isEmpty) {
+      final List compilations = snapshot.data.docs['compilations'];
+      final DocumentReference documentCompilation = FirebaseFirestore.instance
+          .collection('users')
+          .doc(LocalDB.uid)
+          .collection('compilations')
+          .doc(compilations[compilations.length - 1]);
+      documentCompilation.get().then<dynamic>((
+        DocumentSnapshot snapshot,
+      ) {
+        dynamic data = snapshot.data;
+        return [
+          data()['image'],
+          data()['title'],
+        ];
+      });
+    }
+    return [];
   }
 
   IndexEvent _bloc(String page) {
