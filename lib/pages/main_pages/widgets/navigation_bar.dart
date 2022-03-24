@@ -16,6 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
 import '../../audio_pages/audio_page/audio_page.dart';
+import '../../audio_pages/audio_page/test_page.dart';
 import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 class MyNavigationBar extends StatelessWidget {
@@ -132,7 +133,9 @@ class MyNavigationBar extends StatelessWidget {
                   onPressed: () {
                     if (index != 3) {
                       MainPage.globalKey.currentState!
-                          .pushReplacementNamed(AudioPage.routName);
+                          .pushReplacementNamed(TestPage.routName);
+                      // MainPage.globalKey.currentState!
+                      //     .pushReplacementNamed(AudioPage.routName);
                       context.read<BlocIndex>().add(
                             ColorAudio(),
                           );

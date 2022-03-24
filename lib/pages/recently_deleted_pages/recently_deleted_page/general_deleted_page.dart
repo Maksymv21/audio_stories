@@ -3,6 +3,7 @@ import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page
 import 'package:audio_stories/pages/recently_deleted_pages/widgets/delete_bottom_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:grouped_list/grouped_list.dart';
 
 import '../../../main.dart';
 import '../../../resources/app_color.dart';
@@ -108,7 +109,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                           child: DeleteBottomBar(
                             rees: () {
                               for (int i = 0; i < length; i++) {
-                                if (chek[i]) {
+                                if (chek.reversed.toList()[i]) {
                                   final String id = snapshot.data.docs[i].id;
                                   Database.createOrUpdateSound(
                                     {
@@ -125,7 +126,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                             },
                             delete: () {
                               for (int i = 0; i < length; i++) {
-                                if (chek[i]) {
+                                if (chek.reversed.toList()[i]) {
                                   final String path = snapshot.data.docs[i].id;
                                   final String title =
                                       snapshot.data.docs[i]['title'];
@@ -204,36 +205,49 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
       }
       return Padding(
         padding: EdgeInsets.only(
-          top: 85.0,
+          top: 60.0,
           bottom: widget.edit ? _bottomEdit : _bottom,
+          left: 20.0,
+          right: 20.0,
         ),
-        child: ListView.builder(
-          itemCount: length,
-          itemBuilder: (context, index) {
+        child: GroupedListView<dynamic, String>(
+          elements: snapshot.data.docs,
+          groupBy: (element) =>
+              element['dateDeleted'].toDate().toString().substring(0, 10),
+          groupComparator: (value1, value2) => value1.compareTo(value2),
+          order: GroupedListOrder.DESC,
+          groupSeparatorBuilder: (String value) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              _convertDate(value),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                color: const Color(0xff3A3A55).withOpacity(0.5),
+              ),
+            ),
+          ),
+          indexedItemBuilder: (c, element, index) {
             Color color =
                 current[index] ? const Color(0xffF1B488) : AppColor.active;
 
-            final String path = snapshot.data.docs[index].id;
-            final String title = snapshot.data.docs[index]['title'];
-            final String date = snapshot.data.docs[index]['date'].toString();
-            final String url = snapshot.data.docs[index]['song'];
-            final int memory = snapshot.data.docs[index]['memory'];
-
             autoDelete(
-              snapshot.data.docs[index]['dateDeleted'],
-              path,
-              title,
-              date,
-              memory,
+              element['dateDeleted'],
+              element['id'],
+              element['title'],
+              element['date'].toString(),
+              element['memory'],
             );
 
             return Column(
               children: [
+                const SizedBox(
+                  height: 4.0,
+                ),
                 SoundContainer(
                   color: color,
-                  title: title,
-                  time: (snapshot.data.docs[index]['time'] / 60)
-                      .toStringAsFixed(1),
+                  title: element['title'],
+                  time: (element['time'] / 60).toStringAsFixed(1),
                   buttonRight: widget.edit
                       ? CustomCheckBox(
                           color: Colors.black87,
@@ -244,10 +258,10 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                             });
                           })
                       : _deletedButton(
-                          path,
-                          title,
-                          date,
-                          memory,
+                          element['id'],
+                          element['title'],
+                          element['date'].toString(),
+                          element['memory'],
                         ),
                   onTap: () {
                     if (!current[index]) {
@@ -273,9 +287,9 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                               });
                             },
                             child: PlayerContainer(
-                              title: title,
-                              url: url,
-                              id: path,
+                              title: element['title'],
+                              url: element['song'],
+                              id: element['id'],
                               onPressed: () {
                                 setState(() {
                                   _player = const Text('');
@@ -283,9 +297,9 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                                 Navigator.of(context).pushReplacement(
                                   PageRouteBuilder(
                                     pageBuilder: (_, __, ___) => PlayPage(
-                                      url: url,
-                                      title: title,
-                                      id: path,
+                                      title: element['title'],
+                                      url: element['song'],
+                                      id: element['id'],
                                       page: RecentlyDeletedPage.routName,
                                     ),
                                   ),
@@ -298,9 +312,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                     }
                   },
                 ),
-                const SizedBox(
-                  height: 7.0,
-                ),
+                const SizedBox(height: 4.0),
               ],
             );
           },
@@ -485,5 +497,14 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
     if (now.difference(timeDeleted).inDays >= 15) {
       Database.deleteSound(path, title, date, memory);
     }
+  }
+
+  String _convertDate(String date) {
+    final String result = date.substring(8, 10) +
+        '.' +
+        date.substring(5, 7) +
+        '.' +
+        date.substring(2, 4);
+    return result;
   }
 }

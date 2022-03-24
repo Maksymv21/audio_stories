@@ -118,13 +118,17 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                     padding: EdgeInsets.only(
                       left: _width * 0.07,
                       right: _width * 0.07,
+                      bottom: 0.0,
                     ),
                     child: Column(
                       children: [
                         Flexible(
                           child: _readMore
                               ? ListView(
-                                  padding: const EdgeInsets.only(top: 0.0),
+                                  padding: const EdgeInsets.only(
+                                    top: 0.0,
+                                    bottom: 10.0,
+                                  ),
                                   children: [
                                     Text(
                                       state.text,

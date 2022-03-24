@@ -289,6 +289,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  grouped_list:
+    dependency: "direct main"
+    description:
+      name: grouped_list
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.0"
   http:
     dependency: "direct main"
     description:
@@ -594,7 +601,7 @@ packages:
       name: win32
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.2"
+    version: "2.4.4"
   xdg_directories:
     dependency: transitive
     description:
