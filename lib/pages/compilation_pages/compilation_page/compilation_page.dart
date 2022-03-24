@@ -109,28 +109,21 @@ class _CompilationPageState extends State<CompilationPage> {
                         Icons.add,
                       ),
                       onPressed: () {
-                        if (chek.isEmpty) {
-                          GlobalRepo.showSnackBar(
-                            context: context,
-                            title: 'Отсутствуют аудио для создания подборки',
-                          );
-                        } else {
+                        if (state is InitialCompilation) {
+                          context.read<AddInCompilationBloc>().add(
+                                ToCreateCompilation(),
+                              );
+                        }
+                        if (state is AddInCompilation) {
+                          context.read<AddInCompilationBloc>().add(
+                                ToCreate(
+                                  listId: state.listId,
+                                  text: '',
+                                  title: '',
+                                ),
+                              );
                           MainPage.globalKey.currentState!.pushReplacementNamed(
                               CreateCompilationPage.routName);
-                          if (state is InitialCompilation) {
-                            context.read<AddInCompilationBloc>().add(
-                                  ToCreateCompilation(),
-                                );
-                          }
-                          if (state is AddInCompilation) {
-                            context.read<AddInCompilationBloc>().add(
-                                  ToCreate(
-                                    listId: [state.listId],
-                                    text: '',
-                                    title: '',
-                                  ),
-                                );
-                          }
                         }
                       },
                     ),

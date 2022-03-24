@@ -27,6 +27,11 @@ class RecordRepository {
     _recorder = FlutterSoundRecorder();
     _player!.openAudioSession();
     _recorder!.openAudioSession();
+    await _recorder!.setSubscriptionDuration(
+      const Duration(
+        milliseconds: 20,
+      ),
+    );
     await _player?.setSubscriptionDuration(
       const Duration(
         milliseconds: 50,

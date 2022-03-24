@@ -16,6 +16,8 @@ import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
 import '../../main_pages/main_page/main_page.dart';
 import '../../main_pages/widgets/sound_container.dart';
+import '../compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../compilation_page/compilation_bloc/compilation_event.dart';
 import 'compilation_create_bloc/add_in_compilation_bloc.dart';
 import 'compilation_create_bloc/add_in_compilation_event.dart';
 import 'compilation_create_bloc/add_in_compilation_state.dart';
@@ -436,6 +438,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
       }
       if (_textController.text != '' && _titleController.text != '') {
         _createCompilation(listId, state.id, _image);
+        context.read<CompilationBloc>().add(
+          ToInitialCompilation(),
+        );
         MainPage.globalKey.currentState!
             .pushReplacementNamed(CompilationPage.routName);
       }

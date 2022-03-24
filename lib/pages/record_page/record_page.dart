@@ -52,31 +52,19 @@ class _RecordPageState extends State<RecordPage> {
       });
     });
     openTheRecorder();
-    startTimer();
+    //startTimer();
     noise();
     _isPlay = true;
   }
 
   Future openTheRecorder() async {
-    await _recorder.recorder!.openAudioSession(
-      focus: AudioFocus.requestFocusAndStopOthers,
-      category: SessionCategory.playAndRecord,
-      mode: SessionMode.modeDefault,
-    );
-    await _recorder.recorder!
-        .setSubscriptionDuration(const Duration(milliseconds: 10));
-  }
 
-  @override
-  void dispose() {
-    _recorder.close();
-    _recorderSubscription?.cancel();
-    recordSub?.cancel();
-    _playerSubscription?.cancel();
-    super.dispose();
-  }
+    // await _recorder.recorder!.openAudioSession(
+    //   focus: AudioFocus.requestFocusAndStopOthers,
+    //   category: SessionCategory.playAndRecord,
+    //   mode: SessionMode.modeDefault,
+    // );
 
-  void startTimer() {
     _recorderSubscription = _recorder.onProgress!.listen((e) {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(
           e.duration.inMilliseconds,
@@ -88,6 +76,28 @@ class _RecordPageState extends State<RecordPage> {
       });
     });
   }
+
+  @override
+  void dispose() {
+    _recorder.close();
+    _recorderSubscription?.cancel();
+    recordSub?.cancel();
+    _playerSubscription?.cancel();
+    super.dispose();
+  }
+
+  // void startTimer() {
+  //   _recorderSubscription = _recorder.onProgress!.listen((e) {
+  //     DateTime date = DateTime.fromMillisecondsSinceEpoch(
+  //         e.duration.inMilliseconds,
+  //         isUtc: true);
+  //     String txt = DateFormat('HH:mm:ss', 'en_GB').format(date);
+  //     setState(() {
+  //       _recorderTxt = txt.substring(0, 8);
+  //       _time = e.duration.inSeconds.toDouble();
+  //     });
+  //   });
+  // }
 
   void refreshTimer(double value) {
     DateTime date =

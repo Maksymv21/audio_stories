@@ -47,6 +47,7 @@ class PlayPage extends StatefulWidget {
 
 class _PlayPageState extends State<PlayPage> {
   final PlayerRepository _player = PlayerRepository();
+  List<String?> compilation = [];
   StreamSubscription? _playerSubscription;
   double sliderCurrentPosition = 0.0;
   String _playTxt = '00:00';
@@ -191,7 +192,19 @@ class _PlayPageState extends State<PlayPage> {
                       .snapshots(),
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.hasData) {
-                      List<String?> compilation = _compilation(snapshot);
+                      if (compilation.isEmpty) {
+                        compilation = _compilation(snapshot);
+                        print(compilation);
+                      }
+
+                      ImageProvider image = compilation.isEmpty
+                          ? Image.asset(
+                              AppIcons.headphones,
+                            ).image
+                          : Image.network(compilation[0]!).image;
+                      String compTitle = compilation.isEmpty
+                          ? 'Название подборки'
+                          : compilation[1]!;
 
                       return Container(
                         width: MediaQuery.of(context).size.width * 0.8,
@@ -199,11 +212,7 @@ class _PlayPageState extends State<PlayPage> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.0),
                           image: DecorationImage(
-                            image: compilation.isEmpty
-                                ? Image.asset(
-                                    AppIcons.headphones,
-                                  ).image
-                                : Image.network(compilation[0]!).image,
+                            image: image,
                             fit: BoxFit.cover,
                           ),
                           boxShadow: const [
@@ -217,9 +226,7 @@ class _PlayPageState extends State<PlayPage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              compilation.isEmpty
-                                  ? 'Название подборки'
-                                  : compilation[1]!,
+                              compTitle,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 25.0,
@@ -419,9 +426,10 @@ class _PlayPageState extends State<PlayPage> {
   }
 
   List<String?> _compilation(AsyncSnapshot snapshot) {
-    if (snapshot.data.docs['compilations'] != null &&
-        !snapshot.data.docs['compilations'].isEmpty) {
-      final List compilations = snapshot.data.docs['compilations'];
+    List<String?> comp = [];
+    if (snapshot.data.data()['compilations'] != null &&
+        !snapshot.data.data()['compilations'].isEmpty) {
+      final List compilations = snapshot.data.data()['compilations'];
       final DocumentReference documentCompilation = FirebaseFirestore.instance
           .collection('users')
           .doc(LocalDB.uid)
@@ -431,13 +439,13 @@ class _PlayPageState extends State<PlayPage> {
         DocumentSnapshot snapshot,
       ) {
         dynamic data = snapshot.data;
-        return [
-          data()['image'],
-          data()['title'],
-        ];
+
+        comp
+          ..add(data()['image'])
+          ..add(data()['title']);
       });
     }
-    return [];
+    return comp;
   }
 
   IndexEvent _bloc(String page) {
