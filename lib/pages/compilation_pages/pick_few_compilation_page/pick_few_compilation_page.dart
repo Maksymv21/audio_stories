@@ -351,7 +351,21 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         if (value == 2) {
           if (!chek.contains(true)) {
             _choiseSnackBar(context);
-          } else {}
+          } else {
+            List<String> url = [];
+            List<String> title = [];
+            for (int i = 0; i < widget.listId!.length; i++) {
+              if (chek[i]) {
+                url.add(listUrl[i]);
+                title.add(listTitle[i]);
+
+                setState(() {
+                  chek[i] = false;
+                });
+              }
+            }
+            GlobalRepo.share(url, title);
+          }
         }
         if (value == 3) {
           if (!chek.contains(true)) {

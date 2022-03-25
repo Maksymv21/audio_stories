@@ -46,6 +46,8 @@ dependencies:
   uuid: ^3.0.6
   http: ^0.13.4
   grouped_list: ^4.2.0
+  share_plus: ^4.0.3
+  uri_to_file: ^0.2.0
 
   flutter_sound: ^8.5.0
 

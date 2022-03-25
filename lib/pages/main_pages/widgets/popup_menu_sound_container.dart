@@ -3,11 +3,11 @@ import 'package:audio_stories/pages/compilation_pages/compilation_page/compilati
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
 import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../utils/database.dart';
 import '../../../widgets/dialog_sound.dart';
@@ -56,6 +56,9 @@ class PopupMenuSoundContainer extends StatelessWidget {
         }
         if (value == 1) {
           _dialog(context, title, id);
+        }
+        if (value == 2) {
+          GlobalRepo.share([url], [title]);
         }
         if (value == 3) {
           download2(url, title).then(
