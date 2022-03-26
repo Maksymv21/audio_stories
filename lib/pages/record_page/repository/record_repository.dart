@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:uuid/uuid.dart';
 import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
@@ -77,6 +79,30 @@ class RecordRepository {
 
   void resumePlayer(void Function() foo) {
     _player!.resumePlayer().then((value) => foo);
+  }
+
+  Future<void> share() async {
+    Share.shareFiles([_path!]);
+  }
+
+  Future<void> download(String name) async {
+    File sound = await File(_path!).create();
+
+    FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+    Reference reference = _firebaseStorage
+        .ref()
+        .child('Sounds')
+        .child(LocalDB.uid.toString())
+        .child(
+          'forSave',
+        );
+
+    await reference.putFile(sound);
+    String downloadUrl = await reference.getDownloadURL();
+
+    await GlobalRepo.download(downloadUrl, name);
+
+    reference.delete();
   }
 
   Future<void> uploadSound(

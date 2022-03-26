@@ -206,47 +206,67 @@ class _PlayPageState extends State<PlayPage> {
                           ? 'Название подборки'
                           : compilation[1]!;
 
-                      return Container(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.5,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(24.0),
-                          image: DecorationImage(
-                            image: image,
-                            fit: BoxFit.cover,
+                      return Stack(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24.0),
+                              image: DecorationImage(
+                                image: image,
+                                fit: BoxFit.cover,
+                              ),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.grey,
+                                  blurRadius: 5.0,
+                                ),
+                              ],
+                            ),
                           ),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.grey,
-                              blurRadius: 5.0,
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              compTitle,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 25.0,
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.5,
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                begin: FractionalOffset.topCenter,
+                                end: FractionalOffset.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Color(0xff454545),
+                                ],
+                                stops: [0.5, 1.0],
                               ),
+                              borderRadius: BorderRadius.circular(15.0),
                             ),
-                            const SizedBox(
-                              height: 10.0,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  compTitle,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25.0,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 10.0,
+                                ),
+                                Text(
+                                  snapshot.data?.data()?['title'],
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15.0,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 15.0,
+                                ),
+                              ],
                             ),
-                            Text(
-                              snapshot.data?.data()?['title'],
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 15.0,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15.0,
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       );
                     } else {
                       return SizedBox(

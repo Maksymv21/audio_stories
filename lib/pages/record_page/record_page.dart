@@ -7,13 +7,13 @@ import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_i
 import 'package:audio_stories/pages/main_pages/resources/thumb_shape.dart';
 import 'package:audio_stories/pages/main_pages/widgets/button_menu.dart';
 import 'package:audio_stories/pages/record_page/repository/record_repository.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:noise_meter/noise_meter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
@@ -32,6 +32,7 @@ class RecordPage extends StatefulWidget {
 
 class _RecordPageState extends State<RecordPage> {
   final RecordRepository _recorder = RecordRepository();
+  final ScrollController _scrollController = ScrollController();
   StreamSubscription? _recorderSubscription;
   String _recorderTxt = '00:00:00';
   String _playTxt = '00:00';
@@ -54,11 +55,11 @@ class _RecordPageState extends State<RecordPage> {
     openTheRecorder();
     //startTimer();
     noise();
+    _getAmplitude();
     _isPlay = true;
   }
 
   Future openTheRecorder() async {
-
     // await _recorder.recorder!.openAudioSession(
     //   focus: AudioFocus.requestFocusAndStopOthers,
     //   category: SessionCategory.playAndRecord,
@@ -83,6 +84,8 @@ class _RecordPageState extends State<RecordPage> {
     _recorderSubscription?.cancel();
     recordSub?.cancel();
     _playerSubscription?.cancel();
+    _timerAmplitude!.cancel();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -155,11 +158,7 @@ class _RecordPageState extends State<RecordPage> {
       builder: (context, state) => Stack(
         children: [
           Center(
-            child: Container(
-              color: Colors.black,
-              width: 5.0,
-              height: db < 0 ? -db : db,
-            ),
+            child: _amplitudeRecords(),
           ),
           Column(
             children: [
@@ -257,6 +256,8 @@ class _RecordPageState extends State<RecordPage> {
             .snapshots(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
+            final String title =
+                'Аудиозапись ${snapshot.data?.docs.length + 1}';
             return Column(
               children: [
                 Expanded(
@@ -267,19 +268,39 @@ class _RecordPageState extends State<RecordPage> {
                         width: 10.0,
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _recorder.share();
+                        },
                         icon: Image.asset(
                           AppIcons.upload,
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _recorder
+                              .download(
+                                title,
+                              )
+                              .then(
+                                (value) => GlobalRepo.showSnackBar(
+                                  context: context,
+                                  title: 'Файл сохранен.'
+                                      '\nDownload/$title.aac',
+                                ),
+                              );
+                        },
                         icon: Image.asset(
                           AppIcons.download,
                         ),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          MainPage.globalKey.currentState!
+                              .pushReplacementNamed(HomePage.routName);
+                          context.read<BlocIndex>().add(
+                                ColorHome(),
+                              );
+                        },
                         icon: Image.asset(
                           AppIcons.delete,
                         ),
@@ -308,7 +329,7 @@ class _RecordPageState extends State<RecordPage> {
                 Expanded(
                   flex: 3,
                   child: Text(
-                    'Аудиозапись ${snapshot.data?.docs.length + 1}',
+                    title,
                     style: const TextStyle(
                       fontSize: 24.0,
                     ),
@@ -482,11 +503,71 @@ class _RecordPageState extends State<RecordPage> {
     );
   }
 
+  List _listAmplitude = [];
+
+  Widget _amplitudeRecords() {
+    List _list = _listAmplitude.reversed.toList();
+    return SizedBox(
+      width: double.infinity,
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        reverse: true,
+        controller: _scrollController,
+        itemCount: _list.length,
+        itemBuilder: (BuildContext context, int index) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 50),
+                height: _list[index] * 3,
+                width: 2,
+                color: Colors.black,
+              ),
+              SizedBox(
+                width: 7,
+                height: 2.5,
+                child: Container(
+                  color: Colors.black,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Timer? _timerAmplitude;
+
+  void _getAmplitude() {
+    _timerAmplitude = Timer.periodic(
+      const Duration(milliseconds: 80),
+      (_) {
+        double _dcb = db / 3;
+        if (_dcb < 8.5) {
+          _dcb = 1;
+        }
+
+        if (_listAmplitude.length > 38) {
+          _listAmplitude.removeAt(0);
+        }
+
+        _listAmplitude.add(_dcb);
+        setState(() {});
+      },
+    );
+  }
+
   void _stopRecord() {
     _recorder.stopRecord(() {
       setState(() {});
     });
     recordSub?.cancel();
+
+    _timerAmplitude!.cancel();
 
     _isRecorded = true;
     _isPlay = false;
