@@ -12,6 +12,7 @@ import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart' show DateFormat;
@@ -308,10 +309,19 @@ class _RecordPageState extends State<RecordPage> {
                       const Spacer(),
                       TextButton(
                         onPressed: () {
-                          _save(
-                            context,
-                            snapshot.data?.docs.length,
-                          );
+                          if (FirebaseAuth.instance.currentUser == null) {
+                            GlobalRepo.showSnackBar(
+                              context: context,
+                              title:
+                                  'Для сохранения аудио нужно зарегистрироваться',
+                            );
+                          } else {
+                            _save(
+                              context,
+                              snapshot.data?.docs.length,
+                            );
+                          }
+
                         },
                         child: const Text(
                           'Сохранить',
