@@ -36,8 +36,44 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
   List<bool> current = [];
   double _bottom = 10.0;
   double _bottomEdit = 80.0;
-
   Widget _player = const Text('');
+
+  void _rees(AsyncSnapshot snapshot, int length) {
+    for (int i = 0; i < length; i++) {
+      if (chek.reversed.toList()[i]) {
+        final String id = snapshot.data.docs[i].id;
+        Database.createOrUpdateSound(
+          {
+            'deleted': false,
+            'id': id,
+          },
+        );
+      }
+    }
+    setState(() {
+      chek = [];
+      current = [];
+      _player = const Text('');
+    });
+  }
+
+  void _delete(AsyncSnapshot snapshot, int length) {
+    for (int i = 0; i < length; i++) {
+      if (chek.reversed.toList()[i]) {
+        final String path = snapshot.data.docs[i].id;
+        final String title = snapshot.data.docs[i]['title'];
+        final String date = snapshot.data.docs[i]['date'].toString();
+        final int memory = snapshot.data.docs[i]['memory'];
+
+        Database.deleteSound(path, title, date, memory);
+      }
+    }
+    setState(() {
+      chek = [];
+      current = [];
+      _player = const Text('');
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,42 +143,8 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                         child: Align(
                           alignment: AlignmentDirectional.bottomCenter,
                           child: DeleteBottomBar(
-                            rees: () {
-                              for (int i = 0; i < length; i++) {
-                                if (chek.reversed.toList()[i]) {
-                                  final String id = snapshot.data.docs[i].id;
-                                  Database.createOrUpdateSound(
-                                    {
-                                      'deleted': false,
-                                      'id': id,
-                                    },
-                                  );
-                                  chek[i] = false;
-                                }
-                              }
-                              setState(() {
-                                _player = const Text('');
-                              });
-                            },
-                            delete: () {
-                              for (int i = 0; i < length; i++) {
-                                if (chek.reversed.toList()[i]) {
-                                  final String path = snapshot.data.docs[i].id;
-                                  final String title =
-                                      snapshot.data.docs[i]['title'];
-                                  final String date =
-                                      snapshot.data.docs[i]['date'].toString();
-                                  final int memory =
-                                      snapshot.data.docs[i]['memory'];
-                                  Database.deleteSound(
-                                      path, title, date, memory);
-                                  chek[i] = false;
-                                }
-                              }
-                              setState(() {
-                                _player = const Text('');
-                              });
-                            },
+                            rees: () => _rees(snapshot, length),
+                            delete: () => _delete(snapshot, length),
                           ),
                         ),
                       )

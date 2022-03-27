@@ -1,8 +1,8 @@
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
 import 'package:audio_stories/pages/widgets/custom_player.dart';
+import 'package:audio_stories/pages/widgets/popup_menu_pick_few.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -302,12 +302,7 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
   }
 
   Widget _popupMenu() {
-    return PopupMenuButton(
-      shape: ShapeBorder.lerp(
-        const RoundedRectangleBorder(),
-        const CircleBorder(),
-        0.2,
-      ),
+    return PopupMenuPickFew(
       onSelected: (value) async {
         if (value == 0) {
           setState(() {
@@ -357,16 +352,16 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
           } else {
             for (int i = 0; i < widget.listId!.length; i++) {
               if (chek[i]) {
-                _download(listUrl[i], listTitle[i]).then((value) {
-                  GlobalRepo.showSnackBar(
-                    context: context,
-                    title: 'Файл сохранен.'
-                        '\nDownload/${listTitle[i]}.aac',
-                  );
+                GlobalRepo.download(listUrl[i], listTitle[i]).then((value) => {
+                      GlobalRepo.showSnackBar(
+                        context: context,
+                        title: 'Файл сохранен.'
+                            '\nDownload/${listTitle[i]}.aac',
+                      ),
+                    });
 
-                  setState(() {
-                    chek[i] = false;
-                  });
+                setState(() {
+                  chek[i] = false;
                 });
               }
             }
@@ -404,61 +399,6 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
           }
         }
       },
-      itemBuilder: (_) => const [
-        PopupMenuItem(
-          value: 0,
-          child: Text(
-            'Отменить выбор',
-            style: TextStyle(
-              fontSize: 14.0,
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          value: 1,
-          child: Text(
-            'Добавить в подборку',
-            style: TextStyle(
-              fontSize: 14.0,
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          value: 2,
-          child: Text(
-            'Поделиться',
-            style: TextStyle(
-              fontSize: 14.0,
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          value: 3,
-          child: Text(
-            'Скачать все',
-            style: TextStyle(
-              fontSize: 14.0,
-            ),
-          ),
-        ),
-        PopupMenuItem(
-          value: 4,
-          child: Text(
-            'Удалить все',
-            style: TextStyle(
-              fontSize: 14.0,
-            ),
-          ),
-        ),
-      ],
-      child: const Text(
-        '...',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 48,
-          letterSpacing: 3.0,
-        ),
-      ),
     );
   }
 
@@ -468,28 +408,12 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         current.add(false);
       }
     }
-    // if (current.length < length) {
-    //   current = List.from(current.reversed);
-    //   current.add(false);
-    //   current = List.from(current.reversed);
-    // }
 
     if (chek.isEmpty) {
       for (int i = 0; i < length; i++) {
         chek.add(false);
       }
     }
-  }
-
-  Future _download(String url, String name) async {
-    String path = 'storage/emulated/0/Download/$name.aac';
-
-    Dio dio = Dio();
-
-    await dio.download(
-      url,
-      path,
-    );
   }
 
   String _convertDate(Timestamp date) {

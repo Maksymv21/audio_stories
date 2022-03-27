@@ -1,14 +1,22 @@
+import 'package:audio_stories/pages/widgets/custom_checkbox.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
+import '../../compilation_pages/compilation_page/compilation_page.dart';
+import '../../main_page.dart';
 import '../../widgets/button_menu.dart';
 import '../../widgets/custom_player.dart';
 import '../../widgets/player_container.dart';
+import '../../widgets/popup_menu_pick_few.dart';
 import '../../widgets/popup_menu_sound_container.dart';
 import '../../widgets/sound_container.dart';
 
@@ -23,9 +31,12 @@ class AudioPage extends StatefulWidget {
 
 class _AudioPageState extends State<AudioPage> {
   List<bool> current = [];
+  List<bool> chek = [];
+  List currentId = [];
   double _bottom = 10.0;
   Widget _player = const Text('');
   bool _repeat = false;
+  bool _pickFew = false;
 
   void _playAll(
     AsyncSnapshot snapshot,
@@ -107,6 +118,11 @@ class _AudioPageState extends State<AudioPage> {
               current.add(false);
             }
           }
+          if (chek.isEmpty) {
+            for (int i = 0; i < length; i++) {
+              chek.add(false);
+            }
+          }
           return Stack(
             children: [
               Column(
@@ -140,21 +156,8 @@ class _AudioPageState extends State<AudioPage> {
                 ),
               ),
               Align(
-                alignment: const AlignmentDirectional(1.0, -0.98),
-                child: TextButton(
-                  style: const ButtonStyle(
-                    splashFactory: NoSplash.splashFactory,
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    '...',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 48,
-                      letterSpacing: 3.0,
-                    ),
-                  ),
-                ),
+                alignment: const AlignmentDirectional(0.95, -0.96),
+                child: _pickFew ? _popupMenu(snapshot) : _popupPickFew(),
               ),
               const Align(
                 alignment: AlignmentDirectional(0.00, -0.78),
@@ -350,20 +353,30 @@ class _AudioPageState extends State<AudioPage> {
               time: (snapshot.data.docs[index]['time'] / 60).toStringAsFixed(1),
               buttonRight: Align(
                 alignment: const AlignmentDirectional(0.9, -1.0),
-                child: PopupMenuSoundContainer(
-                  size: 30.0,
-                  title: title,
-                  id: id,
-                  url: url,
-                  onDelete: () {
-                    if (current[index]) {
-                      setState(() {
-                        _player = const Text('');
-                      });
-                    }
-                    current.removeAt(index);
-                  },
-                ),
+                child: _pickFew
+                    ? CustomCheckBox(
+                        value: chek[index],
+                        onTap: () {
+                          setState(() {
+                            chek[index] = !chek[index];
+                          });
+                        },
+                        color: Colors.black87,
+                      )
+                    : PopupMenuSoundContainer(
+                        size: 30.0,
+                        title: title,
+                        id: id,
+                        url: url,
+                        onDelete: () {
+                          if (current[index]) {
+                            setState(() {
+                              _player = const Text('');
+                            });
+                          }
+                          current.removeAt(index);
+                        },
+                      ),
               ),
               onTap: () => _play(
                 index,
@@ -378,6 +391,133 @@ class _AudioPageState extends State<AudioPage> {
             ),
           ],
         );
+      },
+    );
+  }
+
+  Widget _popupPickFew() {
+    return PopupMenuButton(
+      shape: ShapeBorder.lerp(
+        const RoundedRectangleBorder(),
+        const CircleBorder(),
+        0.2,
+      ),
+      onSelected: (value) {
+        if (value == 0) {
+          setState(() {
+            _pickFew = true;
+          });
+        }
+      },
+      itemBuilder: (_) => const [
+        PopupMenuItem(
+          value: 0,
+          child: Text(
+            'Выбрать несколько',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+      ],
+      child: const Text(
+        '...',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 48.0,
+          letterSpacing: 3.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _popupMenu(AsyncSnapshot snapshot) {
+    return PopupMenuPickFew(
+      onSelected: (value) async {
+        if (value == 0) {
+          setState(() {
+            _pickFew = false;
+          });
+        }
+        if (value == 1) {
+          if (!chek.contains(true)) {
+            _choiseSnackBar(context);
+          } else {
+            for (int i = 0; i < snapshot.data.docs.length; i++) {
+              if (chek[i]) currentId.add(snapshot.data.docs[i]['id']);
+            }
+            MainPage.globalKey.currentState!
+                .pushReplacementNamed(CompilationPage.routName);
+            context.read<CompilationBloc>().add(
+                  ToAddInCompilation(
+                    listId: currentId,
+                  ),
+                );
+          }
+        }
+        if (value == 2) {
+          if (!chek.contains(true)) {
+            _choiseSnackBar(context);
+          } else {
+            List<String> url = [];
+            List<String> title = [];
+            for (int i = 0; i < snapshot.data.docs.length; i++) {
+              if (chek[i]) {
+                url.add(snapshot.data.docs[i]['song']);
+                title.add(snapshot.data.docs[i]['title']);
+
+                setState(() {
+                  chek[i] = false;
+                });
+              }
+            }
+            GlobalRepo.share(url, title);
+          }
+        }
+        if (value == 3) {
+          if (!chek.contains(true)) {
+            _choiseSnackBar(context);
+          } else {
+            for (int i = 0; i < snapshot.data.docs.length; i++) {
+              if (chek[i]) {
+                GlobalRepo.download(
+                  snapshot.data.docs[i]['song'],
+                  snapshot.data.docs[i]['title'],
+                ).then((value) => {
+                      GlobalRepo.showSnackBar(
+                        context: context,
+                        title: 'Файл сохранен.'
+                            '\nDownload/${snapshot.data.docs[i]['title']}.aac',
+                      ),
+                    });
+
+                setState(() {
+                  chek[i] = false;
+                });
+              }
+            }
+          }
+        }
+        if (value == 4) {
+          if (!chek.contains(true)) {
+            _choiseSnackBar(context);
+          } else {
+            for (int i = 0; i < snapshot.data.docs.length; i++) {
+              if (chek[i]) {
+                Database.createOrUpdateSound(
+                  {
+                    'deleted': true,
+                    'dateDeleted': Timestamp.now(),
+                    'id': snapshot.data.docs[i]['id'],
+                  },
+                );
+                setState(() {
+                  chek[i] = false;
+                });
+              }
+            }
+          }
+        }
       },
     );
   }
@@ -450,6 +590,13 @@ class _AudioPageState extends State<AudioPage> {
           }
         },
       ),
+    );
+  }
+
+  void _choiseSnackBar(BuildContext context) {
+    GlobalRepo.showSnackBar(
+      context: context,
+      title: 'Перед этим нужно сделать выбор',
     );
   }
 }
