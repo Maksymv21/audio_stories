@@ -195,7 +195,8 @@ class _CompilationPageState extends State<CompilationPage> {
         final double _width = MediaQuery.of(context).size.width;
         final double _height = MediaQuery.of(context).size.height;
 
-        if (snapshot.data?.docs.length == 0) {
+        if (snapshot.data?.docs.length == 0 ||
+            FirebaseAuth.instance.currentUser == null) {
           return const Center(
             child: Padding(
               padding: EdgeInsets.only(right: 10.0, top: 100.0),

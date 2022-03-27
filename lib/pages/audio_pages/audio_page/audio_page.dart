@@ -4,6 +4,7 @@ import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -43,30 +44,32 @@ class _AudioPageState extends State<AudioPage> {
     AsyncSnapshot snapshot,
     int length,
   ) {
-    if (current.isEmpty) {
-      GlobalRepo.showSnackBar(
-        context: context,
-        title: 'Отсутствуют аудио для проигрования',
-      );
-    } else {
-      if (!current.contains(true)) {
-        setState(() {
-          _isPlayAll = !_isPlayAll;
-          _player = _next(
-            index: 0,
-            length: length,
-            snapshot: snapshot,
-          );
-        });
+    if (FirebaseAuth.instance.currentUser != null) {
+      if (current.isEmpty) {
+        GlobalRepo.showSnackBar(
+          context: context,
+          title: 'Отсутствуют аудио для проигрования',
+        );
       } else {
-        setState(() {
-          _isPlayAll = !_isPlayAll;
-          _player = const Text('');
-          _bottom = 10.0;
-          for (int i = 0; i < current.length; i++) {
-            current[i] = false;
-          }
-        });
+        if (!current.contains(true)) {
+          setState(() {
+            _isPlayAll = !_isPlayAll;
+            _player = _next(
+              index: 0,
+              length: length,
+              snapshot: snapshot,
+            );
+          });
+        } else {
+          setState(() {
+            _isPlayAll = !_isPlayAll;
+            _player = const Text('');
+            _bottom = 10.0;
+            for (int i = 0; i < current.length; i++) {
+              current[i] = false;
+            }
+          });
+        }
       }
     }
   }
@@ -95,6 +98,7 @@ class _AudioPageState extends State<AudioPage> {
               setState(() {
                 _player = const Text('');
                 _bottom = 10.0;
+                _isPlayAll = false;
                 debugPrint(_bottom.toString());
                 current[index] = false;
               });
@@ -215,10 +219,11 @@ class _AudioPageState extends State<AudioPage> {
                   ),
                 ],
               ),
-              snapshot.data.docs.length == 0
+              snapshot.data.docs.length == 0 ||
+                      FirebaseAuth.instance.currentUser == null
                   ? const Center(
                       child: Padding(
-                        padding: EdgeInsets.only(right: 10.0, top: 100.0),
+                        padding: EdgeInsets.only(top: 100.0),
                         child: Text(
                           'Как только ты запишешь аудио,'
                           '\nони появится здесь.',
@@ -552,6 +557,7 @@ class _AudioPageState extends State<AudioPage> {
         setState(() {
           _player = const Text('');
           _bottom = 10.0;
+          _isPlayAll = false;
           current[index] = false;
         });
       },

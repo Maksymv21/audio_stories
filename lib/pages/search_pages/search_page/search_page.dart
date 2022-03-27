@@ -2,6 +2,7 @@ import 'package:audio_stories/pages/widgets/custom_checkbox.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -122,7 +123,8 @@ class _SearchPageState extends State<SearchPage> {
                       child: Stack(
                         children: [
                           snapshot.hasData
-                              ? snapshot.data.docs.length == 0
+                              ? snapshot.data.docs.length == 0 ||
+                                      FirebaseAuth.instance.currentUser == null
                                   ? Center(
                                       child: Padding(
                                         padding:

@@ -2,6 +2,7 @@ import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page
 import 'package:audio_stories/pages/recently_deleted_pages/widgets/delete_bottom_bar.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 
@@ -90,7 +91,8 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
         Widget _list;
         Widget _popup;
 
-        if (snapshot.data?.docs.length == 0) {
+        if (snapshot.data?.docs.length == 0 ||
+            FirebaseAuth.instance.currentUser == null) {
           _list = const Padding(
             padding: EdgeInsets.only(
               top: 200.0,

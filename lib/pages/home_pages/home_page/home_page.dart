@@ -3,9 +3,9 @@ import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/local_db.dart';
@@ -175,12 +175,14 @@ class _HomePageState extends State<HomePage> {
                   ),
                 );
 
-                if (_length > 0) {
-                  _firstContainer = _compilationContainer(snapshot, 0);
-                  if (_length > 1) {
-                    _secondContainer = _compilationContainer(snapshot, 1);
-                    if (_length > 2) {
-                      _thirdContainer = _compilationContainer(snapshot, 2);
+                if (FirebaseAuth.instance.currentUser != null) {
+                  if (_length > 0) {
+                    _firstContainer = _compilationContainer(snapshot, 0);
+                    if (_length > 1) {
+                      _secondContainer = _compilationContainer(snapshot, 1);
+                      if (_length > 2) {
+                        _thirdContainer = _compilationContainer(snapshot, 2);
+                      }
                     }
                   }
                 }
@@ -320,7 +322,8 @@ class _HomePageState extends State<HomePage> {
                   )
                   .snapshots(),
               builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if (snapshot.data?.docs.length == 0) {
+                if (snapshot.data?.docs.length == 0 ||
+                    FirebaseAuth.instance.currentUser == null) {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.only(right: 10.0),
