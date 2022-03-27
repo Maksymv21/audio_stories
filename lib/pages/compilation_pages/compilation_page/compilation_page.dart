@@ -33,6 +33,8 @@ class CompilationPage extends StatefulWidget {
 class _CompilationPageState extends State<CompilationPage> {
   List<bool> chek = [];
   bool ready = false;
+  bool delete = false;
+  bool _pickFew = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,21 +47,8 @@ class _CompilationPageState extends State<CompilationPage> {
       if (state is InitialCompilation) {
         subTitle = 'Все в одном месте';
         topRightButton = Align(
-          alignment: const AlignmentDirectional(1.0, -0.975),
-          child: TextButton(
-            style: const ButtonStyle(
-              splashFactory: NoSplash.splashFactory,
-            ),
-            onPressed: () {},
-            child: const Text(
-              '...',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 48,
-                letterSpacing: 3.0,
-              ),
-            ),
-          ),
+          alignment: const AlignmentDirectional(0.95, -0.95),
+          child: _pickFew ? _popupPickDelete() : _popupPickFew(),
         );
         visible = false;
       } else {
@@ -92,6 +81,11 @@ class _CompilationPageState extends State<CompilationPage> {
           ),
         );
         visible = true;
+      }
+      if (_pickFew) {
+        visible = true;
+      } else {
+        visible = false;
       }
       return Stack(
         children: [
@@ -259,6 +253,22 @@ class _CompilationPageState extends State<CompilationPage> {
                       );
                 }
 
+                if (delete && chek[index]) {
+                  for (int i = 0; i < snapshot.data.docs.length; i++) {
+                    Database.deleteCompilation({
+                      'id': id,
+                      'title': title,
+                      'date': date,
+                    }).whenComplete(() {
+                      setState(() {
+                        delete = false;
+                        _pickFew = false;
+                        chek.removeAt(index);
+                      });
+                    });
+                  }
+                }
+
                 return GestureDetector(
                   onTap: () {
                     if (state is InitialCompilation) {
@@ -327,6 +337,99 @@ class _CompilationPageState extends State<CompilationPage> {
           );
         }
       },
+    );
+  }
+
+  Widget _popupPickFew() {
+    return PopupMenuButton(
+      shape: ShapeBorder.lerp(
+        const RoundedRectangleBorder(),
+        const CircleBorder(),
+        0.2,
+      ),
+      onSelected: (value) {
+        if (value == 0) {
+          setState(() {
+            _pickFew = true;
+          });
+        }
+      },
+      itemBuilder: (_) => const [
+        PopupMenuItem(
+          value: 0,
+          child: Text(
+            'Выбрать несколько',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+      ],
+      child: const Text(
+        '...',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 48.0,
+          letterSpacing: 3.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _popupPickDelete() {
+    return PopupMenuButton(
+      shape: ShapeBorder.lerp(
+        const RoundedRectangleBorder(),
+        const CircleBorder(),
+        0.2,
+      ),
+      onSelected: (value) {
+        if (value == 0) {
+          setState(() {
+            _pickFew = false;
+          });
+        }
+        if (value == 1) {
+          if (!chek.contains(true)) {
+            GlobalRepo.showSnackBar(
+              context: context,
+              title: 'Сделайте выбор',
+            );
+          } else {
+            setState(() {
+              delete = true;
+            });
+          }
+        }
+      },
+      itemBuilder: (_) => const [
+        PopupMenuItem(
+          value: 0,
+          child: Text(
+            'Отменить выбор',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 1,
+          child: Text(
+            'Удалить',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+      ],
+      child: const Text(
+        '...',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 48.0,
+          letterSpacing: 3.0,
+        ),
+      ),
     );
   }
 }
