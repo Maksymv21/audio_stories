@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:audio_stories/pages/main_pages/repositories/player_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_core/theme.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:intl/intl.dart' show DateFormat;
 
 import '../../../resources/app_icons.dart';
+import '../repositories/player_repository.dart';
 import '../resources/thumb_shape.dart';
 
 //ignore: must_be_immutable

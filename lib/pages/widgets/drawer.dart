@@ -1,9 +1,5 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
-import 'package:audio_stories/pages/main_pages/widgets/burger_button.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/search_pages/search_page/search_page.dart';
@@ -14,9 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
-import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
-import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
-import '../../compilation_pages/compilation_page/compilation_page.dart';
+import '../blocs/bloc_icon_color/bloc_index.dart';
+import '../blocs/bloc_icon_color/bloc_index_event.dart';
+import '../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
+import '../compilation_pages/compilation_page/compilation_page.dart';
+import '../main_page.dart';
+import 'burger_button.dart';
 
 class BurgerMenu extends StatelessWidget {
   const BurgerMenu({Key? key}) : super(key: key);

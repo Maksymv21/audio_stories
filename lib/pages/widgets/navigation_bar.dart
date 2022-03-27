@@ -2,10 +2,6 @@ import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
-import 'package:audio_stories/pages/main_pages/widgets/foot_button.dart';
 import 'package:audio_stories/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/pages/record_page/record_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
@@ -15,9 +11,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
-import '../../audio_pages/audio_page/audio_page.dart';
-import '../../audio_pages/audio_page/test_page.dart';
-import '../../compilation_pages/compilation_page/compilation_page.dart';
+import '../audio_pages/audio_page/audio_page.dart';
+import '../blocs/bloc_icon_color/bloc_index.dart';
+import '../blocs/bloc_icon_color/bloc_index_event.dart';
+import '../compilation_pages/compilation_page/compilation_page.dart';
+import '../main_page.dart';
+import 'foot_button.dart';
 
 class MyNavigationBar extends StatelessWidget {
   const MyNavigationBar({
@@ -132,10 +131,10 @@ class MyNavigationBar extends StatelessWidget {
                   color: index == 3 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
                     if (index != 3) {
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(TestPage.routName);
                       // MainPage.globalKey.currentState!
-                      //     .pushReplacementNamed(AudioPage.routName);
+                      //     .pushReplacementNamed(TestPage.routName);
+                      MainPage.globalKey.currentState!
+                          .pushReplacementNamed(AudioPage.routName);
                       context.read<BlocIndex>().add(
                             ColorAudio(),
                           );
