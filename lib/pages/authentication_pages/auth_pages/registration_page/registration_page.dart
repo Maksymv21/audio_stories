@@ -38,23 +38,20 @@ class RegistrationPage extends StatelessWidget {
             height: 300.0,
             image: AppIcons.up,
             child: Center(
-              child: Container(
-                margin: const EdgeInsets.all(15.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      RegistrationPageText.header,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 48.0,
-                        letterSpacing: 3.0,
-                      ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    RegistrationPageText.header,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 48.0,
+                      letterSpacing: 3.0,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),

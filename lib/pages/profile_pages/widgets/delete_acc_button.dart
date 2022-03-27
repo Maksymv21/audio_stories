@@ -1,6 +1,3 @@
-import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
-import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
-import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/dialog_profile.dart';
@@ -9,6 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../../../main.dart';
+import '../../authentication_pages/auth_pages/auth_page/auth_page.dart';
+import '../../authentication_pages/auth_pages/registration_page/registration_page.dart';
+import '../../authentication_pages/welcome_pages/welcome_page/welcome_page.dart';
 
 class DeleteAccButton extends StatelessWidget {
   const DeleteAccButton({Key? key}) : super(key: key);

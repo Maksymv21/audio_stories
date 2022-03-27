@@ -1,7 +1,5 @@
 import 'dart:io';
 
-import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
-import 'package:audio_stories/pages/auth_pages/registration_page/registration_page.dart';
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile.dart';
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile_event.dart';
 import 'package:audio_stories/pages/profile_pages/blocs/bloc_profile_state.dart';
@@ -18,6 +16,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
+import '../../authentication_pages/auth_pages/auth_page/auth_page.dart';
+import '../../authentication_pages/auth_pages/registration_page/registration_page.dart';
 import '../../main_page.dart';
 
 class EditProfilePage extends StatelessWidget {

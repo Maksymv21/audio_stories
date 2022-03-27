@@ -43,25 +43,32 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
   bool _playAll = false;
 
   void _play(OnCurrentCompilation state) {
-    if (!current.contains(true)) {
-      setState(() {
-        _playAll = !_playAll;
-        _player = _next(
-          index: 0,
-          listUrl: listUrl,
-          listTitle: listTitle,
-          listId: state.listId,
-        );
-      });
+    if (current.isEmpty) {
+      GlobalRepo.showSnackBar(
+        context: context,
+        title: 'Отсутствуют аудио для проигрования',
+      );
     } else {
-      setState(() {
-        _playAll = !_playAll;
-        _player = const Text('');
-        _bottom = 10.0;
-        for (int i = 0; i < current.length; i++) {
-          current[i] = false;
-        }
-      });
+      if (!current.contains(true)) {
+        setState(() {
+          _playAll = !_playAll;
+          _player = _next(
+            index: 0,
+            listUrl: listUrl,
+            listTitle: listTitle,
+            listId: state.listId,
+          );
+        });
+      } else {
+        setState(() {
+          _playAll = !_playAll;
+          _player = const Text('');
+          _bottom = 10.0;
+          for (int i = 0; i < current.length; i++) {
+            current[i] = false;
+          }
+        });
+      }
     }
   }
 
@@ -424,9 +431,8 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                                 if (listId.length == 1) {
                                   GlobalRepo.showSnackBar(
                                     context: context,
-                                    title:
-                                        'В подборке должно оставаться '
-                                            'минимум одно аудио',
+                                    title: 'В подборке должно оставаться '
+                                        'минимум одно аудио',
                                   );
                                 } else {
                                   Database.deleteSoundInCompilation(

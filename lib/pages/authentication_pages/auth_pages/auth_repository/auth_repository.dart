@@ -1,7 +1,9 @@
-import 'package:audio_stories/pages/auth_pages/auth_model/auth_model.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
+import '../auth_model/auth_model.dart';
+
 
 class PhoneAuthRepository {
   final FirebaseAuth _firebaseAuth;

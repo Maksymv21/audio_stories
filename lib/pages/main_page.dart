@@ -1,4 +1,3 @@
-import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import 'package:audio_stories/pages/routes/app_router.dart';
 import 'package:audio_stories/pages/widgets/drawer.dart';
@@ -9,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'authentication_pages/auth_pages/auth_repository/auth_repository.dart';
 import 'blocs/bloc_icon_color/bloc_index.dart';
 import 'compilation_pages/compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
 import 'compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';

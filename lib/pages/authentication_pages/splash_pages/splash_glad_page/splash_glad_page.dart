@@ -42,7 +42,7 @@ class SplashGladPage extends StatelessWidget {
             image: AppIcons.up,
             child: Center(
               child: Container(
-                margin: const EdgeInsets.all(31.0),
+                margin: const EdgeInsets.all(10.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [

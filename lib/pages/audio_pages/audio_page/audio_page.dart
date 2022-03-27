@@ -37,6 +37,7 @@ class _AudioPageState extends State<AudioPage> {
   Widget _player = const Text('');
   bool _repeat = false;
   bool _pickFew = false;
+  bool _isPlayAll = false;
 
   void _playAll(
     AsyncSnapshot snapshot,
@@ -50,11 +51,21 @@ class _AudioPageState extends State<AudioPage> {
     } else {
       if (!current.contains(true)) {
         setState(() {
+          _isPlayAll = !_isPlayAll;
           _player = _next(
             index: 0,
             length: length,
             snapshot: snapshot,
           );
+        });
+      } else {
+        setState(() {
+          _isPlayAll = !_isPlayAll;
+          _player = const Text('');
+          _bottom = 10.0;
+          for (int i = 0; i < current.length; i++) {
+            current[i] = false;
+          }
         });
       }
     }
@@ -297,14 +308,14 @@ class _AudioPageState extends State<AudioPage> {
             ),
           ),
           onPressed: () => _playAll(snapshot, length),
-          child: const Align(
+          child: Align(
             widthFactor: 0.6,
             heightFactor: 0.0,
             alignment: AlignmentDirectional.centerStart,
             child: Text(
-              'Запустить все',
+              _isPlayAll ? 'Остановить' : 'Запустить все',
               textAlign: TextAlign.end,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'TTNormsL',
                 color: AppColor.active,
                 fontSize: 14.0,

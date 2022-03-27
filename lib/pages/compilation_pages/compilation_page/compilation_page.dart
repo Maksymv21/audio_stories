@@ -10,6 +10,7 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -109,19 +110,27 @@ class _CompilationPageState extends State<CompilationPage> {
                         Icons.add,
                       ),
                       onPressed: () {
-                        if (state is InitialCompilation) {
-                          context.read<AddInCompilationBloc>().add(
-                                ToCreateCompilation(),
-                              );
-                        }
-                        if (state is AddInCompilation) {
-                          context.read<AddInCompilationBloc>().add(
-                                ToCreate(
-                                  listId: state.listId,
-                                  text: '',
-                                  title: '',
-                                ),
-                              );
+                        if (FirebaseAuth.instance.currentUser == null) {
+                          GlobalRepo.showSnackBar(
+                            context: context,
+                            title:
+                                'Для создания подборки нужно зарегистрироваться',
+                          );
+                        } else {
+                          if (state is InitialCompilation) {
+                            context.read<AddInCompilationBloc>().add(
+                                  ToCreateCompilation(),
+                                );
+                          }
+                          if (state is AddInCompilation) {
+                            context.read<AddInCompilationBloc>().add(
+                                  ToCreate(
+                                    listId: state.listId,
+                                    text: '',
+                                    title: '',
+                                  ),
+                                );
+                          }
                           MainPage.globalKey.currentState!.pushReplacementNamed(
                               CreateCompilationPage.routName);
                         }

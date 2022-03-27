@@ -1,9 +1,11 @@
-import 'package:audio_stories/pages/auth_pages/auth_model/auth_model.dart';
-import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
-import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
+
+import 'package:audio_stories/pages/authentication_pages/auth_pages/auth_model/auth_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+
+import '../auth_page/auth_page.dart';
+import '../auth_repository/auth_repository.dart';
 import 'bloc_auth_event.dart';
 import 'bloc_auth_state.dart';
 

@@ -61,7 +61,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
 
       if (state is AddInCompilationInitial) {
         _list = Expanded(
-          flex: 4,
+          flex: 5,
           child: Column(
             children: [
               const Spacer(),
@@ -171,6 +171,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
               children: [
                 const Spacer(),
                 Expanded(
+                  flex: 2,
                   child: Text(
                     _titlePage,
                     style: const TextStyle(
@@ -340,7 +341,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
 
   Widget _soundList(List id) {
     return Expanded(
-      flex: 4,
+      flex: 5,
       child: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('users')

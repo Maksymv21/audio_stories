@@ -483,7 +483,7 @@ class _RecordPageState extends State<RecordPage> {
             ),
             child: Padding(
               padding: const EdgeInsets.only(
-                right: 13.0,
+                right: 10.0,
               ),
               child: _isRecorded ? childPlay : childRecord,
             ),
