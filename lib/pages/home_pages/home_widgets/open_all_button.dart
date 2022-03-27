@@ -1,10 +1,10 @@
 import 'package:audio_stories/pages/audio_pages/audio_page/audio_page.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../main_pages/main_page/main_page.dart';
+import '../../blocs/bloc_icon_color/bloc_index.dart';
+import '../../blocs/bloc_icon_color/bloc_index_event.dart';
+import '../../main_page.dart';
 
 class OpenAllButton extends StatelessWidget {
   final Color color;

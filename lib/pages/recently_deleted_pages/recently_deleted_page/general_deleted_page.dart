@@ -1,6 +1,6 @@
-import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import 'package:audio_stories/pages/recently_deleted_pages/widgets/delete_bottom_bar.dart';
+import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
@@ -11,9 +11,9 @@ import '../../../resources/app_icons.dart';
 import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
-import '../../main_pages/widgets/player_container.dart';
-import '../../main_pages/widgets/sound_container.dart';
-import '../../play_page/play_page.dart';
+import '../../widgets/custom_checkbox.dart';
+import '../../widgets/player_container.dart';
+import '../../widgets/sound_container.dart';
 import 'edit_deleted_page.dart';
 
 //ignore: must_be_immutable
@@ -290,21 +290,13 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                               title: element['title'],
                               url: element['song'],
                               id: element['id'],
-                              onPressed: () {
-                                setState(() {
-                                  _player = const Text('');
-                                });
-                                Navigator.of(context).pushReplacement(
-                                  PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) => PlayPage(
-                                      title: element['title'],
-                                      url: element['song'],
-                                      id: element['id'],
-                                      page: RecentlyDeletedPage.routName,
-                                    ),
-                                  ),
-                                );
-                              },
+                              onPressed: () => GlobalRepo.toPlayPage(
+                                context: context,
+                                title: element['title'],
+                                url: element['song'],
+                                id: element['id'],
+                                routName: RecentlyDeletedPage.routName,
+                              ),
                             ),
                           );
                         });

@@ -1,8 +1,4 @@
 import 'package:audio_stories/pages/home_pages/home_widgets/open_all_button.dart';
-import 'package:audio_stories/pages/main_pages/widgets/compilation_container.dart';
-import 'package:audio_stories/pages/main_pages/widgets/player_container.dart';
-import 'package:audio_stories/pages/main_pages/widgets/popup_menu_sound_container.dart';
-import 'package:audio_stories/pages/main_pages/widgets/sound_container.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
@@ -13,17 +9,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../../utils/local_db.dart';
+import '../../blocs/bloc_icon_color/bloc_index.dart';
+import '../../blocs/bloc_icon_color/bloc_index_event.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_event.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';
 import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import '../../compilation_pages/compilation_page/compilation_page.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../main_pages/main_page/main_page.dart';
-import '../../main_pages/widgets/button_menu.dart';
-import '../../play_page/play_page.dart';
+import '../../main_page.dart';
+import '../../widgets/button_menu.dart';
+import '../../widgets/compilation_container.dart';
+import '../../widgets/custom_player.dart';
+import '../../widgets/popup_menu_sound_container.dart';
+import '../../widgets/sound_container.dart';
 
 class HomePage extends StatefulWidget {
   static const routName = '/home';
@@ -389,9 +388,7 @@ class _HomePageState extends State<HomePage> {
                                     () {
                                   setState(() {
                                     current[index] = true;
-                                    _player = Dismissible(
-                                      key: const Key(''),
-                                      direction: DismissDirection.down,
+                                    _player = CustomPlayer(
                                       onDismissed: (direction) {
                                         setState(() {
                                           _player = const Text('');
@@ -399,14 +396,10 @@ class _HomePageState extends State<HomePage> {
                                           current[index] = false;
                                         });
                                       },
-                                      child: PlayerContainer(
-                                        title: title,
-                                        url: url,
-                                        id: id,
-                                        onPressed: () {
-                                          _toPlayPage(url, title, id);
-                                        },
-                                      ),
+                                      url: url,
+                                      id: id,
+                                      title: title,
+                                      routName: HomePage.routName,
                                     );
                                   });
                                 });
@@ -491,25 +484,5 @@ class _HomePageState extends State<HomePage> {
         length: listId.length,
       ),
     );
-  }
-
-  void _toPlayPage(
-    String url,
-    String title,
-    String id,
-  ) {
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => PlayPage(
-          url: url,
-          title: title,
-          id: id,
-          page: HomePage.routName,
-        ),
-      ),
-    );
-    context.read<BlocIndex>().add(
-          NoColor(),
-        );
   }
 }

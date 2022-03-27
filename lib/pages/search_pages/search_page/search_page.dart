@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 
 import '../../../resources/app_color.dart';
 import '../../../utils/local_db.dart';
-import '../../main_pages/widgets/button_menu.dart';
-import '../../main_pages/widgets/player_container.dart';
-import '../../main_pages/widgets/popup_menu_sound_container.dart';
-import '../../main_pages/widgets/sound_container.dart';
-import '../../play_page/play_page.dart';
+import '../../widgets/button_menu.dart';
+import '../../widgets/custom_player.dart';
+import '../../widgets/popup_menu_sound_container.dart';
+import '../../widgets/sound_container.dart';
+
 
 class SearchPage extends StatefulWidget {
   static const routName = '/search';
@@ -21,17 +21,9 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final Query _ref = FirebaseFirestore.instance
-      .collection('users')
-      .doc(LocalDB.uid)
-      .collection('sounds')
-      .where('deleted', isEqualTo: false)
-      .orderBy(
-        'date',
-        descending: true,
-      );
   TextEditingController controller = TextEditingController();
   List<bool> current = [];
+  Set<int> search = {};
   Widget _player = const Text('');
   double _bottom = 10.0;
 
@@ -133,11 +125,16 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _soundList() {
     return StreamBuilder(
-      stream: (controller.text == '')
-          ? _ref.snapshots()
-          : _ref
-              .where('search', arrayContains: controller.text.toLowerCase())
-              .snapshots(),
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(LocalDB.uid)
+          .collection('sounds')
+          .where('deleted', isEqualTo: false)
+          .orderBy(
+            'date',
+            descending: true,
+          )
+          .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.data?.docs.length == 0) {
           return Center(
@@ -159,109 +156,100 @@ class _SearchPageState extends State<SearchPage> {
         }
         if (snapshot.hasData) {
           final int length = snapshot.data.docs.length;
-
-          if (current.isEmpty) {
-            for (int i = 0; i < length; i++) {
-              current.add(false);
-            }
-          }
-          if (current.length < length) {
-            current = List.from(current.reversed);
-            current.add(false);
-            current = List.from(current.reversed);
-          }
+          _createLists(snapshot, length);
+          List<int> list = search.toList();
 
           return Padding(
             padding: EdgeInsets.only(bottom: _bottom),
-            child: ListView.builder(
-              itemCount: length,
-              itemBuilder: (context, index) {
-                Color color =
-                    current[index] ? const Color(0xffF1B488) : AppColor.active;
-                final String title = snapshot.data.docs[index]['title'];
-                final String id = snapshot.data.docs[index].id;
-                final String url = snapshot.data.docs[index]['song'];
-
-                return Column(
-                  children: [
-                    SoundContainer(
-                      color: color,
-                      title: title,
-                      time: (snapshot.data.docs[index]['time'] / 60)
-                          .toStringAsFixed(1),
-                      buttonRight: Align(
-                        alignment: const AlignmentDirectional(0.9, -1.0),
-                        child: PopupMenuSoundContainer(
-                          size: 30.0,
-                          title: title,
-                          id: id,
-                          url: url,
-                          onDelete: () {
-                            if (current[index]) {
-                              setState(() {
-                                _player = const Text('');
-                              });
-                            }
-                            current.removeAt(index);
-                          },
+            child: controller.text != '' && search.isEmpty
+                ? const Center(
+                    child: Padding(
+                      padding: EdgeInsets.only(right: 10.0),
+                      child: Text(
+                        'Ничего не найдено',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          color: Colors.grey,
                         ),
+                        textAlign: TextAlign.center,
                       ),
-                      onTap: () {
-                        if (!current[index]) {
-                          for (int i = 0; i < length; i++) {
-                            current[i] = false;
-                          }
-                          setState(() {
-                            _player = const Text('');
-                            _bottom = 90.0;
-                          });
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: controller.text == '' ? length : search.length,
+                    itemBuilder: (context, index) {
+                      final int i = controller.text == '' ? index : list[index];
 
-                          Future.delayed(const Duration(milliseconds: 50), () {
-                            setState(() {
-                              current[index] = true;
-                              _player = Dismissible(
-                                key: const Key(''),
-                                direction: DismissDirection.down,
-                                onDismissed: (direction) {
-                                  setState(() {
-                                    _player = const Text('');
-                                    _bottom = 10.0;
-                                    current[index] = false;
-                                  });
-                                },
-                                child: PlayerContainer(
-                                  title: title,
-                                  url: url,
-                                  id: id,
-                                  onPressed: () {
+                      Color color = current[i]
+                          ? const Color(0xffF1B488)
+                          : AppColor.active;
+                      final String title = snapshot.data.docs[i]['title'];
+                      final String id = snapshot.data.docs[i].id;
+                      final String url = snapshot.data.docs[i]['song'];
+
+                      return Column(
+                        children: [
+                          SoundContainer(
+                            color: color,
+                            title: title,
+                            time: (snapshot.data.docs[i]['time'] / 60)
+                                .toStringAsFixed(1),
+                            buttonRight: Align(
+                              alignment: const AlignmentDirectional(0.9, -1.0),
+                              child: PopupMenuSoundContainer(
+                                size: 30.0,
+                                title: title,
+                                id: id,
+                                url: url,
+                                onDelete: () {
+                                  if (current[i]) {
                                     setState(() {
                                       _player = const Text('');
                                     });
-                                    Navigator.of(context).pushReplacement(
-                                      PageRouteBuilder(
-                                        pageBuilder: (_, __, ___) => PlayPage(
-                                          url: url,
-                                          title: title,
-                                          id: id,
-                                          page: SearchPage.routName,
-                                        ),
-                                      ),
+                                  }
+                                  current.removeAt(i);
+                                },
+                              ),
+                            ),
+                            onTap: () {
+                              if (!current[i]) {
+                                for (int i = 0; i < length; i++) {
+                                  current[i] = false;
+                                }
+                                setState(() {
+                                  _player = const Text('');
+                                  _bottom = 90.0;
+                                });
+
+                                Future.delayed(const Duration(milliseconds: 50),
+                                    () {
+                                  setState(() {
+                                    current[i] = true;
+                                    _player = CustomPlayer(
+                                      onDismissed: (direction) {
+                                        setState(() {
+                                          _player = const Text('');
+                                          _bottom = 10.0;
+                                          current[i] = false;
+                                        });
+                                      },
+                                      url: url,
+                                      id: id,
+                                      title: title,
+                                      routName: SearchPage.routName,
                                     );
-                                  },
-                                ),
-                              );
-                            });
-                          });
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      height: 7.0,
-                    ),
-                  ],
-                );
-              },
-            ),
+                                  });
+                                });
+                              }
+                            },
+                          ),
+                          const SizedBox(
+                            height: 7.0,
+                          ),
+                        ],
+                      );
+                    },
+                  ),
           );
         } else {
           return const Center(
@@ -320,5 +308,29 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ],
     );
+  }
+
+  void _createLists(
+    AsyncSnapshot snapshot,
+    int length,
+  ) {
+    if (current.isEmpty) {
+      for (int i = 0; i < length; i++) {
+        current.add(false);
+      }
+    }
+    if (current.length < length) {
+      current = List.from(current.reversed);
+      current.add(false);
+      current = List.from(current.reversed);
+    }
+
+    search = {};
+
+    for (int i = 0; i < length; i++) {
+      if (snapshot.data.docs[i]['search'].contains(controller.text)) {
+        search.add(i);
+      }
+    }
   }
 }

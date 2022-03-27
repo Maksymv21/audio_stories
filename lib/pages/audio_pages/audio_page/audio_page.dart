@@ -1,19 +1,16 @@
-import 'package:audio_stories/pages/main_pages/widgets/popup_menu_sound_container.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../utils/local_db.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../main_pages/widgets/button_menu.dart';
-import '../../main_pages/widgets/player_container.dart';
-import '../../main_pages/widgets/sound_container.dart';
-import '../../play_page/play_page.dart';
+import '../../widgets/button_menu.dart';
+import '../../widgets/custom_player.dart';
+import '../../widgets/player_container.dart';
+import '../../widgets/popup_menu_sound_container.dart';
+import '../../widgets/sound_container.dart';
 
 class AudioPage extends StatefulWidget {
   static const routName = '/audio';
@@ -29,6 +26,66 @@ class _AudioPageState extends State<AudioPage> {
   double _bottom = 10.0;
   Widget _player = const Text('');
   bool _repeat = false;
+
+  void _playAll(
+    AsyncSnapshot snapshot,
+    int length,
+  ) {
+    if (current.isEmpty) {
+      GlobalRepo.showSnackBar(
+        context: context,
+        title: 'Отсутствуют аудио для проигрования',
+      );
+    } else {
+      if (!current.contains(true)) {
+        setState(() {
+          _player = _next(
+            index: 0,
+            length: length,
+            snapshot: snapshot,
+          );
+        });
+      }
+    }
+  }
+
+  void _play(
+    int index,
+    int length,
+    String url,
+    String id,
+    String title,
+  ) {
+    if (!current[index]) {
+      for (int i = 0; i < length; i++) {
+        current[i] = false;
+      }
+      setState(() {
+        _player = const Text('');
+        _bottom = 90.0;
+      });
+
+      Future.delayed(const Duration(milliseconds: 50), () {
+        setState(() {
+          current[index] = true;
+          _player = CustomPlayer(
+            onDismissed: (direction) {
+              setState(() {
+                _player = const Text('');
+                _bottom = 10.0;
+                debugPrint(_bottom.toString());
+                current[index] = false;
+              });
+            },
+            url: url,
+            id: id,
+            title: title,
+            routName: AudioPage.routName,
+          );
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +149,10 @@ class _AudioPageState extends State<AudioPage> {
                   child: const Text(
                     '...',
                     style: TextStyle(
-                        color: Colors.white, fontSize: 48, letterSpacing: 3.0),
+                      color: Colors.white,
+                      fontSize: 48,
+                      letterSpacing: 3.0,
+                    ),
                   ),
                 ),
               ),
@@ -132,120 +192,7 @@ class _AudioPageState extends State<AudioPage> {
                         SizedBox(
                           width: width * 0.25,
                         ),
-                        Stack(
-                          children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: width * 0.29,
-                                ),
-                                OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: _repeat
-                                        ? AppColor.greyActive
-                                        : AppColor.greyDisActive,
-                                    minimumSize: const Size(100.0, 46.0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(50.0),
-                                    ),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _repeat = !_repeat;
-                                    });
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(
-                                      left: 45.0,
-                                    ),
-                                    child: Image(
-                                      alignment: AlignmentDirectional.bottomEnd,
-                                      image: Image.asset(AppIcons.repeat).image,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                minimumSize: const Size(168.0, 46.0),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(50.0),
-                                ),
-                              ),
-                              onPressed: () {
-                                if (current.isEmpty) {
-                                  GlobalRepo.showSnackBar(
-                                    context: context,
-                                    title: 'Отсутствуют аудио для проигрования',
-                                  );
-                                } else {
-                                  if (!current.contains(true)) {
-                                    setState(() {
-                                      _player = _next(
-                                        index: 0,
-                                        length: length,
-                                        snapshot: snapshot,
-                                      );
-                                    });
-                                  }
-                                }
-                              },
-                              child: const Align(
-                                widthFactor: 0.6,
-                                heightFactor: 0.0,
-                                alignment: AlignmentDirectional.centerStart,
-                                child: Text(
-                                  'Запустить все',
-                                  textAlign: TextAlign.end,
-                                  style: TextStyle(
-                                    fontFamily: 'TTNormsL',
-                                    color: AppColor.active,
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            Transform.scale(
-                              scale: 1.3,
-                              child: ColorFiltered(
-                                child: IconButton(
-                                  onPressed: () {
-                                    if (current.isEmpty) {
-                                      GlobalRepo.showSnackBar(
-                                        context: context,
-                                        title:
-                                            'Отсутствуют аудио для проигрования',
-                                      );
-                                    } else {
-                                      if (!current.contains(true)) {
-                                        setState(() {
-                                          _player = _next(
-                                            index: 0,
-                                            length: length,
-                                            snapshot: snapshot,
-                                          );
-                                        });
-                                      }
-                                    }
-                                  },
-                                  icon: Image.asset(
-                                    current.contains(true)
-                                        ? AppIcons.pauseRecord
-                                        : AppIcons.play,
-                                  ),
-                                ),
-                                colorFilter: const ColorFilter.mode(
-                                  AppColor.active,
-                                  BlendMode.srcATop,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
+                        _playAllButton(width, length, snapshot),
                       ],
                     ),
                   ),
@@ -271,89 +218,7 @@ class _AudioPageState extends State<AudioPage> {
                     )
                   : Padding(
                       padding: EdgeInsets.only(top: 225.0, bottom: _bottom),
-                      child: ListView.builder(
-                        itemCount: snapshot.data.docs.length,
-                        itemBuilder: (context, index) {
-                          Color color = current[index]
-                              ? const Color(0xffF1B488)
-                              : AppColor.active;
-                          final String url = snapshot.data.docs[index]['song'];
-                          final String id = snapshot.data.docs[index].id;
-                          final String title =
-                              snapshot.data.docs[index]['title'];
-                          return Column(
-                            children: [
-                              SoundContainer(
-                                color: color,
-                                title: title,
-                                time: (snapshot.data.docs[index]['time'] / 60)
-                                    .toStringAsFixed(1),
-                                buttonRight: Align(
-                                  alignment:
-                                      const AlignmentDirectional(0.9, -1.0),
-                                  child: PopupMenuSoundContainer(
-                                    size: 30.0,
-                                    title: title,
-                                    id: id,
-                                    url: url,
-                                    onDelete: () {
-                                      if (current[index]) {
-                                        setState(() {
-                                          _player = const Text('');
-                                        });
-                                      }
-                                      current.removeAt(index);
-                                    },
-                                  ),
-                                ),
-                                onTap: () {
-                                  if (!current[index]) {
-                                    for (int i = 0; i < length; i++) {
-                                      current[i] = false;
-                                    }
-                                    setState(() {
-                                      _player = const Text('');
-                                      _bottom = 90.0;
-                                    });
-
-                                    Future.delayed(
-                                        const Duration(milliseconds: 50), () {
-                                      setState(() {
-                                        current[index] = true;
-                                        _player = Dismissible(
-                                          key: const Key(''),
-                                          direction: DismissDirection.down,
-                                          onDismissed: (direction) {
-                                            setState(() {
-                                              _player = const Text('');
-                                              _bottom = 10.0;
-                                              debugPrint(_bottom.toString());
-                                              current[index] = false;
-                                            });
-                                          },
-                                          child: PlayerContainer(
-                                            title: title,
-                                            url: url,
-                                            id: id,
-                                            onPressed: () => _onPressed(
-                                              url: url,
-                                              title: title,
-                                              id: id,
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                    });
-                                  }
-                                },
-                              ),
-                              const SizedBox(
-                                height: 7.0,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
+                      child: _listSound(snapshot, length),
                     ),
               Align(
                 alignment: AlignmentDirectional.bottomCenter,
@@ -378,6 +243,141 @@ class _AudioPageState extends State<AudioPage> {
             ],
           );
         }
+      },
+    );
+  }
+
+  Widget _playAllButton(
+    double width,
+    int length,
+    AsyncSnapshot snapshot,
+  ) {
+    return Stack(
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              width: width * 0.29,
+            ),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor:
+                    _repeat ? AppColor.greyActive : AppColor.greyDisActive,
+                minimumSize: const Size(100.0, 46.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(50.0),
+                ),
+              ),
+              onPressed: () {
+                setState(() {
+                  _repeat = !_repeat;
+                });
+              },
+              child: Container(
+                margin: const EdgeInsets.only(
+                  left: 45.0,
+                ),
+                child: Image(
+                  alignment: AlignmentDirectional.bottomEnd,
+                  image: Image.asset(AppIcons.repeat).image,
+                ),
+              ),
+            ),
+          ],
+        ),
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Colors.white,
+            minimumSize: const Size(168.0, 46.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+          ),
+          onPressed: () => _playAll(snapshot, length),
+          child: const Align(
+            widthFactor: 0.6,
+            heightFactor: 0.0,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              'Запустить все',
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontFamily: 'TTNormsL',
+                color: AppColor.active,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ),
+        Transform.scale(
+          scale: 1.3,
+          child: ColorFiltered(
+            child: IconButton(
+              onPressed: () => _playAll(snapshot, length),
+              icon: Image.asset(
+                current.contains(true) ? AppIcons.pauseRecord : AppIcons.play,
+              ),
+            ),
+            colorFilter: const ColorFilter.mode(
+              AppColor.active,
+              BlendMode.srcATop,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _listSound(
+    AsyncSnapshot snapshot,
+    int length,
+  ) {
+    return ListView.builder(
+      itemCount: snapshot.data.docs.length,
+      itemBuilder: (context, index) {
+        Color color =
+            current[index] ? const Color(0xffF1B488) : AppColor.active;
+        final String url = snapshot.data.docs[index]['song'];
+        final String id = snapshot.data.docs[index].id;
+        final String title = snapshot.data.docs[index]['title'];
+        return Column(
+          children: [
+            SoundContainer(
+              color: color,
+              title: title,
+              time: (snapshot.data.docs[index]['time'] / 60).toStringAsFixed(1),
+              buttonRight: Align(
+                alignment: const AlignmentDirectional(0.9, -1.0),
+                child: PopupMenuSoundContainer(
+                  size: 30.0,
+                  title: title,
+                  id: id,
+                  url: url,
+                  onDelete: () {
+                    if (current[index]) {
+                      setState(() {
+                        _player = const Text('');
+                      });
+                    }
+                    current.removeAt(index);
+                  },
+                ),
+              ),
+              onTap: () => _play(
+                index,
+                length,
+                url,
+                id,
+                title,
+              ),
+            ),
+            const SizedBox(
+              height: 7.0,
+            ),
+          ],
+        );
       },
     );
   }
@@ -408,10 +408,12 @@ class _AudioPageState extends State<AudioPage> {
         title: title,
         url: url,
         id: id,
-        onPressed: () => _onPressed(
+        onPressed: () => GlobalRepo.toPlayPage(
+          context: context,
           url: url,
           title: title,
           id: id,
+          routName: AudioPage.routName,
         ),
         whenComplete: () {
           if (index + 1 < length) {
@@ -449,28 +451,5 @@ class _AudioPageState extends State<AudioPage> {
         },
       ),
     );
-  }
-
-  void _onPressed({
-    required String url,
-    required String title,
-    required String id,
-  }) {
-    setState(() {
-      _player = const Text('');
-    });
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => PlayPage(
-          url: url,
-          title: title,
-          id: id,
-          page: AudioPage.routName,
-        ),
-      ),
-    );
-    context.read<BlocIndex>().add(
-          NoColor(),
-        );
   }
 }

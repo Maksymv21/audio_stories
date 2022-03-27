@@ -1,17 +1,17 @@
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import 'package:audio_stories/pages/main_pages/routes/app_router.dart';
-import 'package:audio_stories/pages/main_pages/widgets/drawer.dart';
-import 'package:audio_stories/pages/main_pages/widgets/navigation_bar.dart';
+import 'package:audio_stories/pages/routes/app_router.dart';
+import 'package:audio_stories/pages/widgets/drawer.dart';
+import 'package:audio_stories/pages/widgets/navigation_bar.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/custom_will_pop_scope.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../compilation_pages/compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
-import '../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
+import 'blocs/bloc_icon_color/bloc_index.dart';
+import 'compilation_pages/compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
+import 'compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 
 class MainPage extends StatefulWidget {
   static GlobalKey<NavigatorState> globalKey = GlobalKey();

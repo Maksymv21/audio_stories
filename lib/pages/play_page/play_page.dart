@@ -4,7 +4,7 @@ import 'dart:math';
 import 'package:audio_stories/pages/compilation_pages/compilation_create_page/compilation_search_page.dart';
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
 import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
-import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/main_page.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,13 +16,13 @@ import 'package:intl/intl.dart' show DateFormat;
 import '../../resources/app_icons.dart';
 import '../../utils/local_db.dart';
 import '../audio_pages/audio_page/audio_page.dart';
+import '../blocs/bloc_icon_color/bloc_index.dart';
+import '../blocs/bloc_icon_color/bloc_index_event.dart';
 import '../compilation_pages/compilation_page/compilation_page.dart';
 import '../home_pages/home_page/home_page.dart';
-import '../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import '../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import '../main_pages/repositories/player_repository.dart';
-import '../main_pages/resources/thumb_shape.dart';
-import '../main_pages/widgets/popup_menu_sound_container.dart';
+import '../repositories/player_repository.dart';
+import '../resources/thumb_shape.dart';
+import '../widgets/popup_menu_sound_container.dart';
 
 //ignore: must_be_immutable
 class PlayPage extends StatefulWidget {
@@ -194,7 +194,6 @@ class _PlayPageState extends State<PlayPage> {
                     if (snapshot.hasData) {
                       if (compilation.isEmpty) {
                         compilation = _compilation(snapshot);
-                        print(compilation);
                       }
 
                       ImageProvider image = compilation.isEmpty

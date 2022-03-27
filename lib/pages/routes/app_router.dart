@@ -1,20 +1,20 @@
 import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../../audio_pages/audio_page/audio_page.dart';
-import '../../audio_pages/audio_page/test_page.dart';
-import '../../compilation_pages/compilation_create_page/compilation_search_page.dart';
-import '../../compilation_pages/compilation_create_page/create_compilation_page.dart';
-import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';
-import '../../compilation_pages/compilation_page/compilation_page.dart';
-import '../../home_pages/home_page/home_page.dart';
-import '../../play_page/play_page.dart';
-import '../../profile_pages/profile_page/edit_profile_page.dart';
-import '../../profile_pages/profile_page/profile_page.dart';
-import '../../recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
-import '../../record_page/record_page.dart';
-import '../../search_pages/search_page/search_page.dart';
-import '../../subscription_pages/subscription_page/subscription_page.dart';
+import '../audio_pages/audio_page/audio_page.dart';
+import '../audio_pages/audio_page/test_page.dart';
+import '../compilation_pages/compilation_create_page/compilation_search_page.dart';
+import '../compilation_pages/compilation_create_page/create_compilation_page.dart';
+import '../compilation_pages/compilation_current_page/compilation_current_page.dart';
+import '../compilation_pages/compilation_page/compilation_page.dart';
+import '../home_pages/home_page/home_page.dart';
+import '../play_page/play_page.dart';
+import '../profile_pages/profile_page/edit_profile_page.dart';
+import '../profile_pages/profile_page/profile_page.dart';
+import '../recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
+import '../record_page/record_page.dart';
+import '../search_pages/search_page/search_page.dart';
+import '../subscription_pages/subscription_page/subscription_page.dart';
 
 class AppRouter {
   const AppRouter._();

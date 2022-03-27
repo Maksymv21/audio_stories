@@ -1,7 +1,8 @@
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/general_deleted_page.dart';
 import 'package:flutter/material.dart';
 
-import '../../main_pages/widgets/button_menu.dart';
+import '../../widgets/button_menu.dart';
+
 
 class RecentlyDeletedPage extends StatelessWidget {
   static const routName = '/deleted';

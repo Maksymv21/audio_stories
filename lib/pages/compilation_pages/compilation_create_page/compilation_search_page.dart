@@ -1,4 +1,3 @@
-import 'package:audio_stories/pages/main_pages/widgets/custom_checkbox.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +7,10 @@ import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
 import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
-import '../../main_pages/main_page/main_page.dart';
-import '../../main_pages/widgets/player_container.dart';
-import '../../main_pages/widgets/sound_container.dart';
-import '../../play_page/play_page.dart';
+import '../../main_page.dart';
+import '../../widgets/custom_checkbox.dart';
+import '../../widgets/player_container.dart';
+import '../../widgets/sound_container.dart';
 import 'compilation_create_bloc/add_in_compilation_bloc.dart';
 import 'compilation_create_bloc/add_in_compilation_event.dart';
 import 'compilation_create_bloc/add_in_compilation_state.dart';
@@ -264,21 +263,13 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                                   title: title,
                                   url: url,
                                   id: id,
-                                  onPressed: () {
-                                    setState(() {
-                                      _player = const Text('');
-                                    });
-                                    Navigator.of(context).pushReplacement(
-                                      PageRouteBuilder(
-                                        pageBuilder: (_, __, ___) => PlayPage(
-                                          url: url,
-                                          title: title,
-                                          id: id,
-                                          page: CompilationSearchPage.routName,
-                                        ),
-                                      ),
-                                    );
-                                  },
+                                  onPressed: () => GlobalRepo.toPlayPage(
+                                    context: context,
+                                    url: url,
+                                    title: title,
+                                    id: id,
+                                    routName: CompilationSearchPage.routName,
+                                  ),
                                 ),
                               );
                             });

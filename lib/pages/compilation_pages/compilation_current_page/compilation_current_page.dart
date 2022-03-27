@@ -13,13 +13,11 @@ import '../../../resources/app_color.dart';
 import '../../../resources/app_icons.dart';
 import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../main_pages/main_page/main_page.dart';
-import '../../main_pages/widgets/player_container.dart';
-import '../../main_pages/widgets/popup_menu_sound_container.dart';
-import '../../main_pages/widgets/sound_container.dart';
-import '../../play_page/play_page.dart';
+import '../../main_page.dart';
+import '../../widgets/custom_player.dart';
+import '../../widgets/player_container.dart';
+import '../../widgets/popup_menu_sound_container.dart';
+import '../../widgets/sound_container.dart';
 import '../compilation_create_page/compilation_create_bloc/add_in_compilation_event.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../compilation_page/compilation_bloc/compilation_event.dart';
@@ -43,6 +41,29 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
   Widget _player = const Text('');
   bool _readMore = false;
   bool _playAll = false;
+
+  void _play(OnCurrentCompilation state) {
+    if (!current.contains(true)) {
+      setState(() {
+        _playAll = !_playAll;
+        _player = _next(
+          index: 0,
+          listUrl: listUrl,
+          listTitle: listTitle,
+          listId: state.listId,
+        );
+      });
+    } else {
+      setState(() {
+        _playAll = !_playAll;
+        _player = const Text('');
+        _bottom = 10.0;
+        for (int i = 0; i < current.length; i++) {
+          current[i] = false;
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -243,99 +264,61 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                 ),
                 Align(
                   alignment: const AlignmentDirectional(0.85, 0.85),
-                  child: Stack(
-                    children: [
-                      OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.grey.withOpacity(0.7),
-                          minimumSize: const Size(168.0, 46.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50.0),
-                          ),
-                        ),
-                        onPressed: () {
-                          if (!current.contains(true)) {
-                            setState(() {
-                              _playAll = !_playAll;
-                              _player = _next(
-                                index: 0,
-                                listUrl: listUrl,
-                                listTitle: listTitle,
-                                listId: state.listId,
-                              );
-                            });
-                          } else {
-                            setState(() {
-                              _playAll = !_playAll;
-                              _player = const Text('');
-                              _bottom = 10.0;
-                              for (int i = 0; i < current.length; i++) {
-                                current[i] = false;
-                              }
-                            });
-                          }
-                        },
-                        child: Align(
-                          widthFactor: 0.6,
-                          heightFactor: 0.0,
-                          alignment: AlignmentDirectional.centerStart,
-                          child: Text(
-                            _playAll ? 'Остановить' : 'Запустить все',
-                            textAlign: TextAlign.end,
-                            style: const TextStyle(
-                              fontFamily: 'TTNormsL',
-                              color: Colors.white,
-                              fontSize: 14.0,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Transform.scale(
-                        scale: 1.3,
-                        child: ColorFiltered(
-                          child: IconButton(
-                            onPressed: () {
-                              if (!current.contains(true)) {
-                                setState(() {
-                                  _playAll = !_playAll;
-                                  _player = _next(
-                                    index: 0,
-                                    listUrl: listUrl,
-                                    listTitle: listTitle,
-                                    listId: state.listId,
-                                  );
-                                });
-                              } else {
-                                setState(() {
-                                  _playAll = !_playAll;
-                                  _player = const Text('');
-                                  _bottom = 10.0;
-                                  for (int i = 0; i < current.length; i++) {
-                                    current[i] = false;
-                                  }
-                                });
-                              }
-                            },
-                            icon: Image.asset(
-                              _playAll ? AppIcons.pauseRecord : AppIcons.play,
-                            ),
-                          ),
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcATop,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  child: _playAllButton(state),
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _playAllButton(OnCurrentCompilation state) {
+    return Stack(
+      children: [
+        OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            backgroundColor: Colors.grey.withOpacity(0.7),
+            minimumSize: const Size(168.0, 46.0),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(50.0),
+            ),
+          ),
+          onPressed: () => _play(state),
+          child: Align(
+            widthFactor: 0.6,
+            heightFactor: 0.0,
+            alignment: AlignmentDirectional.centerStart,
+            child: Text(
+              _playAll ? 'Остановить' : 'Запустить все',
+              textAlign: TextAlign.end,
+              style: const TextStyle(
+                fontFamily: 'TTNormsL',
+                color: Colors.white,
+                fontSize: 14.0,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        ),
+        Transform.scale(
+          scale: 1.3,
+          child: ColorFiltered(
+            child: IconButton(
+              onPressed: () => _play(state),
+              icon: Image.asset(
+                _playAll ? AppIcons.pauseRecord : AppIcons.play,
+              ),
+            ),
+            colorFilter: const ColorFilter.mode(
+              Colors.white,
+              BlendMode.srcATop,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -413,29 +396,19 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                                   () {
                                 setState(() {
                                   current[index] = true;
-                                  _player = Dismissible(
-                                    key: const Key(''),
-                                    direction: DismissDirection.down,
-                                    onDismissed: (direction) {
-                                      setState(() {
-                                        _player = const Text('');
-                                        _bottom = 10.0;
-                                        current[index] = false;
-                                      });
-                                    },
-                                    child: PlayerContainer(
-                                      title: listTitle[index],
+                                  _player = CustomPlayer(
+                                      onDismissed: (direction) {
+                                        setState(() {
+                                          _player = const Text('');
+                                          _bottom = 10.0;
+                                          current[index] = false;
+                                        });
+                                      },
                                       url: listUrl[index],
                                       id: listId[index],
-                                      onPressed: () {
-                                        _toPlayPage(
-                                          listUrl[index],
-                                          listTitle[index],
-                                          listId[index],
-                                        );
-                                      },
-                                    ),
-                                  );
+                                      title: listTitle[index],
+                                      routName:
+                                          CurrentCompilationPage.routName);
                                 });
                               });
                             }
@@ -452,7 +425,8 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                                   GlobalRepo.showSnackBar(
                                     context: context,
                                     title:
-                                        'В подборке должно оставаться минимум одно аудио',
+                                        'В подборке должно оставаться '
+                                            'минимум одно аудио',
                                   );
                                 } else {
                                   Database.deleteSoundInCompilation(
@@ -518,10 +492,12 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         title: title,
         url: url,
         id: id,
-        onPressed: () => _toPlayPage(
-          url,
-          title,
-          id,
+        onPressed: () => GlobalRepo.toPlayPage(
+          context: context,
+          url: url,
+          title: title,
+          id: id,
+          routName: CurrentCompilationPage.routName,
         ),
         whenComplete: () {
           if (index + 1 < listId.length) {
@@ -567,8 +543,6 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
               );
         }
         if (value == 1) {
-          // MyApp.firstKey.currentState!
-          //     .pushNamed(PickFewCompilationPage.routName);
           Navigator.of(context).push(
             PageRouteBuilder(
               pageBuilder: (_, __, ___) => PickFewCompilationPage(
@@ -654,29 +628,6 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
       current.add(false);
       current = List.from(current.reversed);
     }
-  }
-
-  void _toPlayPage(
-    String url,
-    String title,
-    String id,
-  ) {
-    setState(() {
-      _player = const Text('');
-    });
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => PlayPage(
-          url: url,
-          title: title,
-          id: id,
-          page: CurrentCompilationPage.routName,
-        ),
-      ),
-    );
-    context.read<BlocIndex>().add(
-          NoColor(),
-        );
   }
 
   String _convertDate(Timestamp date) {

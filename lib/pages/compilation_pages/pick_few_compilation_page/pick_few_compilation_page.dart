@@ -1,4 +1,5 @@
 import 'package:audio_stories/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
+import 'package:audio_stories/pages/widgets/custom_player.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
@@ -10,13 +11,9 @@ import '../../../resources/app_icons.dart';
 import '../../../utils/database.dart';
 import '../../../utils/local_db.dart';
 import '../../../widgets/background.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import '../../main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../main_pages/main_page/main_page.dart';
-import '../../main_pages/widgets/custom_checkbox.dart';
-import '../../main_pages/widgets/player_container.dart';
-import '../../main_pages/widgets/sound_container.dart';
-import '../../play_page/play_page.dart';
+import '../../main_page.dart';
+import '../../widgets/custom_checkbox.dart';
+import '../../widgets/sound_container.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../compilation_page/compilation_bloc/compilation_event.dart';
 import '../compilation_page/compilation_page.dart';
@@ -277,9 +274,7 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                       Future.delayed(const Duration(milliseconds: 50), () {
                         setState(() {
                           current[index] = true;
-                          _player = Dismissible(
-                            key: const Key(''),
-                            direction: DismissDirection.down,
+                          _player = CustomPlayer(
                             onDismissed: (direction) {
                               setState(() {
                                 _player = const Text('');
@@ -287,21 +282,10 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                                 current[index] = false;
                               });
                             },
-                            child: PlayerContainer(
-                              title: listTitle[index],
-                              url: listUrl[index],
-                              id: widget.listId![index],
-                              onPressed: () {
-                                setState(() {
-                                  _player = const Text('');
-                                });
-                                _toPlayPage(
-                                  listUrl[index],
-                                  listTitle[index],
-                                  widget.listId![index],
-                                );
-                              },
-                            ),
+                            title: listTitle[index],
+                            url: listUrl[index],
+                            id: widget.listId![index],
+                            routName: PickFewCompilationPage.routName,
                           );
                         });
                       });
@@ -495,29 +479,6 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         chek.add(false);
       }
     }
-  }
-
-  void _toPlayPage(
-    String url,
-    String title,
-    String id,
-  ) {
-    setState(() {
-      _player = const Text('');
-    });
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => PlayPage(
-          url: url,
-          title: title,
-          id: id,
-          page: PickFewCompilationPage.routName,
-        ),
-      ),
-    );
-    context.read<BlocIndex>().add(
-          NoColor(),
-        );
   }
 
   Future _download(String url, String name) async {

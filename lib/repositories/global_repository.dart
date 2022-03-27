@@ -3,9 +3,14 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+
+import '../pages/blocs/bloc_icon_color/bloc_index.dart';
+import '../pages/blocs/bloc_icon_color/bloc_index_event.dart';
+import '../pages/play_page/play_page.dart';
 
 class GlobalRepo {
   const GlobalRepo._();
@@ -55,5 +60,27 @@ class GlobalRepo {
     }
 
     await Share.shareFiles(_path);
+  }
+
+  static void toPlayPage({
+    required BuildContext context,
+    required String url,
+    required String title,
+    required String id,
+    required String routName,
+  }) {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) => PlayPage(
+          url: url,
+          title: title,
+          id: id,
+          page: routName,
+        ),
+      ),
+    );
+    context.read<BlocIndex>().add(
+          NoColor(),
+        );
   }
 }

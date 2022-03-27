@@ -18,7 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
-import '../../main_pages/main_page/main_page.dart';
+import '../../main_page.dart';
 
 class EditProfilePage extends StatelessWidget {
   static const routName = '/editProfile';

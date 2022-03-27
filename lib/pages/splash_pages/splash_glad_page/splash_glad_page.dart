@@ -1,4 +1,4 @@
-import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/background.dart';

@@ -2,10 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_stories/pages/home_pages/home_page/home_page.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index.dart';
-import 'package:audio_stories/pages/main_pages/main_blocs/bloc_icon_color/bloc_index_event.dart';
-import 'package:audio_stories/pages/main_pages/resources/thumb_shape.dart';
-import 'package:audio_stories/pages/main_pages/widgets/button_menu.dart';
 import 'package:audio_stories/pages/record_page/repository/record_repository.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
@@ -20,7 +16,11 @@ import 'package:noise_meter/noise_meter.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 import '../../utils/local_db.dart';
-import '../main_pages/main_page/main_page.dart';
+import '../blocs/bloc_icon_color/bloc_index.dart';
+import '../blocs/bloc_icon_color/bloc_index_event.dart';
+import '../main_page.dart';
+import '../resources/thumb_shape.dart';
+import '../widgets/button_menu.dart';
 
 class RecordPage extends StatefulWidget {
   static const routName = '/record';
@@ -61,12 +61,6 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   Future openTheRecorder() async {
-    // await _recorder.recorder!.openAudioSession(
-    //   focus: AudioFocus.requestFocusAndStopOthers,
-    //   category: SessionCategory.playAndRecord,
-    //   mode: SessionMode.modeDefault,
-    // );
-
     _recorderSubscription = _recorder.onProgress!.listen((e) {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(
           e.duration.inMilliseconds,
@@ -89,19 +83,6 @@ class _RecordPageState extends State<RecordPage> {
     _scrollController.dispose();
     super.dispose();
   }
-
-  // void startTimer() {
-  //   _recorderSubscription = _recorder.onProgress!.listen((e) {
-  //     DateTime date = DateTime.fromMillisecondsSinceEpoch(
-  //         e.duration.inMilliseconds,
-  //         isUtc: true);
-  //     String txt = DateFormat('HH:mm:ss', 'en_GB').format(date);
-  //     setState(() {
-  //       _recorderTxt = txt.substring(0, 8);
-  //       _time = e.duration.inSeconds.toDouble();
-  //     });
-  //   });
-  // }
 
   void refreshTimer(double value) {
     DateTime date =
@@ -321,7 +302,6 @@ class _RecordPageState extends State<RecordPage> {
                               snapshot.data?.docs.length,
                             );
                           }
-
                         },
                         child: const Text(
                           'Сохранить',
@@ -513,7 +493,7 @@ class _RecordPageState extends State<RecordPage> {
     );
   }
 
-  List _listAmplitude = [];
+  final List _listAmplitude = [];
 
   Widget _amplitudeRecords() {
     List _list = _listAmplitude.reversed.toList();
@@ -557,7 +537,7 @@ class _RecordPageState extends State<RecordPage> {
       const Duration(milliseconds: 80),
       (_) {
         double _dcb = db / 3;
-        if (_dcb < 8.5) {
+        if (_dcb < 10) {
           _dcb = 1;
         }
 

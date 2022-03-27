@@ -4,7 +4,7 @@ import 'package:audio_stories/pages/compilation_pages/pick_few_compilation_page/
 import 'package:audio_stories/pages/recently_deleted_pages/recently_deleted_page/edit_deleted_page.dart';
 import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
 import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
-import 'package:audio_stories/pages/main_pages/main_page/main_page.dart';
+import 'package:audio_stories/pages/main_page.dart';
 import 'package:audio_stories/pages/splash_pages/splash_page/splash_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
