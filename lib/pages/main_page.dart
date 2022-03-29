@@ -60,7 +60,7 @@ class _MainPageState extends State<MainPage> {
             onGenerateRoute: AppRouter.generateRoute,
           ),
           bottomNavigationBar: const MyNavigationBar(),
-          drawer: const BurgerMenu(),
+          drawer: BurgerMenu(),
         ),
       ),
     );

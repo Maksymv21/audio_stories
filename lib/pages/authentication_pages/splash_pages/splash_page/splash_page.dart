@@ -28,7 +28,7 @@ class SplashPage extends StatelessWidget {
           PageRouteBuilder(
             pageBuilder: (_, __, ___) {
               User? _user = _firebaseAuth.currentUser;
-              if (_user != null || _user!.isAnonymous) {
+              if (_user != null) {
                 return SplashGladPage();
               } else {
                 return const WelcomePage();

@@ -35,6 +35,7 @@ class _RecordPageState extends State<RecordPage> {
   final RecordRepository _recorder = RecordRepository();
   final ScrollController _scrollController = ScrollController();
   StreamSubscription? _recorderSubscription;
+  Timer? _timerAmplitude;
   String _recorderTxt = '00:00:00';
   String _playTxt = '00:00';
   String _playTxtChange = '00:00';
@@ -530,7 +531,7 @@ class _RecordPageState extends State<RecordPage> {
     );
   }
 
-  Timer? _timerAmplitude;
+
 
   void _getAmplitude() {
     _timerAmplitude = Timer.periodic(

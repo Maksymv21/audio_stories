@@ -2,7 +2,7 @@
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
     <external-path
         name="files_root"
-        path="Android/data/com.my.audio_stories" />
+        path="Android/data/com.my.com.example.audio_stories" />
     <external-path
         name="external_files"
         path="." />

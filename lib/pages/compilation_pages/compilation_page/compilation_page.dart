@@ -50,7 +50,11 @@ class _CompilationPageState extends State<CompilationPage> {
           alignment: const AlignmentDirectional(0.95, -0.95),
           child: _pickFew ? _popupPickDelete() : _popupPickFew(),
         );
-        visible = false;
+        if (_pickFew) {
+          visible = true;
+        } else {
+          visible = false;
+        }
       } else {
         subTitle = '';
         topRightButton = Align(
@@ -82,11 +86,7 @@ class _CompilationPageState extends State<CompilationPage> {
         );
         visible = true;
       }
-      if (_pickFew) {
-        visible = true;
-      } else {
-        visible = false;
-      }
+
       return Stack(
         children: [
           Column(

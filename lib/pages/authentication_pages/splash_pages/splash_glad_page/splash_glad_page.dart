@@ -18,7 +18,7 @@ class SplashGladPage extends StatelessWidget {
     Future.delayed(
         const Duration(
           seconds: 3,
-        ), () async {
+        ), () {
       Navigator.pushAndRemoveUntil(
         context,
         PageRouteBuilder(

@@ -1,4 +1,4 @@
-package com.example.audio_stories
+package com.example.audio
 
 import io.flutter.embedding.android.FlutterActivity
 
