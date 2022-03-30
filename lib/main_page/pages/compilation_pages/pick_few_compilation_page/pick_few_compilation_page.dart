@@ -1,3 +1,4 @@
+import 'package:audio_stories/main_page/widgets/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -5,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../resources/app_icons.dart';
 import '../../../../utils/database.dart';
-import '../../../../utils/local_db.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
 import '../../../widgets/popup_menu_pick_few.dart';
@@ -59,125 +59,122 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
     }
   }
 
+  void _cancel() {
+    for (int i = 0; i < sounds.length; i++) {
+      sounds[i]['chek'] = false;
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
     final double _height = MediaQuery.of(context).size.height;
 
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(LocalDB.uid)
-            .collection('sounds')
-            .where('deleted', isEqualTo: false)
-            .orderBy(
-              'date',
-              descending: true,
-            )
-            .snapshots(),
-        builder: (
-          BuildContext context,
-          AsyncSnapshot snapshot,
-        ) {
-          if (snapshot.hasData) {
-            _createLists(snapshot);
-            return Stack(
-              children: [
-                Column(
-                  children: [
-                    Expanded(
-                      child: Background(
-                        image: AppIcons.upGreen,
-                        height: 325.0,
-                        child: Align(
-                          alignment: const AlignmentDirectional(
-                            -1.1,
-                            -0.9,
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              MainPage.globalKey.currentState!
-                                  .pushReplacementNamed(
-                                CurrentCompilationPage.routName,
-                              );
-                            },
-                            icon: Image.asset(AppIcons.back),
-                            iconSize: 60.0,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const Spacer(),
-                  ],
-                ),
-                Align(
+    return Stack(
+      children: [
+        Column(
+          children: [
+            Expanded(
+              child: Background(
+                image: AppIcons.upGreen,
+                height: 325.0,
+                child: Align(
                   alignment: const AlignmentDirectional(
-                    0.95,
-                    -0.95,
+                    -1.1,
+                    -0.9,
                   ),
-                  child: _PopupMenu(
-                    sounds: sounds,
-                    id: widget.id!,
+                  child: IconButton(
+                    onPressed: () {
+                      MainPage.globalKey.currentState!.pushReplacementNamed(
+                        CurrentCompilationPage.routName,
+                      );
+                    },
+                    icon: Image.asset(AppIcons.back),
+                    iconSize: 60.0,
                   ),
                 ),
-                Column(
+              ),
+            ),
+            const Spacer(),
+          ],
+        ),
+        Align(
+          alignment: const AlignmentDirectional(
+            0.95,
+            -0.95,
+          ),
+          child: _PopupMenu(
+            sounds: sounds,
+            id: widget.id!,
+            cancel: _cancel,
+            set: (i) {
+              sounds.removeAt(i);
+              setState(() {});
+            },
+          ),
+        ),
+        SoundStream(
+          create: _createLists,
+          child: Column(
+            children: [
+              const Spacer(
+                flex: 2,
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: _width * 0.05,
+                  bottom: _height * 0.01,
+                ),
+                child: Row(
                   children: [
-                    const Spacer(
-                      flex: 2,
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: _width * 0.05,
-                        bottom: _height * 0.01,
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            widget.title!,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 25.0,
-                              letterSpacing: 1.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    _ImageContainer(
-                      width: _width,
-                      height: _height,
-                      url: widget.url!,
-                      date: widget.date!,
-                      length: sounds.length,
-                    ),
-                    Expanded(
-                      flex: 6,
-                      child: SoundsList(
-                        sounds: sounds,
-                        routName: PickFewCompilationPage.routName,
+                    Text(
+                      widget.title!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 25.0,
+                        letterSpacing: 1.0,
                       ),
                     ),
                   ],
                 ),
-              ],
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+              ),
+              _ImageContainer(
+                width: _width,
+                height: _height,
+                url: widget.url!,
+                date: widget.date!,
+                length: sounds.isEmpty
+                    ? widget.listId!.length
+                    : sounds.length,
+              ),
+              Expanded(
+                flex: 6,
+                child: SoundsList(
+                  sounds: sounds,
+                  routName: PickFewCompilationPage.routName,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }
 
 class _PopupMenu extends StatefulWidget {
   final List<Map<String, dynamic>> sounds;
   final String id;
+  final void Function() cancel;
+  final void Function(int i) set;
 
   const _PopupMenu({
     Key? key,
     required this.sounds,
     required this.id,
+    required this.cancel,
+    required this.set,
   }) : super(key: key);
 
   @override
@@ -186,12 +183,6 @@ class _PopupMenu extends StatefulWidget {
 
 class _PopupMenuState extends State<_PopupMenu> {
   int _current = 0;
-
-  void _cancel() {
-    for (int i = 0; i < widget.sounds.length; i++) {
-      widget.sounds[i]['chek'] = false;
-    }
-  }
 
   void _addInCompilation() {
     if (!_chek()) {
@@ -253,7 +244,9 @@ class _PopupMenuState extends State<_PopupMenu> {
   }
 
   void _delete() {
-    if (!_chek()) {
+    if (!_chek(
+      current: _current,
+    )) {
       _choiseSnackBar(context);
     } else {
       if (_current == widget.sounds.length) {
@@ -272,9 +265,8 @@ class _PopupMenuState extends State<_PopupMenu> {
               },
               widget.id,
               widget.sounds[i]['id'],
-            ).whenComplete(
-              () => widget.sounds.removeAt(i),
             );
+            widget.set(i);
           }
         }
       }
@@ -299,12 +291,11 @@ class _PopupMenuState extends State<_PopupMenu> {
   Widget build(BuildContext context) {
     return PopupMenuPickFew(
       onSelected: (value) async {
-        if (value == 0) _cancel();
+        if (value == 0) widget.cancel();
         if (value == 1) _addInCompilation();
         if (value == 2) _share();
         if (value == 3) _download();
         if (value == 4) _delete();
-        setState(() {});
       },
     );
   }
