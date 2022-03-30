@@ -8,9 +8,9 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../pages/blocs/bloc_icon_color/bloc_index.dart';
-import '../pages/blocs/bloc_icon_color/bloc_index_event.dart';
-import '../pages/play_page/play_page.dart';
+import '../blocs/bloc_icon_color/bloc_index.dart';
+import '../blocs/bloc_icon_color/bloc_index_event.dart';
+import '../main_page/pages/uncategorized_pages/play_page/play_page.dart';
 
 class GlobalRepo {
   const GlobalRepo._();
