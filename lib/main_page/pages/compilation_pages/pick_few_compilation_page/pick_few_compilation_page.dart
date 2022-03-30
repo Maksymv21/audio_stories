@@ -3,32 +3,28 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../resources/app_color.dart';
 import '../../../../resources/app_icons.dart';
 import '../../../../utils/database.dart';
 import '../../../../utils/local_db.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
-import '../../../widgets/custom_checkbox.dart';
-import '../../../widgets/custom_player.dart';
 import '../../../widgets/popup_menu_pick_few.dart';
-import '../../../widgets/sound_container.dart';
+import '../../../widgets/sound_list.dart';
 import '../compilation_current_page/compilation_current_page.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../compilation_page/compilation_bloc/compilation_event.dart';
 import '../compilation_page/compilation_page.dart';
 
-//ignore: must_be_immutable
 class PickFewCompilationPage extends StatefulWidget {
   static const routName = '/pickFew';
 
   final String? title;
   final String? url;
-  List? listId;
+  final List? listId;
   final Timestamp? date;
   final String? id;
 
-  PickFewCompilationPage({
+  const PickFewCompilationPage({
     Key? key,
     this.title,
     this.url,
@@ -42,14 +38,26 @@ class PickFewCompilationPage extends StatefulWidget {
 }
 
 class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
-  double _bottom = 0.0;
-  List<bool> current = [];
-  List<bool> chek = [];
-  List<String> listTitle = [];
-  List<String> listUrl = [];
-  List<double> listTime = [];
-  List currentId = [];
-  Widget _player = const Text('');
+  List<Map<String, dynamic>> sounds = [];
+
+  void _createLists(AsyncSnapshot snapshot) {
+    if (sounds.isEmpty) {
+      for (int i = 0; i < snapshot.data.docs.length; i++) {
+        for (int j = 0; j < widget.listId!.length; j++) {
+          if (snapshot.data.docs[i]['id'] == widget.listId![j]) {
+            sounds.add({
+              'current': false,
+              'chek': false,
+              'title': snapshot.data.docs[i]['title'],
+              'url': snapshot.data.docs[i]['song'],
+              'time': snapshot.data.docs[i]['time'],
+              'id': widget.listId![j],
+            });
+          }
+        }
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,8 +75,12 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
               descending: true,
             )
             .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
+        builder: (
+          BuildContext context,
+          AsyncSnapshot snapshot,
+        ) {
           if (snapshot.hasData) {
+            _createLists(snapshot);
             return Stack(
               children: [
                 Column(
@@ -78,12 +90,16 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                         image: AppIcons.upGreen,
                         height: 325.0,
                         child: Align(
-                          alignment: const AlignmentDirectional(-1.1, -0.9),
+                          alignment: const AlignmentDirectional(
+                            -1.1,
+                            -0.9,
+                          ),
                           child: IconButton(
                             onPressed: () {
                               MainPage.globalKey.currentState!
                                   .pushReplacementNamed(
-                                      CurrentCompilationPage.routName);
+                                CurrentCompilationPage.routName,
+                              );
                             },
                             icon: Image.asset(AppIcons.back),
                             iconSize: 60.0,
@@ -95,8 +111,14 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                   ],
                 ),
                 Align(
-                  alignment: const AlignmentDirectional(0.95, -0.95),
-                  child: _popupMenu(),
+                  alignment: const AlignmentDirectional(
+                    0.95,
+                    -0.95,
+                  ),
+                  child: _PopupMenu(
+                    sounds: sounds,
+                    id: widget.id!,
+                  ),
                 ),
                 Column(
                   children: [
@@ -121,22 +143,21 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                         ],
                       ),
                     ),
-                    _imageContainer(
+                    _ImageContainer(
                       width: _width,
                       height: _height,
                       url: widget.url!,
                       date: widget.date!,
-                      length: widget.listId!.length,
+                      length: sounds.length,
                     ),
                     Expanded(
                       flex: 6,
-                      child: _soundList(snapshot),
+                      child: SoundsList(
+                        sounds: sounds,
+                        routName: PickFewCompilationPage.routName,
+                      ),
                     ),
                   ],
-                ),
-                Align(
-                  alignment: AlignmentDirectional.bottomCenter,
-                  child: _player,
                 ),
               ],
             );
@@ -147,14 +168,173 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
           }
         });
   }
+}
 
-  Widget _imageContainer({
-    required double width,
-    required double height,
-    required String url,
-    required Timestamp date,
-    required int length,
-  }) {
+class _PopupMenu extends StatefulWidget {
+  final List<Map<String, dynamic>> sounds;
+  final String id;
+
+  const _PopupMenu({
+    Key? key,
+    required this.sounds,
+    required this.id,
+  }) : super(key: key);
+
+  @override
+  State<_PopupMenu> createState() => _PopupMenuState();
+}
+
+class _PopupMenuState extends State<_PopupMenu> {
+  int _current = 0;
+
+  void _cancel() {
+    for (int i = 0; i < widget.sounds.length; i++) {
+      widget.sounds[i]['chek'] = false;
+    }
+  }
+
+  void _addInCompilation() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      List currentId = [];
+      for (int i = 0; i < widget.sounds.length; i++) {
+        if (widget.sounds[i]['chek']) {
+          currentId.add(widget.sounds[i]['id']);
+        }
+      }
+      MainPage.globalKey.currentState!
+          .pushReplacementNamed(CompilationPage.routName);
+      context.read<CompilationBloc>().add(
+            ToAddInCompilation(
+              listId: currentId,
+            ),
+          );
+    }
+  }
+
+  void _share() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      List<String> url = [];
+      List<String> title = [];
+      for (int i = 0; i < widget.sounds.length; i++) {
+        if (widget.sounds[i]['chek']) {
+          url.add(widget.sounds[i]['url']);
+          title.add(widget.sounds[i]['title']);
+        }
+      }
+      GlobalRepo.share(url, title);
+    }
+  }
+
+  void _download() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      for (int i = 0; i < widget.sounds.length; i++) {
+        if (widget.sounds[i]['chek']) {
+          GlobalRepo.download(
+            widget.sounds[i]['url'],
+            widget.sounds[i]['title'],
+          ).then(
+            (value) => {
+              GlobalRepo.showSnackBar(
+                context: context,
+                title: 'Файл сохранен.'
+                    '\nDownload/${widget.sounds[i]['title']}.aac',
+              ),
+            },
+          );
+        }
+      }
+    }
+  }
+
+  void _delete() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      if (_current == widget.sounds.length) {
+        GlobalRepo.showSnackBar(
+          context: context,
+          title: 'В подборке должно оставаться минимум одно аудио',
+        );
+      } else {
+        for (int i = widget.sounds.length - 1; i >= 0; i = i - 1) {
+          if (widget.sounds[i]['chek']) {
+            Database.deleteSoundInCompilation(
+              {
+                'sounds': FieldValue.arrayRemove(
+                  [widget.sounds[i]['id']],
+                ),
+              },
+              widget.id,
+              widget.sounds[i]['id'],
+            ).whenComplete(
+              () => widget.sounds.removeAt(i),
+            );
+          }
+        }
+      }
+    }
+  }
+
+  bool _chek({int? current}) {
+    _current = 0;
+    bool chek = false;
+    for (var map in widget.sounds) {
+      if (map.containsKey('chek')) {
+        if (map['chek']) {
+          chek = true;
+          if (current != null) _current++;
+        }
+      }
+    }
+    return chek;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuPickFew(
+      onSelected: (value) async {
+        if (value == 0) _cancel();
+        if (value == 1) _addInCompilation();
+        if (value == 2) _share();
+        if (value == 3) _download();
+        if (value == 4) _delete();
+        setState(() {});
+      },
+    );
+  }
+
+  void _choiseSnackBar(BuildContext context) {
+    GlobalRepo.showSnackBar(
+      context: context,
+      title: 'Перед этим нужно сделать выбор',
+    );
+  }
+}
+
+class _ImageContainer extends StatelessWidget {
+  final double width;
+  final double height;
+  final String url;
+  final Timestamp date;
+  final int length;
+
+  const _ImageContainer({
+    Key? key,
+    required this.width,
+    required this.height,
+    required this.url,
+    required this.date,
+    required this.length,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Stack(
@@ -194,7 +374,10 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
             child: Stack(
               children: [
                 Align(
-                  alignment: const AlignmentDirectional(-0.85, -0.9),
+                  alignment: const AlignmentDirectional(
+                    -0.85,
+                    -0.9,
+                  ),
                   child: Text(
                     _convertDate(date),
                     style: const TextStyle(
@@ -204,7 +387,10 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                   ),
                 ),
                 Align(
-                  alignment: const AlignmentDirectional(-0.85, 0.9),
+                  alignment: const AlignmentDirectional(
+                    -0.85,
+                    0.9,
+                  ),
                   child: Text(
                     '$length аудио'
                     '\n0 часов',
@@ -221,210 +407,6 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
     );
   }
 
-  Widget _soundList(AsyncSnapshot snapshot) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: _bottom),
-      child: ListView.builder(
-          itemCount: widget.listId!.length,
-          itemBuilder: (context, index) {
-            _createLists(snapshot, widget.listId!.length);
-            Color color =
-                current[index] ? const Color(0xffF1B488) : AppColor.active;
-
-            final int _length = widget.listId!.length;
-
-            if (listTitle.isEmpty) {
-              listTitle = List.filled(_length, '');
-              listUrl = List.filled(_length, '');
-              listTime = List.filled(_length, 0.0);
-              for (int i = 0; i < snapshot.data.docs.length; i++) {
-                for (int j = 0; j < _length; j++) {
-                  if (snapshot.data.docs[i].id == widget.listId![j]) {
-                    listTitle[j] = snapshot.data.docs[i]['title'];
-                    listUrl[j] = snapshot.data.docs[i]['song'];
-                    listTime[j] = snapshot.data.docs[i]['time'];
-                  }
-                }
-              }
-            }
-
-            return Column(
-              children: [
-                SoundContainer(
-                  color: color,
-                  title: listTitle[index],
-                  time: (listTime[index] / 60).toStringAsFixed(1),
-                  buttonRight: Align(
-                    alignment: const AlignmentDirectional(0.9, -1.0),
-                    child: CustomCheckBox(
-                      color: Colors.black87,
-                      value: chek[index],
-                      onTap: () {
-                        setState(() {
-                          chek[index] = !chek[index];
-                        });
-                      },
-                    ),
-                  ),
-                  onTap: () {
-                    if (!current[index]) {
-                      for (int i = 0; i < widget.listId!.length; i++) {
-                        current[i] = false;
-                      }
-                      setState(() {
-                        _player = const Text('');
-                        _bottom = 90.0;
-                      });
-
-                      Future.delayed(const Duration(milliseconds: 50), () {
-                        setState(() {
-                          current[index] = true;
-                          _player = CustomPlayer(
-                            onDismissed: (direction) {
-                              setState(() {
-                                _player = const Text('');
-                                _bottom = 10.0;
-                                current[index] = false;
-                              });
-                            },
-                            title: listTitle[index],
-                            url: listUrl[index],
-                            id: widget.listId![index],
-                            routName: PickFewCompilationPage.routName,
-                          );
-                        });
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(
-                  height: 7.0,
-                ),
-              ],
-            );
-          }),
-    );
-  }
-
-  Widget _popupMenu() {
-    return PopupMenuPickFew(
-      onSelected: (value) async {
-        if (value == 0) {
-          setState(() {
-            for (int i = 0; i < chek.length; i++) {
-              chek[i] = false;
-            }
-          });
-        }
-        if (value == 1) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            for (int i = 0; i < widget.listId!.length; i++) {
-              if (chek[i]) currentId.add(widget.listId![i]);
-            }
-            MainPage.globalKey.currentState!
-                .pushReplacementNamed(CompilationPage.routName);
-            context.read<CompilationBloc>().add(
-                  ToAddInCompilation(
-                    listId: currentId,
-                  ),
-                );
-          }
-        }
-        if (value == 2) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            List<String> url = [];
-            List<String> title = [];
-            for (int i = 0; i < widget.listId!.length; i++) {
-              if (chek[i]) {
-                url.add(listUrl[i]);
-                title.add(listTitle[i]);
-
-                setState(() {
-                  chek[i] = false;
-                });
-              }
-            }
-            GlobalRepo.share(url, title);
-          }
-        }
-        if (value == 3) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            for (int i = 0; i < widget.listId!.length; i++) {
-              if (chek[i]) {
-                GlobalRepo.download(listUrl[i], listTitle[i]).then((value) => {
-                      GlobalRepo.showSnackBar(
-                        context: context,
-                        title: 'Файл сохранен.'
-                            '\nDownload/${listTitle[i]}.aac',
-                      ),
-                    });
-
-                setState(() {
-                  chek[i] = false;
-                });
-              }
-            }
-          }
-        }
-        if (value == 4) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            if (!chek.contains(false)) {
-              GlobalRepo.showSnackBar(
-                context: context,
-                title: 'В подборке должно оставаться минимум одно аудио',
-              );
-            } else {
-              for (int i = 0; i < chek.length; i++) {
-                if (chek[i]) {
-                  Database.deleteSoundInCompilation(
-                    {
-                      'sounds': FieldValue.arrayRemove(
-                        [widget.listId![i]],
-                      ),
-                    },
-                    widget.id!,
-                    widget.listId![i],
-                  );
-                  setState(() {
-                    listTitle.removeAt(i);
-                    listUrl.removeAt(i);
-                    listTime.removeAt(i);
-                    widget.listId!.removeAt(i);
-
-                    current.removeAt(i);
-                  });
-                }
-              }
-              chek = [];
-            }
-          }
-        }
-      },
-    );
-  }
-
-  void _createLists(AsyncSnapshot snapshot, int length) {
-    if (current.isEmpty) {
-      for (int i = 0; i < length; i++) {
-        current.add(false);
-      }
-    }
-
-    if (chek.isEmpty) {
-      for (int i = 0; i < length; i++) {
-        chek.add(false);
-      }
-    }
-  }
-
   String _convertDate(Timestamp date) {
     final String dateTime = date.toDate().toString();
     final String result = dateTime.substring(8, 10) +
@@ -434,11 +416,104 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
         dateTime.substring(2, 4);
     return result;
   }
-
-  void _choiseSnackBar(BuildContext context) {
-    GlobalRepo.showSnackBar(
-      context: context,
-      title: 'Перед этим нужно сделать выбор',
-    );
-  }
 }
+
+// //ignore: must_be_immutable
+// class _SoundsList extends StatefulWidget {
+//   final List<Map<String, dynamic>> sounds;
+//   void Function() onTap;
+//
+//   _SoundsList({
+//     Key? key,
+//     required this.sounds,
+//     required this.onTap,
+//   }) : super(key: key);
+//
+//   @override
+//   State<_SoundsList> createState() => _SoundsListState();
+// }
+//
+// class _SoundsListState extends State<_SoundsList> {
+//   Widget _player = const Text('');
+//   double _bottom = 10.0;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Stack(
+//       children: [
+//         Padding(
+//           padding: EdgeInsets.only(bottom: _bottom),
+//           child: ListView.builder(
+//               itemCount: widget.sounds.length,
+//               itemBuilder: (context, index) {
+//                 Color color = widget.sounds[index]['current']
+//                     ? const Color(0xffF1B488)
+//                     : AppColor.active;
+//
+//                 return Column(
+//                   children: [
+//                     SoundContainer(
+//                       color: color,
+//                       title: widget.sounds[index]['title'],
+//                       time: (widget.sounds[index]['time'] / 60)
+//                           .toStringAsFixed(1),
+//                       buttonRight: Align(
+//                         alignment: const AlignmentDirectional(0.9, -1.0),
+//                         child: CustomCheckBox(
+//                           color: Colors.black87,
+//                           value: widget.sounds[index]['chek'],
+//                           onTap: () {
+//                             setState(() {
+//                               widget.sounds[index]['chek'] =
+//                                   !widget.sounds[index]['chek'];
+//                             });
+//                             widget.onTap();
+//                           },
+//                         ),
+//                       ),
+//                       onTap: () {
+//                         if (!widget.sounds[index]['current']) {
+//                           for (int i = 0; i < widget.sounds.length; i++) {
+//                             widget.sounds[i]['current'] = false;
+//                           }
+//                           setState(() {
+//                             _player = const Text('');
+//                             _bottom = 90.0;
+//                           });
+//
+//                           Future.delayed(const Duration(milliseconds: 50), () {
+//                             setState(() {
+//                               widget.sounds[index]['current'] = true;
+//                               _player = CustomPlayer(
+//                                 onDismissed: (direction) {
+//                                   setState(() {
+//                                     _player = const Text('');
+//                                     _bottom = 10.0;
+//                                     widget.sounds[index]['current'] = false;
+//                                   });
+//                                 },
+//                                 title: widget.sounds[index]['title'],
+//                                 url: widget.sounds[index]['url'],
+//                                 id: widget.sounds[index]['id'],
+//                                 routName: PickFewCompilationPage.routName,
+//                               );
+//                             });
+//                           });
+//                         }
+//                       },
+//                     ),
+//                     const SizedBox(
+//                       height: 7.0,
+//                     ),
+//                   ],
+//                 );
+//               }),
+//         ),
+//         Align(
+//           alignment: AlignmentDirectional.bottomCenter,
+//           child: _player,
+//         ),
+//       ],
+//     );
+//   }
+// }
