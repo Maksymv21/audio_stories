@@ -165,7 +165,9 @@ class _CompilationPageState extends State<CompilationPage> {
             onPressed: () {
               if (_chek(compilations)) {
                 _addIn(state);
-                setState(() {});
+                Future.delayed(const Duration(milliseconds: 50), () {
+                  setState(() {});
+                });
               } else {
                 GlobalRepo.showSnackBar(
                   context: context,
