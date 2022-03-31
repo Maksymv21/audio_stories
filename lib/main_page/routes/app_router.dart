@@ -20,6 +20,7 @@ class AppRouter {
   const AppRouter._();
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
+    final Object? arguments = settings.arguments;
     Widget page;
 
     switch (settings.name) {
@@ -33,7 +34,16 @@ class AppRouter {
         page = const CompilationPage();
         break;
       case CurrentCompilationPage.routName:
-        page = const CurrentCompilationPage();
+        final CurrentCompilationPageArguments args =
+            arguments as CurrentCompilationPageArguments;
+        page = CurrentCompilationPage(
+          title: args.title,
+          url: args.url,
+          text: args.text,
+          listId: args.listId,
+          date: args.date,
+          id: args.id,
+        );
         break;
       case CreateCompilationPage.routName:
         page = const CreateCompilationPage();
@@ -42,7 +52,16 @@ class AppRouter {
         page = const CompilationSearchPage();
         break;
       case PickFewCompilationPage.routName:
-        page = PickFewCompilationPage();
+        final PickFewCompilationPageArguments args =
+            arguments as PickFewCompilationPageArguments;
+        page = PickFewCompilationPage(
+          title: args.title,
+          url: args.url,
+          sounds: args.sounds,
+          date: args.date,
+          id: args.id,
+          text: args.text,
+        );
         break;
       case ProfilePage.routName:
         page = const ProfilePage();

@@ -1,5 +1,4 @@
 import 'package:audio_stories/main_page/pages/compilation_pages/compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
-import 'package:audio_stories/main_page/pages/compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
 import 'package:audio_stories/main_page/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import 'package:audio_stories/main_page/routes/app_router.dart';
 import 'package:audio_stories/main_page/widgets/drawer.dart';
@@ -43,9 +42,6 @@ class _MainPageState extends State<MainPage> {
         ),
         BlocProvider(
           create: (context) => AddInCompilationBloc(),
-        ),
-        BlocProvider(
-          create: (context) => CompilationCurrentBloc(),
         ),
         BlocProvider(
           create: (context) => CompilationBloc(),

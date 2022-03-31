@@ -16,8 +16,6 @@ import '../../../../widgets/compilation_container.dart';
 import '../../../../widgets/custom_player.dart';
 import '../../../../widgets/popup_menu_sound_container.dart';
 import '../../../../widgets/sound_container.dart';
-import '../../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
-import '../../../compilation_pages/compilation_current_page/compilation_current_bloc/compilation_current_event.dart';
 import '../../../compilation_pages/compilation_current_page/compilation_current_page.dart';
 import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
@@ -464,21 +462,22 @@ class _HomePageState extends State<HomePage> {
 
     return GestureDetector(
       onTap: () {
-        MainPage.globalKey.currentState!
-            .pushReplacementNamed(CurrentCompilationPage.routName);
+        Navigator.pushNamed(
+          context,
+          CurrentCompilationPage.routName,
+          arguments: CurrentCompilationPageArguments(
+            title: title,
+            url: url,
+            listId: listId,
+            date: date,
+            id: id,
+            text: text,
+          ),
+        );
         context.read<BlocIndex>().add(
               ColorCategory(),
             );
-        context.read<CompilationCurrentBloc>().add(
-              ToCurrentCompilation(
-                listId: listId,
-                url: url,
-                text: text,
-                title: title,
-                date: date,
-                id: id,
-              ),
-            );
+
       },
       child: CompilationContainer(
         url: url,

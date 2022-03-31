@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../repositories/global_repository.dart';
 import '../../../../resources/app_icons.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
@@ -17,25 +18,43 @@ import '../compilation_page/compilation_page.dart';
 import '../pick_few_compilation_page/pick_few_compilation_page.dart';
 import '../widgets/image_container.dart';
 
+class CurrentCompilationPageArguments {
+  CurrentCompilationPageArguments({
+    required this.title,
+    required this.url,
+    required this.text,
+    required this.listId,
+    required this.date,
+    required this.id,
+  });
+
+  final String title;
+  final String url;
+  final String text;
+  final List listId;
+  final Timestamp date;
+  final String id;
+}
+
 class CurrentCompilationPage extends StatefulWidget {
   static const routName = '/currentCompilation';
 
-  final String? title;
-  final String? url;
-  final String? text;
-  final List? listId;
-  final Timestamp? date;
-  final String? id;
-
   const CurrentCompilationPage({
     Key? key,
-    this.title,
-    this.url,
-    this.text,
-    this.listId,
-    this.date,
-    this.id,
+    required this.title,
+    required this.url,
+    required this.text,
+    required this.listId,
+    required this.date,
+    required this.id,
   }) : super(key: key);
+
+  final String title;
+  final String url;
+  final String text;
+  final List listId;
+  final Timestamp date;
+  final String id;
 
   @override
   State<CurrentCompilationPage> createState() => _CurrentCompilationPageState();
@@ -49,15 +68,15 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
   void _createLists(AsyncSnapshot snapshot) {
     if (sounds.isEmpty) {
       for (int i = 0; i < snapshot.data.docs.length; i++) {
-        for (int j = 0; j < widget.listId!.length; j++) {
-          if (snapshot.data.docs[i]['id'] == widget.listId![j]) {
+        for (int j = 0; j < widget.listId.length; j++) {
+          if (snapshot.data.docs[i]['id'] == widget.listId[j]) {
             sounds.add({
               'current': false,
               'chek': false,
               'title': snapshot.data.docs[i]['title'],
               'url': snapshot.data.docs[i]['song'],
               'time': snapshot.data.docs[i]['time'],
-              'id': widget.listId![j],
+              'id': widget.listId[j],
             });
           }
         }
@@ -113,11 +132,15 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                 image: AppIcons.upGreen,
                 height: 325.0,
                 child: Align(
-                  alignment: const AlignmentDirectional(-1.1, -0.9),
+                  alignment: const AlignmentDirectional(
+                    -1.1,
+                    -0.9,
+                  ),
                   child: IconButton(
                     onPressed: () {
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(CompilationPage.routName);
+                      MainPage.globalKey.currentState!.pushReplacementNamed(
+                        CompilationPage.routName,
+                      );
                       context.read<CompilationBloc>().add(
                             ToInitialCompilation(),
                           );
@@ -132,14 +155,17 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
           ],
         ),
         Align(
-          alignment: const AlignmentDirectional(0.95, -0.95),
+          alignment: const AlignmentDirectional(
+            0.95,
+            -0.95,
+          ),
           child: _PopupMenu(
             sounds: sounds,
-            id: widget.id!,
-            text: widget.text!,
-            url: widget.url!,
-            date: widget.date!,
-            title: widget.title!,
+            id: widget.id,
+            text: widget.text,
+            url: widget.url,
+            date: widget.date,
+            title: widget.title,
           ),
         ),
         SoundStream(
@@ -157,7 +183,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                 child: Row(
                   children: [
                     Text(
-                      widget.title!,
+                      widget.title,
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 25.0,
@@ -170,9 +196,9 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
               ImageContainer(
                 width: _width,
                 height: _height,
-                url: widget.url!,
-                date: widget.date!,
-                length: sounds.isEmpty ? widget.listId!.length : sounds.length,
+                url: widget.url,
+                date: widget.date,
+                length: sounds.isEmpty ? widget.listId.length : sounds.length,
                 child: const Align(
                   alignment: AlignmentDirectional(0.85, 0.85),
                   child: PlayAllButton(),
@@ -197,12 +223,12 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                                 ),
                                 children: [
                                   Text(
-                                    widget.text!,
+                                    widget.text,
                                   ),
                                 ],
                               )
                             : Text(
-                                widget.text!,
+                                widget.text,
                               ),
                       ),
                     ],
@@ -232,7 +258,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                     sounds: sounds,
                     routName: CurrentCompilationPage.routName,
                     isPopup: true,
-                    compilationId: widget.id!),
+                    compilationId: widget.id),
               ),
             ],
           ),
@@ -318,6 +344,66 @@ class _PopupMenu extends StatelessWidget {
     required this.title,
   }) : super(key: key);
 
+  void _edit(BuildContext context) {
+    List soundId = [];
+    for (int i = 0; i < sounds.length; i++) {
+      soundId.add(sounds[i]['id']);
+    }
+    MainPage.globalKey.currentState!
+        .pushReplacementNamed(CreateCompilationPage.routName);
+    context.read<AddInCompilationBloc>().add(
+          ToCreate(
+            listId: soundId,
+            text: text,
+            title: title,
+            url: url,
+            id: id,
+          ),
+        );
+  }
+
+  void _pickFew(BuildContext context) {
+    List soundId = [];
+    for (int i = 0; i < sounds.length; i++) {
+      soundId.add(sounds[i]['id']);
+    }
+    Navigator.pushNamed(
+      context,
+      PickFewCompilationPage.routName,
+      arguments: PickFewCompilationPageArguments(
+        title: title,
+        url: url,
+        sounds: sounds,
+        date: date,
+        id: id,
+        text: text,
+      ),
+    );
+  }
+
+  void _delete(BuildContext context) {
+    Database.deleteCompilation({
+      'id': id,
+      'title': title,
+      'date': date,
+    });
+    MainPage.globalKey.currentState!
+        .pushReplacementNamed(CompilationPage.routName);
+    context.read<CompilationBloc>().add(
+          ToInitialCompilation(),
+        );
+  }
+
+  void _share() {
+    List<String> url = [];
+    List<String> title = [];
+    for (int i = 0; i < sounds.length; i++) {
+      url.add(sounds[i]['url']);
+      title.add(sounds[i]['title']);
+    }
+    GlobalRepo.share(url, title);
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
@@ -326,53 +412,11 @@ class _PopupMenu extends StatelessWidget {
         const CircleBorder(),
         0.2,
       ),
-      onSelected: (value) async {
-        if (value == 0) {
-          List soundId = [];
-          for (int i = 0; i < sounds.length; i++) {
-            soundId.add(sounds[i]['id']);
-          }
-          MainPage.globalKey.currentState!
-              .pushReplacementNamed(CreateCompilationPage.routName);
-          context.read<AddInCompilationBloc>().add(
-                ToCreate(
-                  listId: soundId,
-                  text: text,
-                  title: title,
-                  url: url,
-                  id: id,
-                ),
-              );
-        }
-        if (value == 1) {
-          List soundId = [];
-          for (int i = 0; i < sounds.length; i++) {
-            soundId.add(sounds[i]['id']);
-          }
-          Navigator.of(context).push(
-            PageRouteBuilder(
-              pageBuilder: (_, __, ___) => PickFewCompilationPage(
-                title: title,
-                url: url,
-                listId: soundId,
-                date: date,
-                id: id,
-              ),
-            ),
-          );
-        }
-        if (value == 2) {
-          Database.deleteCompilation({
-            'id': id,
-            'title': title,
-            'date': date,
-          });
-          MainPage.globalKey.currentState!
-              .pushReplacementNamed(CompilationPage.routName);
-          context.read<CompilationBloc>().add(
-                ToInitialCompilation(),
-              );
-        }
+      onSelected: (value) {
+        if (value == 0) _edit(context);
+        if (value == 1) _pickFew(context);
+        if (value == 2) _delete(context);
+        if (value == 3) _share();
       },
       itemBuilder: (_) => const [
         PopupMenuItem(

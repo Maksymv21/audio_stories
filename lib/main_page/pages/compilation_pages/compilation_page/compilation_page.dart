@@ -1,3 +1,4 @@
+import 'package:audio_stories/main_page/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/database.dart';
@@ -14,9 +15,6 @@ import '../../../widgets/custom_checkbox.dart';
 import '../compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
 import '../compilation_create_page/compilation_create_bloc/add_in_compilation_event.dart';
 import '../compilation_create_page/create_compilation_page.dart';
-import '../compilation_current_page/compilation_current_bloc/compilation_current_bloc.dart';
-import '../compilation_current_page/compilation_current_bloc/compilation_current_event.dart';
-import '../compilation_current_page/compilation_current_page.dart';
 import 'compilation_bloc/compilation_bloc.dart';
 import 'compilation_bloc/compilation_event.dart';
 import 'compilation_bloc/compilation_state.dart';
@@ -45,6 +43,7 @@ class _CompilationPageState extends State<CompilationPage> {
       bool visible;
 
       if (state is InitialCompilation) {
+        print('0');
         subTitle = 'Все в одном месте';
         topRightButton = Align(
           alignment: const AlignmentDirectional(0.95, -0.95),
@@ -56,6 +55,7 @@ class _CompilationPageState extends State<CompilationPage> {
           visible = false;
         }
       } else {
+        print('1');
         subTitle = '';
         topRightButton = Align(
           alignment: const AlignmentDirectional(1.0, -0.89),
@@ -251,6 +251,7 @@ class _CompilationPageState extends State<CompilationPage> {
                   context.read<CompilationBloc>().add(
                         ToInitialCompilation(),
                       );
+                  ready = false;
                 }
 
                 if (delete && chek[index]) {
@@ -272,18 +273,18 @@ class _CompilationPageState extends State<CompilationPage> {
                 return GestureDetector(
                   onTap: () {
                     if (state is InitialCompilation) {
-                      MainPage.globalKey.currentState!.pushReplacementNamed(
-                          CurrentCompilationPage.routName);
-                      context.read<CompilationCurrentBloc>().add(
-                            ToCurrentCompilation(
-                              listId: listId,
-                              url: image,
-                              text: text,
-                              title: title,
-                              date: date,
-                              id: id,
-                            ),
-                          );
+                      Navigator.pushNamed(
+                        context,
+                        CurrentCompilationPage.routName,
+                        arguments: CurrentCompilationPageArguments(
+                          title: title,
+                          url: image,
+                          listId: listId,
+                          date: date,
+                          id: id,
+                          text: text,
+                        ),
+                      );
                     }
                   },
                   child: Stack(

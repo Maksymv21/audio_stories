@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import '../../utils/local_db.dart';
 
 class SoundStream extends StatelessWidget {
-  final void Function(AsyncSnapshot) create;
-  final Widget child;
 
   const SoundStream({
     Key? key,
-    required this.create,
     required this.child,
+    this.create,
   }) : super(key: key);
+
+  final void Function(AsyncSnapshot)? create;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +29,7 @@ class SoundStream extends StatelessWidget {
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          create(snapshot);
+          if(create != null) create!(snapshot);
           return child;
         } else {
           return const Center(

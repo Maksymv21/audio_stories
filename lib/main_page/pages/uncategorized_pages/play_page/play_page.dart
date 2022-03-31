@@ -160,7 +160,8 @@ class _PlayPageState extends State<PlayPage> {
                         child: IconButton(
                           onPressed: () {
                             if (widget.page ==
-                                PickFewCompilationPage.routName) {
+                                PickFewCompilationPage.routName ||
+                            widget.page == CurrentCompilationPage.routName) {
                               Navigator.of(context).pop();
                               context.read<BlocIndex>().add(
                                     ColorCategory(),

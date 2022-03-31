@@ -69,7 +69,7 @@ class GlobalRepo {
     required String id,
     required String routName,
   }) {
-    Navigator.of(context).pushReplacement(
+    Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (_, __, ___) => PlayPage(
           url: url,
