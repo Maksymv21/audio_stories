@@ -118,6 +118,7 @@ class _CompilationPageState extends State<CompilationPage> {
       String subTitle;
       Widget topRightButton;
       bool visible;
+      compilations = [];
 
       subTitle = 'Все в одном месте';
       topRightButton = Align(
@@ -131,9 +132,10 @@ class _CompilationPageState extends State<CompilationPage> {
                   });
                 },
                 set: (i) {
-                  compilations.removeAt(i);
-                  _pickFew = false;
-                  setState(() {});
+                  setState(() {
+                    compilations.removeAt(i);
+                    _pickFew = false;
+                  });
                 },
               )
             : PickFewPopup(pickFew: () {
@@ -277,8 +279,9 @@ class _PopupMenu extends StatelessWidget {
               'id': compilations[i]['id'],
               'sounds': compilations[i]['listId'],
             },
+          ).whenComplete(
+            () => set(i),
           );
-          set(i);
         }
       }
     }
@@ -364,7 +367,7 @@ class _CompilationStream extends StatelessWidget {
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          if (snapshot.data?.docs.length == 0 ||
+          if (snapshot.data.docs.length == 0 ||
               FirebaseAuth.instance.currentUser == null) {
             return const Center(
               child: Padding(
@@ -380,12 +383,12 @@ class _CompilationStream extends StatelessWidget {
                 ),
               ),
             );
+          } else {
+            create(snapshot);
+            print('create');
+
+            return child;
           }
-
-          create(snapshot);
-          print('create');
-
-          return child;
         } else {
           return const Center(
             child: CircularProgressIndicator(),
@@ -435,7 +438,7 @@ class _CompilationsListState extends State<_CompilationsList> {
         itemBuilder: (context, index) {
           return GestureDetector(
             onTap: () {
-              if (widget.state is InitialCompilation) {
+              if (widget.state is InitialCompilation && !widget.visible) {
                 Navigator.pushNamed(
                   context,
                   CurrentCompilationPage.routName,
