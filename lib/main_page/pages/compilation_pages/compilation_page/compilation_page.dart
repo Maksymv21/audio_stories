@@ -131,10 +131,14 @@ class _CompilationPageState extends State<CompilationPage> {
                     _pickFew = false;
                   });
                 },
-                set: (i) {
-                  setState(() {
-                    compilations.removeAt(i);
-                    _pickFew = false;
+                set: () {
+                  Future.delayed(
+                      const Duration(
+                        milliseconds: 50,
+                      ), () {
+                    setState(() {
+                      _pickFew = false;
+                    });
                   });
                 },
               )
@@ -262,8 +266,22 @@ class _PopupMenu extends StatelessWidget {
   }) : super(key: key);
 
   void Function() cancel;
-  void Function(int) set;
+  void Function() set;
   final List<Map<String, dynamic>> compilations;
+
+  Future<void> _deleteCompilations() async {
+    for (int i = compilations.length - 1; i >= 0; i = i - 1) {
+      if (compilations[i]['chek']) {
+        await Database.deleteCompilation(
+          {
+            'id': compilations[i]['id'],
+            'sounds': compilations[i]['listId'],
+          },
+        );
+        compilations.removeAt(i);
+      }
+    }
+  }
 
   void _delete(BuildContext context) {
     if (!_chek(compilations)) {
@@ -272,18 +290,9 @@ class _PopupMenu extends StatelessWidget {
         title: 'Сделайте выбор',
       );
     } else {
-      for (int i = compilations.length - 1; i >= 0; i = i - 1) {
-        if (compilations[i]['chek']) {
-          Database.deleteCompilation(
-            {
-              'id': compilations[i]['id'],
-              'sounds': compilations[i]['listId'],
-            },
-          ).whenComplete(
-            () => set(i),
-          );
-        }
-      }
+      _deleteCompilations().whenComplete(
+        () => set(),
+      );
     }
   }
 
@@ -309,7 +318,9 @@ class _PopupMenu extends StatelessWidget {
       ),
       onSelected: (value) {
         if (value == 0) cancel();
-        if (value == 1) _delete(context);
+        if (value == 1) {
+          _delete(context);
+        }
       },
       itemBuilder: (_) => const [
         PopupMenuItem(
@@ -343,7 +354,7 @@ class _PopupMenu extends StatelessWidget {
   }
 }
 
-class _CompilationStream extends StatelessWidget {
+class _CompilationStream extends StatefulWidget {
   const _CompilationStream({
     Key? key,
     required this.child,
@@ -353,6 +364,11 @@ class _CompilationStream extends StatelessWidget {
   final void Function(AsyncSnapshot) create;
   final Widget child;
 
+  @override
+  State<_CompilationStream> createState() => _CompilationStreamState();
+}
+
+class _CompilationStreamState extends State<_CompilationStream> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -384,10 +400,9 @@ class _CompilationStream extends StatelessWidget {
               ),
             );
           } else {
-            create(snapshot);
-            print('create');
+            widget.create(snapshot);
 
-            return child;
+            return widget.child;
           }
         } else {
           return const Center(
