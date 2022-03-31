@@ -1,4 +1,5 @@
 import 'package:audio_stories/main_page/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
+import 'package:audio_stories/main_page/widgets/pick_few_popup.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/database.dart';
@@ -29,10 +30,86 @@ class CompilationPage extends StatefulWidget {
 }
 
 class _CompilationPageState extends State<CompilationPage> {
-  List<bool> chek = [];
-  bool ready = false;
-  bool delete = false;
+  List<Map<String, dynamic>> compilations = [];
   bool _pickFew = false;
+
+  void _createList(AsyncSnapshot snapshot) {
+    if (compilations.isEmpty) {
+      for (int i = 0; i < snapshot.data.docs.length; i++) {
+        compilations.add({
+          'chek': false,
+          'title': snapshot.data.docs[i]['title'],
+          'url': snapshot.data.docs[i]['image'],
+          'text': snapshot.data.docs[i]['text'],
+          'date': snapshot.data.docs[i]['date'],
+          'listId': snapshot.data.docs[i]['sounds'],
+          'id': snapshot.data.docs[i]['id'],
+        });
+      }
+    }
+  }
+
+  void _addIn(
+    AddInCompilation state,
+  ) {
+    for (int i = 0; i < compilations.length; i++) {
+      if (compilations[i]['chek']) {
+        for (int j = 0; j < state.listId.length; j++) {
+          if (!compilations[i]['listId'].contains(state.listId[j])) {
+            compilations[i]['listId'].add(state.listId[j]);
+          }
+        }
+        Database.createOrUpdateCompilation(
+          {
+            'id': compilations[i]['id'],
+            'sounds': state.listId,
+          },
+        );
+      }
+    }
+
+    context.read<CompilationBloc>().add(
+          ToInitialCompilation(),
+        );
+  }
+
+  bool _chek(List<Map<String, dynamic>> dataList) {
+    bool chek = false;
+    for (var map in dataList) {
+      if (map.containsKey('chek')) {
+        if (map['chek']) {
+          chek = true;
+        }
+      }
+    }
+    return chek;
+  }
+
+  void _toCreateCompilation(CompilationState state) {
+    if (FirebaseAuth.instance.currentUser == null) {
+      GlobalRepo.showSnackBar(
+        context: context,
+        title: 'Для создания подборки нужно зарегистрироваться',
+      );
+    } else {
+      if (state is InitialCompilation) {
+        context.read<AddInCompilationBloc>().add(
+              ToCreateCompilation(),
+            );
+      }
+      if (state is AddInCompilation) {
+        context.read<AddInCompilationBloc>().add(
+              ToCreate(
+                listId: state.listId,
+                text: '',
+                title: '',
+              ),
+            );
+      }
+      MainPage.globalKey.currentState!
+          .pushReplacementNamed(CreateCompilationPage.routName);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,20 +119,36 @@ class _CompilationPageState extends State<CompilationPage> {
       Widget topRightButton;
       bool visible;
 
-      if (state is InitialCompilation) {
-        print('0');
-        subTitle = 'Все в одном месте';
-        topRightButton = Align(
-          alignment: const AlignmentDirectional(0.95, -0.95),
-          child: _pickFew ? _popupPickDelete() : _popupPickFew(),
-        );
-        if (_pickFew) {
-          visible = true;
-        } else {
-          visible = false;
-        }
+      subTitle = 'Все в одном месте';
+      topRightButton = Align(
+        alignment: const AlignmentDirectional(0.95, -0.95),
+        child: _pickFew
+            ? _PopupMenu(
+                compilations: compilations,
+                cancel: () {
+                  setState(() {
+                    _pickFew = false;
+                  });
+                },
+                set: (i) {
+                  compilations.removeAt(i);
+                  _pickFew = false;
+                  setState(() {});
+                },
+              )
+            : PickFewPopup(pickFew: () {
+                setState(() {
+                  _pickFew = true;
+                });
+              }),
+      );
+      if (_pickFew) {
+        visible = true;
       } else {
-        print('1');
+        visible = false;
+      }
+
+      if (state is AddInCompilation) {
         subTitle = '';
         topRightButton = Align(
           alignment: const AlignmentDirectional(1.0, -0.89),
@@ -64,10 +157,9 @@ class _CompilationPageState extends State<CompilationPage> {
               splashFactory: NoSplash.splashFactory,
             ),
             onPressed: () {
-              if (chek.contains(true)) {
-                setState(() {
-                  ready = !ready;
-                });
+              if (_chek(compilations)) {
+                _addIn(state);
+                setState(() {});
               } else {
                 GlobalRepo.showSnackBar(
                   context: context,
@@ -96,39 +188,19 @@ class _CompilationPageState extends State<CompilationPage> {
                   image: AppIcons.upGreen,
                   height: 325.0,
                   child: Align(
-                    alignment: const AlignmentDirectional(-1.1, -0.9),
+                    alignment: const AlignmentDirectional(
+                      -1.1,
+                      -0.9,
+                    ),
                     child: IconButton(
                       color: Colors.white,
                       iconSize: 40.0,
                       icon: const Icon(
                         Icons.add,
                       ),
-                      onPressed: () {
-                        if (FirebaseAuth.instance.currentUser == null) {
-                          GlobalRepo.showSnackBar(
-                            context: context,
-                            title:
-                                'Для создания подборки нужно зарегистрироваться',
-                          );
-                        } else {
-                          if (state is InitialCompilation) {
-                            context.read<AddInCompilationBloc>().add(
-                                  ToCreateCompilation(),
-                                );
-                          }
-                          if (state is AddInCompilation) {
-                            context.read<AddInCompilationBloc>().add(
-                                  ToCreate(
-                                    listId: state.listId,
-                                    text: '',
-                                    title: '',
-                                  ),
-                                );
-                          }
-                          MainPage.globalKey.currentState!.pushReplacementNamed(
-                              CreateCompilationPage.routName);
-                        }
-                      },
+                      onPressed: () => _toCreateCompilation(
+                        state,
+                      ),
                     ),
                   ),
                 ),
@@ -164,184 +236,68 @@ class _CompilationPageState extends State<CompilationPage> {
               ),
             ),
           ),
-          _listCompilation(visible, state, ready),
+          _CompilationStream(
+            create: _createList,
+            child: _CompilationsList(
+              compilations: compilations,
+              state: state,
+              visible: visible,
+            ),
+          ),
         ],
       );
     });
   }
+}
 
-  Widget _listCompilation(
-    bool visible,
-    CompilationState state,
-    bool ready,
-  ) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(LocalDB.uid)
-          .collection('compilations')
-          .orderBy(
-            'date',
-            descending: true,
-          )
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        final double _width = MediaQuery.of(context).size.width;
-        final double _height = MediaQuery.of(context).size.height;
+//ignore: must_be_immutable
+class _PopupMenu extends StatelessWidget {
+  _PopupMenu({
+    Key? key,
+    required this.cancel,
+    required this.compilations,
+    required this.set,
+  }) : super(key: key);
 
-        if (snapshot.data?.docs.length == 0 ||
-            FirebaseAuth.instance.currentUser == null) {
-          return const Center(
-            child: Padding(
-              padding: EdgeInsets.only(right: 10.0, top: 100.0),
-              child: Text(
-                'Как только ты создадишь'
-                '\nподборку, она появится здесь.',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  color: Colors.grey,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
+  void Function() cancel;
+  void Function(int) set;
+  final List<Map<String, dynamic>> compilations;
+
+  void _delete(BuildContext context) {
+    if (!_chek(compilations)) {
+      GlobalRepo.showSnackBar(
+        context: context,
+        title: 'Сделайте выбор',
+      );
+    } else {
+      for (int i = compilations.length - 1; i >= 0; i = i - 1) {
+        if (compilations[i]['chek']) {
+          Database.deleteCompilation(
+            {
+              'id': compilations[i]['id'],
+              'sounds': compilations[i]['listId'],
+            },
           );
+          set(i);
         }
-        if (snapshot.hasData) {
-          final int length = snapshot.data.docs.length;
-
-          if (chek.isEmpty || chek.length < length) {
-            for (int i = 0; i < length; i++) {
-              chek.add(false);
-            }
-          }
-
-          return Padding(
-            padding: EdgeInsets.only(
-              top: _height * 0.15,
-              left: _width * 0.02,
-              right: _width * 0.02,
-            ),
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                maxCrossAxisExtent: 250.0,
-                childAspectRatio: 61 / 80,
-                mainAxisSpacing: _width * 0.04,
-                crossAxisSpacing: _width * 0.04,
-              ),
-              itemCount: length,
-              itemBuilder: (context, index) {
-                final String title = snapshot.data.docs[index]['title'];
-                final String text = snapshot.data.docs[index]['text'];
-                final String image = snapshot.data.docs[index]['image'];
-                final List listId = snapshot.data.docs[index]['sounds'];
-                final Timestamp date = snapshot.data.docs[index]['date'];
-                final String id = snapshot.data.docs[index].id;
-
-                if (ready && state is AddInCompilation && chek[index]) {
-                  for (int i = 0; i < state.listId.length; i++) {
-                    if (!listId.contains(state.listId[i])) {
-                      listId.add(state.listId[i]);
-                    }
-                  }
-
-                  Database.createOrUpdateCompilation({
-                    'id': id,
-                    'sounds': listId,
-                  });
-                  context.read<CompilationBloc>().add(
-                        ToInitialCompilation(),
-                      );
-                  ready = false;
-                }
-
-                if (delete && chek[index]) {
-                  for (int i = 0; i < snapshot.data.docs.length; i++) {
-                    Database.deleteCompilation({
-                      'id': id,
-                      'title': title,
-                      'date': date,
-                    }).whenComplete(() {
-                      setState(() {
-                        delete = false;
-                        _pickFew = false;
-                        chek.removeAt(index);
-                      });
-                    });
-                  }
-                }
-
-                return GestureDetector(
-                  onTap: () {
-                    if (state is InitialCompilation) {
-                      Navigator.pushNamed(
-                        context,
-                        CurrentCompilationPage.routName,
-                        arguments: CurrentCompilationPageArguments(
-                          title: title,
-                          url: image,
-                          listId: listId,
-                          date: date,
-                          id: id,
-                          text: text,
-                        ),
-                      );
-                    }
-                  },
-                  child: Stack(
-                    children: [
-                      CompilationContainer(
-                        url: image,
-                        height: _height,
-                        width: _width,
-                        title: title,
-                        length: listId.length,
-                      ),
-                      Visibility(
-                        visible: visible,
-                        child: Stack(
-                          children: [
-                            Container(
-                              height: _height * 0.4,
-                              decoration: BoxDecoration(
-                                color: chek[index]
-                                    ? Colors.transparent
-                                    : const Color(0xff454545).withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(15.0),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(right: _width * 0.175),
-                              child: CustomCheckBox(
-                                color: Colors.white,
-                                value: chek[index],
-                                onTap: () {
-                                  setState(() {
-                                    chek[index] = !chek[index];
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
-            ),
-          );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Color(0xff71A59F),
-            ),
-          );
-        }
-      },
-    );
+      }
+    }
   }
 
-  Widget _popupPickFew() {
+  bool _chek(List<Map<String, dynamic>> dataList) {
+    bool chek = false;
+    for (var map in dataList) {
+      if (map.containsKey('chek')) {
+        if (map['chek']) {
+          chek = true;
+        }
+      }
+    }
+    return chek;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return PopupMenuButton(
       shape: ShapeBorder.lerp(
         const RoundedRectangleBorder(),
@@ -349,59 +305,8 @@ class _CompilationPageState extends State<CompilationPage> {
         0.2,
       ),
       onSelected: (value) {
-        if (value == 0) {
-          setState(() {
-            _pickFew = true;
-          });
-        }
-      },
-      itemBuilder: (_) => const [
-        PopupMenuItem(
-          value: 0,
-          child: Text(
-            'Выбрать несколько',
-            style: TextStyle(
-              fontSize: 14.0,
-            ),
-          ),
-        ),
-      ],
-      child: const Text(
-        '...',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 48.0,
-          letterSpacing: 3.0,
-        ),
-      ),
-    );
-  }
-
-  Widget _popupPickDelete() {
-    return PopupMenuButton(
-      shape: ShapeBorder.lerp(
-        const RoundedRectangleBorder(),
-        const CircleBorder(),
-        0.2,
-      ),
-      onSelected: (value) {
-        if (value == 0) {
-          setState(() {
-            _pickFew = false;
-          });
-        }
-        if (value == 1) {
-          if (!chek.contains(true)) {
-            GlobalRepo.showSnackBar(
-              context: context,
-              title: 'Сделайте выбор',
-            );
-          } else {
-            setState(() {
-              delete = true;
-            });
-          }
-        }
+        if (value == 0) cancel();
+        if (value == 1) _delete(context);
       },
       itemBuilder: (_) => const [
         PopupMenuItem(
@@ -430,6 +335,163 @@ class _CompilationPageState extends State<CompilationPage> {
           fontSize: 48.0,
           letterSpacing: 3.0,
         ),
+      ),
+    );
+  }
+}
+
+class _CompilationStream extends StatelessWidget {
+  const _CompilationStream({
+    Key? key,
+    required this.child,
+    required this.create,
+  }) : super(key: key);
+
+  final void Function(AsyncSnapshot) create;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .doc(LocalDB.uid)
+          .collection('compilations')
+          .orderBy(
+            'date',
+            descending: true,
+          )
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData) {
+          if (snapshot.data?.docs.length == 0 ||
+              FirebaseAuth.instance.currentUser == null) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.only(right: 10.0, top: 100.0),
+                child: Text(
+                  'Как только ты создадишь'
+                  '\nподборку, она появится здесь.',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+
+          create(snapshot);
+          print('create');
+
+          return child;
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+}
+
+class _CompilationsList extends StatefulWidget {
+  const _CompilationsList({
+    Key? key,
+    required this.compilations,
+    required this.state,
+    required this.visible,
+  }) : super(key: key);
+
+  final List<Map<String, dynamic>> compilations;
+  final CompilationState state;
+  final bool visible;
+
+  @override
+  State<_CompilationsList> createState() => _CompilationsListState();
+}
+
+class _CompilationsListState extends State<_CompilationsList> {
+  @override
+  Widget build(BuildContext context) {
+    final double _width = MediaQuery.of(context).size.width;
+    final double _height = MediaQuery.of(context).size.height;
+
+    return Padding(
+      padding: EdgeInsets.only(
+        top: _height * 0.15,
+        left: _width * 0.02,
+        right: _width * 0.02,
+      ),
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 250.0,
+          childAspectRatio: 61 / 80,
+          mainAxisSpacing: _width * 0.04,
+          crossAxisSpacing: _width * 0.04,
+        ),
+        itemCount: widget.compilations.length,
+        itemBuilder: (context, index) {
+          return GestureDetector(
+            onTap: () {
+              if (widget.state is InitialCompilation) {
+                Navigator.pushNamed(
+                  context,
+                  CurrentCompilationPage.routName,
+                  arguments: CurrentCompilationPageArguments(
+                    title: widget.compilations[index]['title'],
+                    url: widget.compilations[index]['url'],
+                    listId: widget.compilations[index]['listId'],
+                    date: widget.compilations[index]['date'],
+                    id: widget.compilations[index]['id'],
+                    text: widget.compilations[index]['text'],
+                  ),
+                );
+              }
+            },
+            child: Stack(
+              children: [
+                CompilationContainer(
+                  url: widget.compilations[index]['url'],
+                  height: _height,
+                  width: _width,
+                  title: widget.compilations[index]['title'],
+                  length: widget.compilations[index]['listId'].length,
+                ),
+                Visibility(
+                  visible: widget.visible,
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: _height * 0.4,
+                        decoration: BoxDecoration(
+                          color: widget.compilations[index]['chek']
+                              ? Colors.transparent
+                              : const Color(0xff454545).withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(15.0),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(right: _width * 0.175),
+                        child: CustomCheckBox(
+                          color: Colors.white,
+                          value: widget.compilations[index]['chek'],
+                          onTap: () {
+                            setState(() {
+                              widget.compilations[index]['chek'] =
+                                  !widget.compilations[index]['chek'];
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

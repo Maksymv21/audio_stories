@@ -175,6 +175,22 @@ class Database {
   }
 
   static Future deleteCompilation(Map<String, dynamic> map) async {
+    for (int i = 0; i < map['sounds'].length; i++) {
+      final DocumentReference document = FirebaseFirestore.instance
+          .collection('users')
+          .doc(LocalDB.uid)
+          .collection('sounds')
+          .doc(map['sounds'][i]);
+      await document.get().then<dynamic>((
+        DocumentSnapshot snapshot,
+      ) {
+        createOrUpdateSound({
+          'id': map['sounds'][i],
+          'compilations': FieldValue.arrayRemove([map['id']]),
+        });
+      });
+    }
+
     _user.doc(LocalDB.uid).collection('compilations').doc(map['id']).delete();
 
     _storage
