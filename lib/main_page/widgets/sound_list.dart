@@ -11,28 +11,154 @@ import 'custom_player.dart';
 
 //ignore: must_be_immutable
 class SoundsList extends StatefulWidget {
-  final List<Map<String, dynamic>> sounds;
-  final String routName;
-  final bool isPopup;
-  final String compilationId;
-  final String? page;
-
   const SoundsList({
     Key? key,
     required this.sounds,
     required this.routName,
     required this.isPopup,
     required this.compilationId,
+    this.play,
+    this.stop,
     this.page,
   }) : super(key: key);
+
+  final List<Map<String, dynamic>> sounds;
+  final void Function(int)? play;
+  final void Function()? stop;
+  final String routName;
+  final bool isPopup;
+  final String compilationId;
+  final String? page;
 
   @override
   State<SoundsList> createState() => SoundsListState();
 }
 
 class SoundsListState extends State<SoundsList> {
-  Widget _player = const Text('');
+  Widget? _player;
   double _bottom = 10.0;
+  bool isPlay = false;
+
+  void _onDelete(
+    BuildContext context,
+    int index,
+  ) {
+    if (widget.sounds.length == 1) {
+      GlobalRepo.showSnackBar(
+        context: context,
+        title: 'В подборке должно оставаться '
+            'минимум одно аудио',
+      );
+    } else {
+      Database.deleteSoundInCompilation(
+        {
+          'sounds': FieldValue.arrayRemove(
+            [widget.sounds[index]['id']],
+          ),
+        },
+        widget.compilationId,
+        widget.sounds[index]['id'],
+      );
+      widget.sounds.removeAt(index);
+    }
+  }
+
+  void play(int index) {
+    if (!widget.sounds[index]['current']) {
+      for (int i = 0; i < widget.sounds.length; i++) {
+        widget.sounds[i]['current'] = false;
+      }
+      setState(() {
+        _player = null;
+        _bottom = 90.0;
+      });
+
+      Future.delayed(
+        const Duration(milliseconds: 10),
+        () {
+          setState(
+            () {
+              widget.sounds[index]['current'] = true;
+              isPlay = true;
+              _player = CustomPlayer(
+                onDismissed: (direction) {
+                  widget.stop == null ? stop() : widget.stop!();
+                },
+                title: widget.sounds[index]['title'],
+                url: widget.sounds[index]['url'],
+                id: widget.sounds[index]['id'],
+                routName: widget.routName,
+              );
+            },
+          );
+        },
+      );
+    }
+  }
+
+  void stop() {
+    setState(() {
+      _player = null;
+      _bottom = 10.0;
+      for (int i = 0; i < widget.sounds.length; i++) {
+        widget.sounds[i]['current'] = false;
+      }
+    });
+  }
+
+  void playAll(
+    int index,
+  ) {
+    setState(() {
+      _player = null;
+      _bottom = 90.0;
+    });
+
+    Future.delayed(
+      const Duration(milliseconds: 50),
+      () {
+        setState(
+          () {
+            widget.sounds[index]['current'] = true;
+            isPlay = true;
+            _player = CustomPlayer(
+              onDismissed: (direction) {
+                setState(
+                  () {
+                    widget.stop == null ? stop() : widget.stop!();
+                    widget.sounds[index]['current'] = false;
+                    isPlay = false;
+                  },
+                );
+              },
+              title: widget.sounds[index]['title'],
+              url: widget.sounds[index]['url'],
+              id: widget.sounds[index]['id'],
+              routName: widget.routName,
+              whenComplete: () {
+                if (index < widget.sounds.length - 1) {
+                  widget.sounds[index]['current'] = false;
+                  playAll(index + 1);
+                }
+              },
+            );
+          },
+        );
+      },
+    );
+  }
+
+  bool chek() {
+    bool chek = false;
+    for (var map in widget.sounds) {
+      if (map.containsKey('chek')) {
+        if (map['chek']) {
+          chek = true;
+        }
+      }
+    }
+    return chek;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,25 +202,10 @@ class SoundsListState extends State<SoundsList> {
                                     title: widget.sounds[index]['title'],
                                     id: widget.sounds[index]['id'],
                                     url: widget.sounds[index]['url'],
-                                    onDelete: () {
-                                      if (widget.sounds.length == 1) {
-                                        GlobalRepo.showSnackBar(
-                                          context: context,
-                                          title: 'В подборке должно оставаться '
-                                              'минимум одно аудио',
-                                        );
-                                      } else {
-                                        Database.deleteSoundInCompilation(
-                                          {
-                                            'sounds': FieldValue.arrayRemove(
-                                                [widget.sounds[index]['id']]),
-                                          },
-                                          widget.compilationId,
-                                          widget.sounds[index]['id'],
-                                        );
-                                        widget.sounds.removeAt(index);
-                                      }
-                                    },
+                                    onDelete: () => _onDelete(
+                                      context,
+                                      index,
+                                    ),
                                     page: widget.page,
                                   )
                                 : CustomCheckBox(
@@ -111,35 +222,9 @@ class SoundsListState extends State<SoundsList> {
                                   ),
                           ),
                           onTap: () {
-                            if (!widget.sounds[index]['current']) {
-                              for (int i = 0; i < widget.sounds.length; i++) {
-                                widget.sounds[i]['current'] = false;
-                              }
-                              setState(() {
-                                _player = const Text('');
-                                _bottom = 90.0;
-                              });
-
-                              Future.delayed(const Duration(milliseconds: 50),
-                                  () {
-                                setState(() {
-                                  widget.sounds[index]['current'] = true;
-                                  _player = CustomPlayer(
-                                    onDismissed: (direction) {
-                                      setState(() {
-                                        _player = const Text('');
-                                        _bottom = 10.0;
-                                        widget.sounds[index]['current'] = false;
-                                      });
-                                    },
-                                    title: widget.sounds[index]['title'],
-                                    url: widget.sounds[index]['url'],
-                                    id: widget.sounds[index]['id'],
-                                    routName: widget.routName,
-                                  );
-                                });
-                              });
-                            }
+                            widget.play == null
+                                ? play(index)
+                                : widget.play!(index);
                           },
                         ),
                         const SizedBox(

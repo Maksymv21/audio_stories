@@ -62,7 +62,7 @@ class _CompilationPageState extends State<CompilationPage> {
         Database.createOrUpdateCompilation(
           {
             'id': compilations[i]['id'],
-            'sounds': state.listId,
+            'sounds': compilations[i]['listId'],
           },
         );
       }
@@ -165,7 +165,10 @@ class _CompilationPageState extends State<CompilationPage> {
             onPressed: () {
               if (_chek(compilations)) {
                 _addIn(state);
-                Future.delayed(const Duration(milliseconds: 50), () {
+                Future.delayed(
+                    const Duration(
+                      milliseconds: 50,
+                    ), () {
                   setState(() {});
                 });
               } else {
@@ -383,13 +386,19 @@ class _CompilationStreamState extends State<_CompilationStream> {
             descending: true,
           )
           .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+      builder: (
+        BuildContext context,
+        AsyncSnapshot snapshot,
+      ) {
         if (snapshot.hasData) {
           if (snapshot.data.docs.length == 0 ||
               FirebaseAuth.instance.currentUser == null) {
             return const Center(
               child: Padding(
-                padding: EdgeInsets.only(right: 10.0, top: 100.0),
+                padding: EdgeInsets.only(
+                  right: 10.0,
+                  top: 100.0,
+                ),
                 child: Text(
                   'Как только ты создадишь'
                   '\nподборку, она появится здесь.',

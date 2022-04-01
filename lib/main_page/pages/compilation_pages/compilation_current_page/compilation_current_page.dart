@@ -61,9 +61,11 @@ class CurrentCompilationPage extends StatefulWidget {
 }
 
 class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
+  final GlobalKey<SoundsListState> _key = GlobalKey();
   List<Map<String, dynamic>> sounds = [];
 
   bool _readMore = false;
+  bool _isPlay = false;
 
   void _createLists(AsyncSnapshot snapshot) {
     if (sounds.isEmpty) {
@@ -83,40 +85,6 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
       }
     }
   }
-
-  // void _play() {
-  //   if (current.isEmpty) {
-  //     GlobalRepo.showSnackBar(
-  //       context: context,
-  //       title: 'Отсутствуют аудио для проигрования',
-  //     );
-  //   } else {
-  //     List soundId = [];
-  //     for(int i = 0; i < widget.listId!.length; i++) {
-  //       soundId.add(sounds[i]['id']);
-  //     }
-  //     if (!current.contains(true)) {
-  //       setState(() {
-  //         _playAll = !_playAll;
-  //         _player = _next(
-  //           index: 0,
-  //           listUrl: listUrl,
-  //           listTitle: listTitle,
-  //           listId: soundId,
-  //         );
-  //       });
-  //     } else {
-  //       setState(() {
-  //         _playAll = !_playAll;
-  //         _player = const Text('');
-  //         _bottom = 10.0;
-  //         for (int i = 0; i < current.length; i++) {
-  //           current[i] = false;
-  //         }
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -199,9 +167,21 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                 url: widget.url,
                 date: widget.date,
                 length: sounds.isEmpty ? widget.listId.length : sounds.length,
-                child: const Align(
-                  alignment: AlignmentDirectional(0.85, 0.85),
-                  child: PlayAllButton(),
+                child: Align(
+                  alignment: const AlignmentDirectional(0.85, 0.85),
+                  child: PlayAllButton(
+                    isPlay: _isPlay,
+                    play: (i) {
+                      _key.currentState!.playAll(i);
+                      _isPlay = true;
+                      setState(() {});
+                    },
+                    stop: () {
+                      _key.currentState!.stop();
+                      _isPlay = false;
+                      setState(() {});
+                    },
+                  ),
                 ),
               ),
               Expanded(
@@ -255,10 +235,22 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
               Expanded(
                 flex: _readMore ? 3 : 4,
                 child: SoundsList(
-                    sounds: sounds,
-                    routName: CurrentCompilationPage.routName,
-                    isPopup: true,
-                    compilationId: widget.id),
+                  key: _key,
+                  sounds: sounds,
+                  routName: CurrentCompilationPage.routName,
+                  isPopup: true,
+                  compilationId: widget.id,
+                  play: (i) {
+                    if (!_isPlay) {
+                      _key.currentState!.play(i);
+                    }
+                  },
+                  stop: () {
+                    _key.currentState!.stop();
+                    _isPlay = false;
+                    setState(() {});
+                  },
+                ),
               ),
             ],
           ),
@@ -266,64 +258,6 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
       ],
     );
   }
-
-// Widget _next({
-//   required int index,
-//   required List<String> listTitle,
-//   required List<String> listUrl,
-//   required List listId,
-// }) {
-//   final String title = listTitle[index];
-//   final String url = listUrl[index];
-//   final String id = listId[index];
-//   setState(() {
-//     current[index] = true;
-//   });
-//
-//   return Dismissible(
-//     key: const Key(''),
-//     direction: DismissDirection.down,
-//     onDismissed: (direction) {
-//       setState(() {
-//         _player = const Text('');
-//         _bottom = 10.0;
-//         current[index] = false;
-//       });
-//     },
-//     child: PlayerContainer(
-//       title: title,
-//       url: url,
-//       id: id,
-//       onPressed: () =>
-//           GlobalRepo.toPlayPage(
-//             context: context,
-//             url: url,
-//             title: title,
-//             id: id,
-//             routName: CurrentCompilationPage.routName,
-//           ),
-//       whenComplete: () {
-//         if (index + 1 < listId.length) {
-//           setState(() {
-//             _player = const Text('');
-//             current[index] = false;
-//           });
-//           Future.delayed(const Duration(milliseconds: 50), () {
-//             setState(() {
-//               _player = _next(
-//                 index: index + 1,
-//                 listId: listId,
-//                 listTitle: listTitle,
-//                 listUrl: listUrl,
-//               );
-//             });
-//           });
-//         }
-//       },
-//     ),
-//   );
-// }
-
 }
 
 class _PopupMenu extends StatelessWidget {
@@ -349,8 +283,9 @@ class _PopupMenu extends StatelessWidget {
     for (int i = 0; i < sounds.length; i++) {
       soundId.add(sounds[i]['id']);
     }
-    MainPage.globalKey.currentState!
-        .pushReplacementNamed(CreateCompilationPage.routName);
+    MainPage.globalKey.currentState!.pushReplacementNamed(
+      CreateCompilationPage.routName,
+    );
     context.read<AddInCompilationBloc>().add(
           ToCreate(
             listId: soundId,
@@ -387,8 +322,9 @@ class _PopupMenu extends StatelessWidget {
       'title': title,
       'date': date,
     });
-    MainPage.globalKey.currentState!
-        .pushReplacementNamed(CompilationPage.routName);
+    MainPage.globalKey.currentState!.pushReplacementNamed(
+      CompilationPage.routName,
+    );
     context.read<CompilationBloc>().add(
           ToInitialCompilation(),
         );
@@ -468,16 +404,26 @@ class _PopupMenu extends StatelessWidget {
   }
 }
 
+// if do PlayAllButton private then everything breaks
+
+//ignore: must_be_immutable
 class PlayAllButton extends StatefulWidget {
-  const PlayAllButton({Key? key}) : super(key: key);
+  PlayAllButton({
+    Key? key,
+    required this.play,
+    required this.stop,
+    required this.isPlay,
+  }) : super(key: key);
+
+  final void Function(int) play;
+  final void Function() stop;
+  bool isPlay;
 
   @override
   State<PlayAllButton> createState() => _PlayAllButtonState();
 }
 
 class _PlayAllButtonState extends State<PlayAllButton> {
-  bool _playAll = false;
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -490,13 +436,16 @@ class _PlayAllButtonState extends State<PlayAllButton> {
               borderRadius: BorderRadius.circular(50.0),
             ),
           ),
-          onPressed: () => _playAll = !_playAll,
+          onPressed: () {
+            widget.isPlay ? widget.stop() : widget.play(0);
+            setState(() {});
+          },
           child: Align(
             widthFactor: 0.6,
             heightFactor: 0.0,
             alignment: AlignmentDirectional.centerStart,
             child: Text(
-              _playAll ? 'Остановить' : 'Запустить все',
+              widget.isPlay ? 'Остановить' : 'Запустить все',
               textAlign: TextAlign.end,
               style: const TextStyle(
                 fontFamily: 'TTNormsL',
@@ -512,9 +461,12 @@ class _PlayAllButtonState extends State<PlayAllButton> {
           scale: 1.3,
           child: ColorFiltered(
             child: IconButton(
-              onPressed: () => _playAll = !_playAll,
+              onPressed: () {
+                widget.isPlay ? widget.stop() : widget.play;
+                setState(() {});
+              },
               icon: Image.asset(
-                _playAll ? AppIcons.pauseRecord : AppIcons.play,
+                widget.isPlay ? AppIcons.pauseRecord : AppIcons.play,
               ),
             ),
             colorFilter: const ColorFilter.mode(

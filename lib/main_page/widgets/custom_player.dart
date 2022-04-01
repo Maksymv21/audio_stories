@@ -5,11 +5,7 @@ import '../../../repositories/global_repository.dart';
 
 //ignore: must_be_immutable
 class CustomPlayer extends StatelessWidget {
-  void Function(DismissDirection)? onDismissed;
-  String url;
-  String id;
-  String title;
-  String routName;
+
 
   CustomPlayer({
     Key? key,
@@ -18,7 +14,15 @@ class CustomPlayer extends StatelessWidget {
     required this.id,
     required this.title,
     required this.routName,
+    this.whenComplete,
   }) : super(key: key);
+
+  void Function(DismissDirection)? onDismissed;
+  void Function()? whenComplete;
+  String url;
+  String id;
+  String title;
+  String routName;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +41,9 @@ class CustomPlayer extends StatelessWidget {
           id: id,
           routName: routName,
         ),
+        whenComplete: () {
+          if(whenComplete != null) whenComplete!();
+        },
       ),
     );
   }
