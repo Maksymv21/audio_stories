@@ -1,11 +1,11 @@
-import 'package:audio_stories/main_page/widgets/popup_menu_sound_container.dart';
-import 'package:audio_stories/main_page/widgets/sound_container.dart';
+import 'package:audio_stories/main_page/widgets/menu/popup_menu_sound_container.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_container.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../repositories/global_repository.dart';
-import '../../resources/app_color.dart';
-import '../../utils/database.dart';
+import '../../../repositories/global_repository.dart';
+import '../../../resources/app_color.dart';
+import '../../../utils/database.dart';
 import 'custom_checkbox.dart';
 import 'custom_player.dart';
 

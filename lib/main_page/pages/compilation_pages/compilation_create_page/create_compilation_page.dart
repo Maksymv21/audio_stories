@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/utils/database.dart';
@@ -10,10 +11,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../resources/app_icons.dart';
-import '../../../../utils/local_db.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
-import '../../../widgets/sound_container.dart';
+import '../../../widgets/uncategorized/sound_container.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../compilation_page/compilation_bloc/compilation_event.dart';
 import '../compilation_page/compilation_page.dart';
@@ -36,7 +36,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
   final TextEditingController _textController = TextEditingController();
   File? _image;
   String? _url;
-  List listId = [];
+  List listId = []; // this listId need to fixed bug with text controller
   bool loading = false;
 
   Future pickImage() async {
@@ -45,6 +45,23 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     if (image == null) return;
 
     setState(() => _image = File(image.path));
+  }
+
+  void _addAudio(BuildContext context) {
+    context.read<AddInCompilationBloc>().add(
+          ToChoiseSound(
+              text: _textController.text,
+              title: _titleController.text,
+              image: _image),
+        );
+    MainPage.globalKey.currentState!
+        .pushReplacementNamed(CompilationSearchPage.routName);
+  }
+
+  void _back() {
+    MainPage.globalKey.currentState!.pushReplacementNamed(
+      CompilationPage.routName,
+    );
   }
 
   @override
@@ -71,19 +88,11 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                       style: const ButtonStyle(
                         splashFactory: NoSplash.splashFactory,
                       ),
-                      onPressed: () {
-                        context.read<AddInCompilationBloc>().add(
-                              ToChoiseSound(
-                                  text: _textController.text,
-                                  title: _titleController.text,
-                                  image: _image),
-                            );
-
-                        MainPage.globalKey.currentState!.pushReplacementNamed(
-                            CompilationSearchPage.routName);
-                      },
+                      onPressed: () => _addAudio(context),
                       child: Container(
-                        padding: const EdgeInsets.only(bottom: 1.0),
+                        padding: const EdgeInsets.only(
+                          bottom: 1.0,
+                        ),
                         decoration: const BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
@@ -117,7 +126,12 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
             _url = state.url;
           }
           if (_url != null) _titlePage = '';
-          _list = _soundList(listId);
+          _list = Expanded(
+            flex: 5,
+            child: _SoundList(
+              listId: listId,
+            ),
+          );
         }
 
         return Stack(
@@ -129,12 +143,12 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     image: AppIcons.upGreen,
                     height: 325.0,
                     child: Align(
-                      alignment: const AlignmentDirectional(-1.1, -0.9),
+                      alignment: const AlignmentDirectional(
+                        -1.1,
+                        -0.9,
+                      ),
                       child: IconButton(
-                        onPressed: () {
-                          MainPage.globalKey.currentState!
-                              .pushReplacementNamed(CompilationPage.routName);
-                        },
+                        onPressed: () => _back(),
                         icon: Image.asset(AppIcons.back),
                         iconSize: 60.0,
                       ),
@@ -145,7 +159,10 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
               ],
             ),
             Align(
-              alignment: const AlignmentDirectional(0.95, -0.87),
+              alignment: const AlignmentDirectional(
+                0.95,
+                -0.87,
+              ),
               child: TextButton(
                 child: const Text(
                   'Готово',
@@ -154,17 +171,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     fontSize: 16.0,
                   ),
                 ),
-                onPressed: () {
-                  if (state is AddInCompilationInitial) {
-                    GlobalRepo.showSnackBar(
-                      context: context,
-                      title: 'Добавтье аудиофайлы',
-                    );
-                  }
-                  if (state is Create) {
-                    _ready(state);
-                  }
-                },
+                onPressed: () => _ready(state),
               ),
             ),
             Center(
@@ -186,7 +193,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                   const Spacer(),
                   Expanded(
                     child: Padding(
-                      padding: EdgeInsets.only(left: _width * 0.05),
+                      padding: EdgeInsets.only(
+                        left: _width * 0.05,
+                      ),
                       child: TextFormField(
                         controller: _titleController,
                         style: const TextStyle(
@@ -207,7 +216,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 10.0),
+                    padding: const EdgeInsets.only(
+                      bottom: 10.0,
+                    ),
                     child: Container(
                       width: _width * 0.9,
                       height: _height * 0.3,
@@ -215,7 +226,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                           ? _url == null
                               ? BoxDecoration(
                                   color: const Color(0xffF6F6F6),
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderRadius: BorderRadius.circular(
+                                    15.0,
+                                  ),
                                   boxShadow: const [
                                     BoxShadow(
                                       color: Colors.grey,
@@ -224,7 +237,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                                   ],
                                 )
                               : BoxDecoration(
-                                  borderRadius: BorderRadius.circular(15.0),
+                                  borderRadius: BorderRadius.circular(
+                                    15.0,
+                                  ),
                                   image: DecorationImage(
                                     colorFilter:
                                         const ColorFilter.srgbToLinearGamma(),
@@ -269,7 +284,9 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                     child: Row(
                       children: [
                         Padding(
-                          padding: EdgeInsets.only(left: _width * 0.085),
+                          padding: EdgeInsets.only(
+                            left: _width * 0.085,
+                          ),
                           child: const Text(
                             'Введите описание...',
                             style: TextStyle(
@@ -309,17 +326,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
                         width: _width * 0.8,
                       ),
                       TextButton(
-                        onPressed: () {
-                          if (state is AddInCompilationInitial) {
-                            GlobalRepo.showSnackBar(
-                              context: context,
-                              title: 'Добавтье аудиофайли',
-                            );
-                          }
-                          if (state is Create) {
-                            _ready(state);
-                          }
-                        },
+                        onPressed: () => _ready(state),
                         child: const Text(
                           'Готово',
                           style: TextStyle(
@@ -347,60 +354,6 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     );
   }
 
-  Widget _soundList(List id) {
-    return Expanded(
-      flex: 5,
-      child: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(LocalDB.uid)
-            .collection('sounds')
-            .where('deleted', isEqualTo: false)
-            .orderBy(
-              'date',
-              descending: true,
-            )
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            return ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: id.length,
-              itemBuilder: (context, index) {
-                String? title;
-                double? time;
-                for (int i = 0; i < snapshot.data.docs.length; i++) {
-                  if (snapshot.data.docs[i].id == id[index]) {
-                    title = snapshot.data.docs[i]['title'];
-                    time = snapshot.data.docs[i]['time'];
-                  }
-                }
-                return Column(
-                  children: [
-                    SoundContainer(
-                      color: AppColor.active,
-                      title: title!,
-                      time: (time! / 60).toStringAsFixed(1),
-                      onTap: () {},
-                      buttonRight: Container(),
-                    ),
-                    const SizedBox(
-                      height: 7.0,
-                    ),
-                  ],
-                );
-              },
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-        },
-      ),
-    );
-  }
-
   Future<void> _createCompilation(
     List listId,
     String? id,
@@ -421,43 +374,106 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     }, image: image);
   }
 
-  void _ready(Create state) {
-    if (_image == null && _url == null) {
-      if (_textController.text != '' && _titleController.text != '') {
-        GlobalRepo.showSnackBar(
-          context: context,
-          title: 'Выберите излюражение',
-        );
+  void _ready(AddInCompilationState state) {
+    if (state is AddInCompilationInitial) {
+      GlobalRepo.showSnackBar(
+        context: context,
+        title: 'Добавтье аудиофайли',
+      );
+    }
+    if (state is Create) {
+      if (_image == null && _url == null) {
+        if (_textController.text != '' && _titleController.text != '') {
+          GlobalRepo.showSnackBar(
+            context: context,
+            title: 'Выберите излюражение',
+          );
+        }
+        if (_textController.text == '' || _titleController.text == '') {
+          GlobalRepo.showSnackBar(
+            context: context,
+            title: 'Для создания подборки должно быть выбрано '
+                'название, изображение и описание',
+          );
+        }
       }
-      if (_textController.text == '' || _titleController.text == '') {
-        GlobalRepo.showSnackBar(
-          context: context,
-          title: 'Для создания подборки должно быть выбрано '
-              'название, изображение и описание',
-        );
+      if (_image != null || _url != null) {
+        if (_textController.text == '' || _titleController.text == '') {
+          GlobalRepo.showSnackBar(
+            context: context,
+            title: 'Для создания подборки должно быть выбрано '
+                'название и описание',
+          );
+        }
+        if (_textController.text != '' && _titleController.text != '') {
+          loading = true;
+          setState(() {});
+          _createCompilation(listId, state.id, _image).then(
+            (value) {
+              context.read<CompilationBloc>().add(
+                    ToInitialCompilation(),
+                  );
+              MainPage.globalKey.currentState!
+                  .pushReplacementNamed(CompilationPage.routName);
+            },
+          );
+        }
       }
     }
-    if (_image != null || _url != null) {
-      if (_textController.text == '' || _titleController.text == '') {
-        GlobalRepo.showSnackBar(
-          context: context,
-          title: 'Для создания подборки должно быть выбрано '
-              'название и описание',
-        );
-      }
-      if (_textController.text != '' && _titleController.text != '') {
-        loading = true;
-        setState(() {});
-        _createCompilation(listId, state.id, _image).then(
-          (value) {
-            context.read<CompilationBloc>().add(
-                  ToInitialCompilation(),
-                );
-            MainPage.globalKey.currentState!
-                .pushReplacementNamed(CompilationPage.routName);
-          },
-        );
+  }
+}
+
+//ignore: must_be_immutable
+class _SoundList extends StatelessWidget {
+  _SoundList({
+    Key? key,
+    required this.listId,
+  }) : super(key: key);
+  final List listId;
+
+  List<Map<String, dynamic>> sounds = [];
+
+  void _create(AsyncSnapshot snapshot) {
+    if (sounds.isEmpty) {
+      for (int i = 0; i < snapshot.data.docs.length; i++) {
+        for (int j = 0; j < listId.length; j++) {
+          if (snapshot.data.docs[i]['id'] == listId[j]) {
+            sounds.add(
+              {
+                'title': snapshot.data.docs[i]['title'],
+                'time': snapshot.data.docs[i]['time'],
+              },
+            );
+          }
+        }
       }
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SoundStream(
+      create: _create,
+      child: ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: sounds.length,
+        itemBuilder: (context, index) {
+          return Column(
+            children: [
+              SoundContainer(
+                color: AppColor.active,
+                title: sounds[index]['title'],
+                time: (sounds[index]['time'] / 60).toStringAsFixed(1),
+                onTap: () {},
+                buttonRight: Container(),
+              ),
+              const SizedBox(
+                height: 7.0,
+              ),
+            ],
+          );
+        },
+      ),
+    );
   }
 }

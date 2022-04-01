@@ -1,8 +1,8 @@
 import 'package:audio_stories/main_page/pages/compilation_pages/compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
 import 'package:audio_stories/main_page/pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import 'package:audio_stories/main_page/routes/app_router.dart';
-import 'package:audio_stories/main_page/widgets/drawer.dart';
-import 'package:audio_stories/main_page/widgets/navigation_bar.dart';
+import 'package:audio_stories/main_page/widgets/menu/drawer.dart';
+import 'package:audio_stories/main_page/widgets/menu/navigation_bar.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/custom_will_pop_scope.dart';
 import 'package:firebase_auth/firebase_auth.dart';

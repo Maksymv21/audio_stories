@@ -1,4 +1,4 @@
-import 'package:audio_stories/main_page/widgets/sound_stream.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +8,8 @@ import '../../../../resources/app_icons.dart';
 import '../../../../utils/database.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
-import '../../../widgets/popup_menu_pick_few.dart';
-import '../../../widgets/sound_list.dart';
+import '../../../widgets/menu/popup_menu_pick_few.dart';
+import '../../../widgets/uncategorized/sound_list.dart';
 import '../compilation_current_page/compilation_current_page.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../compilation_page/compilation_bloc/compilation_event.dart';

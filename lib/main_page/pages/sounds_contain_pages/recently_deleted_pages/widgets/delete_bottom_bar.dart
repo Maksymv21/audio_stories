@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../resources/app_color.dart';
 import '../../../../../resources/app_icons.dart';
-import '../../../../widgets/foot_button.dart';
+import '../../../../widgets/buttons/foot_button.dart';
 
 
 //ignore: must_be_immutable

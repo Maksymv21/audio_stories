@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-import '../../utils/local_db.dart';
+import '../../../utils/local_db.dart';
 
 class SoundStream extends StatelessWidget {
-
   const SoundStream({
     Key? key,
     required this.child,
@@ -27,9 +26,12 @@ class SoundStream extends StatelessWidget {
             descending: true,
           )
           .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+      builder: (
+        BuildContext context,
+        AsyncSnapshot snapshot,
+      ) {
         if (snapshot.hasData) {
-          if(create != null) create!(snapshot);
+          if (create != null) create!(snapshot);
           return child;
         } else {
           return const Center(

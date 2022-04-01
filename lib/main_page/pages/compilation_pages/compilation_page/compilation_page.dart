@@ -1,5 +1,5 @@
 import 'package:audio_stories/main_page/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
-import 'package:audio_stories/main_page/widgets/pick_few_popup.dart';
+import 'package:audio_stories/main_page/widgets/menu/pick_few_popup.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/database.dart';
@@ -11,8 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../utils/local_db.dart';
 import '../../../main_page.dart';
-import '../../../widgets/compilation_container.dart';
-import '../../../widgets/custom_checkbox.dart';
+import '../../../widgets/uncategorized/compilation_container.dart';
+import '../../../widgets/uncategorized/custom_checkbox.dart';
 import '../compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
 import '../compilation_create_page/compilation_create_bloc/add_in_compilation_event.dart';
 import '../compilation_create_page/create_compilation_page.dart';

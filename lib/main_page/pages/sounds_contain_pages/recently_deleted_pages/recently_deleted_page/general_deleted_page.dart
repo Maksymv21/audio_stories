@@ -11,9 +11,9 @@ import '../../../../../resources/app_icons.dart';
 import '../../../../../utils/database.dart';
 import '../../../../../utils/local_db.dart';
 import '../../../../../widgets/background.dart';
-import '../../../../widgets/custom_checkbox.dart';
-import '../../../../widgets/player_container.dart';
-import '../../../../widgets/sound_container.dart';
+import '../../../../widgets/uncategorized/custom_checkbox.dart';
+import '../../../../widgets/uncategorized/player_container.dart';
+import '../../../../widgets/uncategorized/sound_container.dart';
 import '../widgets/delete_bottom_bar.dart';
 import 'edit_deleted_page.dart';
 

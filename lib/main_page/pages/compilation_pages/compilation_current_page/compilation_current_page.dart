@@ -1,5 +1,5 @@
-import 'package:audio_stories/main_page/widgets/sound_list.dart';
-import 'package:audio_stories/main_page/widgets/sound_stream.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_list.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

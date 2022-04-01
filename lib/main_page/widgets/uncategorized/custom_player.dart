@@ -1,7 +1,7 @@
-import 'package:audio_stories/main_page/widgets/player_container.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/player_container.dart';
 import 'package:flutter/material.dart';
 
-import '../../../repositories/global_repository.dart';
+import '../../../../repositories/global_repository.dart';
 
 //ignore: must_be_immutable
 class CustomPlayer extends StatelessWidget {

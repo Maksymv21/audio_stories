@@ -16,7 +16,7 @@ import '../../../../utils/local_db.dart';
 import '../../../main_page.dart';
 import '../../../repositories/player_repository.dart';
 import '../../../resources/thumb_shape.dart';
-import '../../../widgets/popup_menu_sound_container.dart';
+import '../../../widgets/menu/popup_menu_sound_container.dart';
 import '../../compilation_pages/compilation_create_page/compilation_search_page.dart';
 import '../../compilation_pages/compilation_current_page/compilation_current_page.dart';
 import '../../compilation_pages/compilation_page/compilation_page.dart';
