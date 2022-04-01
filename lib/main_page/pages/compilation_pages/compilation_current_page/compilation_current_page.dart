@@ -172,6 +172,9 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                   child: PlayAllButton(
                     isPlay: _isPlay,
                     play: (i) {
+                      for (int i = 0; i < sounds.length; i++) {
+                        sounds[i]['current'] = false;
+                      }
                       _key.currentState!.playAll(i);
                       _isPlay = true;
                       setState(() {});
