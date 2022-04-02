@@ -49,13 +49,11 @@ class MyApp extends StatelessWidget {
         navigatorKey: firstKey,
         initialRoute: SplashPage.routName,
         routes: {
-          SplashPage.routName: (context) => SplashPage(
-                duration: 4,
-              ),
+          SplashPage.routName: (context) => const SplashPage(),
           WelcomePage.routName: (context) => const WelcomePage(),
           AuthPage.routName: (context) => AuthPage(),
           MainPage.routName: (context) => const MainPage(),
-          SplashGladPage.routName: (context) => SplashGladPage(),
+          SplashGladPage.routName: (context) => const SplashGladPage(),
           EditDeletedPage.routName: (context) => const EditDeletedPage(),
         },
       ),

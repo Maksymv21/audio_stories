@@ -1,46 +1,60 @@
+import 'dart:async';
+
+import 'package:audio_stories/main_page/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../welcome_pages/welcome_page/welcome_page.dart';
 import '../splash_glad_page/splash_glad_page.dart';
 
-class SplashPage extends StatelessWidget {
+class SplashPage extends StatefulWidget {
   static const routName = '/';
 
-  final int duration;
+  const SplashPage({Key? key}) : super(key: key);
 
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  SplashPage({
-    Key? key,
-    required this.duration,
-  }) : super(key: key);
+  @override
+  void initState() {
+    _setInitialData();
+    super.initState();
+  }
+
+  void _setInitialData() {
+    Timer(
+      const Duration(milliseconds: 3000),
+      () {
+        User? _user = _firebaseAuth.currentUser;
+        if (_user != null) {
+          return _navigateToPage(const SplashGladPage());
+        }
+
+        return _navigateToPage(const MainPage());
+      },
+    );
+  }
+
+  void _navigateToPage(Widget page) {
+    Navigator.pushAndRemoveUntil(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) {
+          return page;
+        },
+        transitionDuration: const Duration(seconds: 0),
+      ),
+      (_) => false,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(
-      Duration(seconds: duration),
-      () {
-        Navigator.pushAndRemoveUntil(
-          context,
-          PageRouteBuilder(
-            pageBuilder: (_, __, ___) {
-              User? _user = _firebaseAuth.currentUser;
-              if (_user != null) {
-                return SplashGladPage();
-              } else {
-                return const WelcomePage();
-              }
-            },
-            transitionDuration: const Duration(seconds: 0),
-          ),
-          (Route<dynamic> route) => false,
-        );
-      },
-    );
-
     return const Material(
       child: Background(
         height: 100.0,

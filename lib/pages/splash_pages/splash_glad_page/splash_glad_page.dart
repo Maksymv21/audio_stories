@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -7,34 +9,52 @@ import 'package:flutter/material.dart';
 
 import '../../../main_page/main_page.dart';
 
-class SplashGladPage extends StatelessWidget {
+class SplashGladPage extends StatefulWidget {
   static const routName = '/glad';
 
-  SplashGladPage({Key? key}) : super(key: key);
+  const SplashGladPage({Key? key}) : super(key: key);
 
+  @override
+  State<SplashGladPage> createState() => _SplashGladPageState();
+}
+
+class _SplashGladPageState extends State<SplashGladPage> {
   final User? _user = FirebaseAuth.instance.currentUser;
 
   @override
-  Widget build(BuildContext context) {
-    Future.delayed(
-        const Duration(
-          seconds: 3,
-        ), () {
-      Navigator.pushAndRemoveUntil(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, __, ___) {
-            LocalDB.uid = _user?.uid;
-            LocalDB.phoneNumber = _user?.phoneNumber;
-            LocalDB.refactorNumber();
-            return const MainPage();
-          },
-          transitionDuration: const Duration(seconds: 0),
-        ),
-        (Route<dynamic> route) => false,
-      );
-    });
+  void initState() {
+    _setInitialData();
+    super.initState();
+  }
 
+  void _setInitialData() {
+    Timer(
+      const Duration(milliseconds: 3000),
+      () {
+        LocalDB.uid = _user?.uid;
+        LocalDB.phoneNumber = _user?.phoneNumber;
+        LocalDB.refactorNumber();
+
+        return _navigateToPage();
+      },
+    );
+  }
+
+  void _navigateToPage() {
+    Navigator.pushAndRemoveUntil(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, __, ___) {
+          return const MainPage();
+        },
+        transitionDuration: const Duration(seconds: 0),
+      ),
+      (_) => false,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
