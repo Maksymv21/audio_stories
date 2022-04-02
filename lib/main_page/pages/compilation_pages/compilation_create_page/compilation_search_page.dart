@@ -1,6 +1,7 @@
 import 'package:audio_stories/main_page/widgets/uncategorized/search_sound_list.dart';
 import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,7 +67,6 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
         title: 'Сделайте выбор',
       );
     } else {
-      print(listId);
       if (state is ChoiseSound) {
         context.read<AddInCompilationBloc>().add(
               ToCreate(
@@ -95,7 +95,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                 flex: 3,
                 child: Background(
                   height: 375.0,
-                  image: AppIcons.upGreen,
+                  image: AppImages.upGreen,
                   child: Stack(
                     children: [
                       Align(

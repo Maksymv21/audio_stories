@@ -1,4 +1,5 @@
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -64,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
                     flex: 3,
                     child: Background(
                       height: 375.0,
-                      image: AppIcons.upSearch,
+                      image: AppImages.upSearch,
                       child: Stack(
                         children: [
                           const Align(

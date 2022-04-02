@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/dialog_profile.dart';
@@ -30,7 +31,7 @@ class ProfilePage extends StatelessWidget {
             Expanded(
               child: Background(
                 height: 375.0,
-                image: AppIcons.up,
+                image: AppImages.up,
                 child: Align(
                   alignment: AlignmentDirectional(
                     -1.1,
@@ -97,7 +98,7 @@ class ProfilePage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(24.0),
                         image: DecorationImage(
                           image: _url == null
-                              ? Image.asset(AppIcons.photo).image
+                              ? Image.asset(AppImages.photo).image
                               : Image.network(_url).image,
                           fit: BoxFit.cover,
                         ),

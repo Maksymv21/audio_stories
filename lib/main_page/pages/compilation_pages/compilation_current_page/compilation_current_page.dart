@@ -1,5 +1,6 @@
 import 'package:audio_stories/main_page/widgets/uncategorized/sound_list.dart';
 import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -97,7 +98,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
           children: [
             Expanded(
               child: Background(
-                image: AppIcons.upGreen,
+                image: AppImages.upGreen,
                 height: 325.0,
                 child: Align(
                   alignment: const AlignmentDirectional(

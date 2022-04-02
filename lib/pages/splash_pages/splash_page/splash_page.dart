@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:audio_stories/main_page/main_page.dart';
-import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -33,9 +33,9 @@ class _SplashPageState extends State<SplashPage> {
         User? _user = _firebaseAuth.currentUser;
         if (_user != null) {
           return _navigateToPage(const SplashGladPage());
+        } else {
+          return _navigateToPage(const WelcomePage());
         }
-
-        return _navigateToPage(const MainPage());
       },
     );
   }
@@ -58,7 +58,7 @@ class _SplashPageState extends State<SplashPage> {
     return const Material(
       child: Background(
         height: 100.0,
-        image: AppIcons.gradient,
+        image: AppImages.gradient,
         child: Center(
           child: Text(
             'Memory Box',

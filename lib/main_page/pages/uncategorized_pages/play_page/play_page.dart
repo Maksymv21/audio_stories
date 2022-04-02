@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_stories/resources/app_color.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -122,7 +123,7 @@ class _PlayPageState extends State<PlayPage> {
             Expanded(
               child: Background(
                 height: 375.0,
-                image: AppIcons.up,
+                image: AppImages.up,
                 child: Container(),
               ),
             ),
@@ -200,7 +201,7 @@ class _PlayPageState extends State<PlayPage> {
 
                       ImageProvider image = compilation.isEmpty
                           ? Image.asset(
-                              AppIcons.headphones,
+                              AppImages.headphones,
                             ).image
                           : Image.network(compilation[0]!).image;
                       String compTitle = compilation.isEmpty

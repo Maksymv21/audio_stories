@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:audio_stories/main_page/pages/profile_pages/profile_page/profile_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/dialog_profile.dart';
@@ -53,7 +54,7 @@ class EditProfilePage extends StatelessWidget {
             Expanded(
               child: Background(
                 height: 375.0,
-                image: AppIcons.up,
+                image: AppImages.up,
                 child: Align(
                   alignment: const AlignmentDirectional(
                     -1.1,
@@ -89,7 +90,7 @@ class EditProfilePage extends StatelessWidget {
                     builder: (context, state) {
                   final String? _url = snapshot.data?.data()['imageURL'];
                   final String? _nameData = snapshot.data?.data()['name'];
-                  ImageProvider _image = Image.asset(AppIcons.photo).image;
+                  ImageProvider _image = Image.asset(AppImages.photo).image;
                   File? _currentImage;
                   String _name = 'Ваше имя';
 

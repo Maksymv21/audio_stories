@@ -1,4 +1,4 @@
-import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
 import 'package:audio_stories/widgets/number_form.dart';
@@ -36,7 +36,7 @@ class RegistrationPage extends StatelessWidget {
         children: [
           Background(
             height: 300.0,
-            image: AppIcons.up,
+            image: AppImages.up,
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,

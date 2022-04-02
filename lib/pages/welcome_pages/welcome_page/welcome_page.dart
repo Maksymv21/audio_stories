@@ -1,7 +1,7 @@
 import 'package:audio_stories/main.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/continue_button.dart';
-import 'package:audio_stories/resources/app_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -28,7 +28,7 @@ class WelcomePage extends StatelessWidget {
           children: [
             Background(
               height: 300.0,
-              image: AppIcons.up,
+              image: AppImages.up,
               child: Center(
                 child: Container(
                   margin: const EdgeInsets.all(10.0),
@@ -89,12 +89,6 @@ class WelcomePage extends StatelessWidget {
                   AuthPage.routName,
                   (Route<dynamic> route) => false,
                 );
-                // context.read<PhoneAuthBloc>().emit(
-                //       PhoneAuthInitial(),
-                //     );
-                // context.read<PhoneAuthBloc>().add(
-                //       DeletedAccount(),
-                //     );
               },
             ),
           ],

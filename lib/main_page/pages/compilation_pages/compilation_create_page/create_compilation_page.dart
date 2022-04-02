@@ -11,6 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../resources/app_icons.dart';
+import '../../../../resources/app_images.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
 import '../../../widgets/uncategorized/sound_container.dart';
@@ -156,7 +157,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
               children: [
                 Expanded(
                   child: Background(
-                    image: AppIcons.upGreen,
+                    image: AppImages.upGreen,
                     height: 325.0,
                     child: Align(
                       alignment: const AlignmentDirectional(

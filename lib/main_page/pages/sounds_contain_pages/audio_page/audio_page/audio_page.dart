@@ -1,6 +1,7 @@
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -148,7 +149,7 @@ class _AudioPageState extends State<AudioPage> {
                   Expanded(
                     flex: 3,
                     child: Background(
-                      image: AppIcons.upBlue,
+                      image: AppImages.upBlue,
                       height: 275.0,
                       child: Align(
                         alignment: AlignmentDirectional(-1.1, -0.9),
@@ -255,7 +256,7 @@ class _AudioPageState extends State<AudioPage> {
           return Column(
             children: const [
               Background(
-                image: AppIcons.upBlue,
+                image: AppImages.upBlue,
                 height: 275.0,
                 child: Align(
                   alignment: AlignmentDirectional(-1.1, -0.9),

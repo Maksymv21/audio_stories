@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/widgets/welcome_container.dart';
@@ -60,7 +61,7 @@ class _SplashGladPageState extends State<SplashGladPage> {
         children: [
           Background(
             height: 300.0,
-            image: AppIcons.up,
+            image: AppImages.up,
             child: Center(
               child: Container(
                 margin: const EdgeInsets.all(10.0),

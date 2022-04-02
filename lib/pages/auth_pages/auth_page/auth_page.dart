@@ -11,14 +11,19 @@ import '../auth_bloc/bloc_auth_event.dart';
 import '../auth_bloc/bloc_auth_state.dart';
 import '../registration_page/registration_page.dart';
 
-
-class AuthPage extends StatelessWidget {
+class AuthPage extends StatefulWidget {
   static const routName = '/auth';
 
-  final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _codeNumberController = TextEditingController();
+  const AuthPage({Key? key}) : super(key: key);
 
-  AuthPage({Key? key}) : super(key: key);
+  @override
+  State<AuthPage> createState() => _AuthPageState();
+}
+
+class _AuthPageState extends State<AuthPage> {
+  final TextEditingController _phoneNumberController = TextEditingController();
+
+  final TextEditingController _codeNumberController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

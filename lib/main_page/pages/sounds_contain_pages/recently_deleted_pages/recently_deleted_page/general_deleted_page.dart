@@ -8,6 +8,7 @@ import 'package:grouped_list/grouped_list.dart';
 import '../../../../../main.dart';
 import '../../../../../resources/app_color.dart';
 import '../../../../../resources/app_icons.dart';
+import '../../../../../resources/app_images.dart';
 import '../../../../../utils/database.dart';
 import '../../../../../utils/local_db.dart';
 import '../../../../../widgets/background.dart';
@@ -127,7 +128,7 @@ class _GeneralDeletedPageState extends State<GeneralDeletedPage> {
                   flex: 3,
                   child: Background(
                     height: 375.0,
-                    image: AppIcons.upSearch,
+                    image: AppImages.upSearch,
                     child: Stack(
                       children: [
                         widget.button,

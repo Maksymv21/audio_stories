@@ -2,6 +2,7 @@ import 'package:audio_stories/main_page/pages/compilation_pages/compilation_curr
 import 'package:audio_stories/main_page/widgets/menu/pick_few_popup.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -196,7 +197,7 @@ class _CompilationPageState extends State<CompilationPage> {
             children: [
               Expanded(
                 child: Background(
-                  image: AppIcons.upGreen,
+                  image: AppImages.upGreen,
                   height: 325.0,
                   child: Align(
                     alignment: const AlignmentDirectional(

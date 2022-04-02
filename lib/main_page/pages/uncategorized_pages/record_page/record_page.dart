@@ -5,6 +5,7 @@ import 'package:audio_stories/main_page/pages/uncategorized_pages/record_page/re
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -454,7 +455,7 @@ class _RecordPageState extends State<RecordPage> {
             Expanded(
               child: Background(
                 height: 375.0,
-                image: AppIcons.up,
+                image: AppImages.up,
                 child: Align(
                   alignment: AlignmentDirectional(-1.1, -0.95),
                   child: ButtonMenu(),

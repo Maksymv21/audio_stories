@@ -1,4 +1,5 @@
 import 'package:audio_stories/resources/app_color.dart';
+import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -59,7 +60,7 @@ class _HomePageState extends State<HomePage> {
             Expanded(
               child: Background(
                 height: 375.0,
-                image: AppIcons.up,
+                image: AppImages.up,
                 child: Align(
                   alignment: AlignmentDirectional(-1.1, -0.95),
                   child: ButtonMenu(),
