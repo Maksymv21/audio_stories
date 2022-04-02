@@ -1,4 +1,4 @@
-import 'package:audio_stories/main_page/widgets/uncategorized/sound_list.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_list_play_all.dart';
 import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/database.dart';
@@ -168,24 +168,21 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                 url: widget.url,
                 date: widget.date,
                 length: sounds.isEmpty ? widget.listId.length : sounds.length,
-                child: Align(
-                  alignment: const AlignmentDirectional(0.85, 0.85),
-                  child: PlayAllButton(
-                    isPlay: _isPlay,
-                    play: (i) {
-                      for (int i = 0; i < sounds.length; i++) {
-                        sounds[i]['current'] = false;
-                      }
-                      _key.currentState!.playAll(i);
-                      _isPlay = true;
-                      setState(() {});
-                    },
-                    stop: () {
-                      _key.currentState!.stop();
-                      _isPlay = false;
-                      setState(() {});
-                    },
-                  ),
+                child: _PlayAllButton(
+                  isPlay: _isPlay,
+                  play: (i) {
+                    for (int i = 0; i < sounds.length; i++) {
+                      sounds[i]['current'] = false;
+                    }
+                    _key.currentState!.playAll(i);
+                    _isPlay = true;
+                    setState(() {});
+                  },
+                  stop: () {
+                    _key.currentState!.stop();
+                    _isPlay = false;
+                    setState(() {});
+                  },
                 ),
               ),
               Expanded(
@@ -254,6 +251,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                     _isPlay = false;
                     setState(() {});
                   },
+                  repeat: false,
                 ),
               ),
             ],
@@ -411,8 +409,8 @@ class _PopupMenu extends StatelessWidget {
 // if do PlayAllButton private then everything breaks
 
 //ignore: must_be_immutable
-class PlayAllButton extends StatefulWidget {
-  PlayAllButton({
+class _PlayAllButton extends StatefulWidget {
+  _PlayAllButton({
     Key? key,
     required this.play,
     required this.stop,
@@ -424,10 +422,10 @@ class PlayAllButton extends StatefulWidget {
   bool isPlay;
 
   @override
-  State<PlayAllButton> createState() => _PlayAllButtonState();
+  State<_PlayAllButton> createState() => _PlayAllButtonState();
 }
 
-class _PlayAllButtonState extends State<PlayAllButton> {
+class _PlayAllButtonState extends State<_PlayAllButton> {
   @override
   Widget build(BuildContext context) {
     return Stack(

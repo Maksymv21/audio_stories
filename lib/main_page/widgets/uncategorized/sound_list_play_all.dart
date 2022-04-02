@@ -16,7 +16,8 @@ class SoundsListPlayAll extends StatefulWidget {
     required this.sounds,
     required this.routName,
     required this.isPopup,
-    required this.compilationId,
+    required this.repeat,
+    this.compilationId,
     this.play,
     this.stop,
     this.page,
@@ -27,7 +28,8 @@ class SoundsListPlayAll extends StatefulWidget {
   final void Function()? stop;
   final String routName;
   final bool isPopup;
-  final String compilationId;
+  final bool repeat;
+  final String? compilationId;
   final String? page;
 
   @override
@@ -39,7 +41,7 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
   double _bottom = 10.0;
   bool isPlay = false;
 
-  void _onDelete(
+  void _onDeleteInCompilation(
     BuildContext context,
     int index,
   ) {
@@ -56,11 +58,16 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
             [widget.sounds[index]['id']],
           ),
         },
-        widget.compilationId,
+        widget.compilationId!,
         widget.sounds[index]['id'],
       );
       widget.sounds.removeAt(index);
     }
+  }
+
+  void _onDeleteInAudio(int index) {
+    _player = null;
+    widget.sounds.removeAt(index);
   }
 
   void play(int index) {
@@ -141,6 +148,11 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
                 if (index < widget.sounds.length - 1) {
                   widget.sounds[index]['current'] = false;
                   playAll(index + 1);
+                } else {
+                  if(widget.repeat) {
+                    widget.sounds[index]['current'] = false;
+                    playAll(0);
+                  }
                 }
               },
             );
@@ -169,12 +181,15 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
         Padding(
           padding: EdgeInsets.only(bottom: _bottom),
           child: widget.sounds.isEmpty
-              ? const Center(
+              ? Center(
                   child: Text(
-                    'Упс, видимо все аудио из этой'
-                    '\nподборки были удалены.'
-                    '\nНо ее все еще можно'
-                    '\nпополнять новыми.',
+                    widget.compilationId == null
+                        ? 'Как только ты запишешь аудио,'
+                            '\nони появится здесь.'
+                        : 'Упс, видимо все аудио из этой'
+                            '\nподборки были удалены.'
+                            '\nНо ее все еще можно'
+                            '\nпополнять новыми.',
                     style: TextStyle(
                       fontSize: 23.0,
                       color: Colors.grey,
@@ -204,10 +219,14 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
                                     title: widget.sounds[index]['title'],
                                     id: widget.sounds[index]['id'],
                                     url: widget.sounds[index]['url'],
-                                    onDelete: () => _onDelete(
-                                      context,
-                                      index,
-                                    ),
+                                    onDelete: () {
+                                      widget.compilationId == null
+                                          ? _onDeleteInAudio(index)
+                                          : _onDeleteInCompilation(
+                                              context,
+                                              index,
+                                            );
+                                    },
                                     page: widget.page,
                                   )
                                 : CustomCheckBox(

@@ -1,29 +1,22 @@
+import 'package:audio_stories/main_page/widgets/menu/pick_few_popup.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../blocs/bloc_icon_color/bloc_index.dart';
-import '../../../../../blocs/bloc_icon_color/bloc_index_event.dart';
 import '../../../../../utils/database.dart';
-import '../../../../../utils/local_db.dart';
 import '../../../../main_page.dart';
 import '../../../../widgets/buttons/button_menu.dart';
-import '../../../../widgets/uncategorized/custom_checkbox.dart';
-import '../../../../widgets/uncategorized/custom_player.dart';
-import '../../../../widgets/uncategorized/player_container.dart';
 import '../../../../widgets/menu/popup_menu_pick_few.dart';
-import '../../../../widgets/menu/popup_menu_sound_container.dart';
-import '../../../../widgets/uncategorized/sound_container.dart';
+import '../../../../widgets/uncategorized/sound_list_play_all.dart';
 import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import '../../../compilation_pages/compilation_page/compilation_page.dart';
-
 
 class AudioPage extends StatefulWidget {
   static const routName = '/audio';
@@ -35,267 +28,376 @@ class AudioPage extends StatefulWidget {
 }
 
 class _AudioPageState extends State<AudioPage> {
-  List<bool> current = [];
-  List<bool> chek = [];
-  List currentId = [];
-  double _bottom = 10.0;
-  Widget _player = const Text('');
+  final GlobalKey<SoundsListPlayAllState> _key = GlobalKey();
+  List<Map<String, dynamic>> sounds = [];
   bool _repeat = false;
   bool _pickFew = false;
-  bool _isPlayAll = false;
+  bool _isPlay = false;
 
-  void _playAll(
-    AsyncSnapshot snapshot,
-    int length,
-  ) {
-    if (FirebaseAuth.instance.currentUser != null) {
-      if (current.isEmpty) {
-        GlobalRepo.showSnackBar(
-          context: context,
-          title: 'Отсутствуют аудио для проигрования',
-        );
-      } else {
-        if (!current.contains(true)) {
-          setState(() {
-            _isPlayAll = !_isPlayAll;
-            _player = _next(
-              index: 0,
-              length: length,
-              snapshot: snapshot,
-            );
-          });
-        } else {
-          setState(() {
-            _isPlayAll = !_isPlayAll;
-            _player = const Text('');
-            _bottom = 10.0;
-            for (int i = 0; i < current.length; i++) {
-              current[i] = false;
-            }
-          });
-        }
-      }
-    }
+  @override
+  void initState() {
+    _setInitialData();
+    super.initState();
   }
 
-  void _play(
-    int index,
-    int length,
-    String url,
-    String id,
-    String title,
-  ) {
-    if (!current[index]) {
-      for (int i = 0; i < length; i++) {
-        current[i] = false;
-      }
-      setState(() {
-        _player = const Text('');
-        _bottom = 90.0;
-      });
+  void _setInitialData() {
+    Future.delayed(
+      const Duration(
+        seconds: 1,
+      ),
+      () {
+        setState(() {});
+      },
+    );
+  }
 
-      Future.delayed(const Duration(milliseconds: 50), () {
-        setState(() {
-          current[index] = true;
-          _player = CustomPlayer(
-            onDismissed: (direction) {
-              setState(() {
-                _player = const Text('');
-                _bottom = 10.0;
-                _isPlayAll = false;
-                debugPrint(_bottom.toString());
-                current[index] = false;
-              });
-            },
-            url: url,
-            id: id,
-            title: title,
-            routName: AudioPage.routName,
-          );
-        });
-      });
+  void _createList(AsyncSnapshot snapshot) {
+    if (sounds.isEmpty) {
+      for (int i = 0; i < snapshot.data.docs.length; i++) {
+        sounds.add(
+          {
+            'chek': false,
+            'current': false,
+            'title': snapshot.data.docs[i]['title'],
+            'time': snapshot.data.docs[i]['time'],
+            'id': snapshot.data.docs[i]['id'],
+            'url': snapshot.data.docs[i]['song'],
+          },
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
+    final double _width = MediaQuery.of(context).size.width;
+    final double _height = MediaQuery.of(context).size.height;
 
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(LocalDB.uid)
-          .collection('sounds')
-          .where('deleted', isEqualTo: false)
-          .orderBy('date', descending: true)
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.hasData) {
-          final int length = snapshot.data.docs.length;
-          if (current.isEmpty) {
-            for (int i = 0; i < length; i++) {
-              current.add(false);
-            }
-          }
-          if (chek.isEmpty) {
-            for (int i = 0; i < length; i++) {
-              chek.add(false);
-            }
-          }
-          return Stack(
-            children: [
-              Column(
-                children: const [
-                  Expanded(
-                    flex: 3,
-                    child: Background(
-                      image: AppImages.upBlue,
-                      height: 275.0,
-                      child: Align(
-                        alignment: AlignmentDirectional(-1.1, -0.9),
-                        child: ButtonMenu(),
-                      ),
-                    ),
-                  ),
-                  Spacer(
-                    flex: 5,
-                  ),
-                ],
-              ),
-              const Align(
-                alignment: AlignmentDirectional(0.0, -0.91),
-                child: Text(
-                  'Аудиозаписи',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 36.0,
-                    letterSpacing: 3.0,
-                  ),
-                ),
-              ),
-              Align(
-                alignment: const AlignmentDirectional(0.95, -0.96),
-                child: _pickFew ? _popupMenu(snapshot) : _popupPickFew(),
-              ),
-              const Align(
-                alignment: AlignmentDirectional(0.00, -0.78),
-                child: Text(
-                  'Все в одном месте',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16.0,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ),
-              Column(
-                children: [
-                  const Spacer(
-                    flex: 2,
-                  ),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        SizedBox(
-                          width: width * 0.035,
-                        ),
-                        Text(
-                          '$length аудио'
-                          '\n0 часов',
-                          style: const TextStyle(
-                            fontFamily: 'TTNormsL',
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14.0,
-                          ),
-                        ),
-                        SizedBox(
-                          width: width * 0.25,
-                        ),
-                        _playAllButton(width, length, snapshot),
-                      ],
-                    ),
-                  ),
-                  const Spacer(
-                    flex: 8,
-                  ),
-                ],
-              ),
-              snapshot.data.docs.length == 0 ||
-                      FirebaseAuth.instance.currentUser == null
-                  ? const Center(
-                      child: Padding(
-                        padding: EdgeInsets.only(top: 100.0),
-                        child: Text(
-                          'Как только ты запишешь аудио,'
-                          '\nони появится здесь.',
-                          style: TextStyle(
-                            fontSize: 24.0,
-                            color: Colors.grey,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                  : Padding(
-                      padding: EdgeInsets.only(top: 225.0, bottom: _bottom),
-                      child: _listSound(snapshot, length),
-                    ),
-              Align(
-                alignment: AlignmentDirectional.bottomCenter,
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 15.0),
-                  child: _player,
-                ),
-              ),
-            ],
-          );
-        } else {
-          return Column(
-            children: const [
-              Background(
+    return Stack(
+      children: [
+        Column(
+          children: const [
+            Expanded(
+              flex: 3,
+              child: Background(
                 image: AppImages.upBlue,
                 height: 275.0,
                 child: Align(
-                  alignment: AlignmentDirectional(-1.1, -0.9),
+                  alignment: AlignmentDirectional(
+                    -1.1,
+                    -0.9,
+                  ),
                   child: ButtonMenu(),
                 ),
               ),
-            ],
+            ),
+            Spacer(
+              flex: 5,
+            ),
+          ],
+        ),
+        const Align(
+          alignment: AlignmentDirectional(
+            0.0,
+            -0.91,
+          ),
+          child: Text(
+            'Аудиозаписи',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 36.0,
+              letterSpacing: 3.0,
+            ),
+          ),
+        ),
+        Align(
+          alignment: const AlignmentDirectional(0.95, -0.96),
+          child: _pickFew
+              ? _PopupMenuPickFew(
+                  sounds: sounds,
+                  cancel: () {
+                    _pickFew = false;
+                    setState(() {});
+                  },
+                  set: (i) {
+                    sounds.removeAt(i);
+                    setState(() {});
+                  },
+                )
+              : PickFewPopup(
+                  pickFew: () {
+                    _pickFew = true;
+                    setState(() {});
+                  },
+                ),
+        ),
+        const Align(
+          alignment: AlignmentDirectional(0.00, -0.78),
+          child: Text(
+            'Все в одном месте',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w400,
+              fontSize: 16.0,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ),
+        Column(
+          children: [
+            const Spacer(
+              flex: 2,
+            ),
+            Expanded(
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: _width * 0.035,
+                  ),
+                  Text(
+                    '${sounds.length} аудио'
+                    '\n0 часов',
+                    style: const TextStyle(
+                      fontFamily: 'TTNormsL',
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  SizedBox(
+                    width: _width * 0.25,
+                  ),
+                  _PlayAllButton(
+                    width: _width,
+                    repeat: _repeat,
+                    isPlay: _isPlay,
+                    tapRepeat: () {
+                      setState(() {
+                        _repeat = !_repeat;
+                      });
+                    },
+                    play: (i) {
+                      for (int i = 0; i < sounds.length; i++) {
+                        sounds[i]['current'] = false;
+                      }
+                      _key.currentState!.playAll(i);
+                      _isPlay = true;
+                      setState(() {});
+                    },
+                    stop: () {
+                      _key.currentState!.stop();
+                      _isPlay = false;
+                      setState(() {});
+                    },
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(
+              flex: 8,
+            ),
+          ],
+        ),
+        SoundStream(
+          create: _createList,
+          child: Padding(
+            padding: EdgeInsets.only(top: _height * 0.31),
+            child: SoundsListPlayAll(
+              key: _key,
+              sounds: sounds,
+              routName: AudioPage.routName,
+              isPopup: !_pickFew,
+              play: (i) {
+                if (!_isPlay) {
+                  _key.currentState!.play(i);
+                }
+              },
+              stop: () {
+                _key.currentState!.stop();
+                _isPlay = false;
+                setState(() {});
+              },
+              repeat: _repeat,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _PopupMenuPickFew extends StatefulWidget {
+  const _PopupMenuPickFew({
+    Key? key,
+    required this.sounds,
+    required this.cancel,
+    required this.set,
+  }) : super(key: key);
+
+  final List<Map<String, dynamic>> sounds;
+  final void Function() cancel;
+  final void Function(int i) set;
+
+  @override
+  State<_PopupMenuPickFew> createState() => _PopupMenuPickFewState();
+}
+
+class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
+  void _addInCompilation() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      List currentId = [];
+      for (int i = 0; i < widget.sounds.length; i++) {
+        if (widget.sounds[i]['chek']) {
+          currentId.add(widget.sounds[i]['id']);
+        }
+      }
+      MainPage.globalKey.currentState!
+          .pushReplacementNamed(CompilationPage.routName);
+      context.read<CompilationBloc>().add(
+            ToAddInCompilation(
+              listId: currentId,
+            ),
+          );
+    }
+  }
+
+  void _share() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      List<String> url = [];
+      List<String> title = [];
+      for (int i = 0; i < widget.sounds.length; i++) {
+        if (widget.sounds[i]['chek']) {
+          url.add(widget.sounds[i]['url']);
+          title.add(widget.sounds[i]['title']);
+        }
+      }
+      GlobalRepo.share(url, title);
+    }
+  }
+
+  void _download() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      for (int i = 0; i < widget.sounds.length; i++) {
+        if (widget.sounds[i]['chek']) {
+          GlobalRepo.download(
+            widget.sounds[i]['url'],
+            widget.sounds[i]['title'],
+          ).then(
+            (value) => {
+              GlobalRepo.showSnackBar(
+                context: context,
+                title: 'Файл сохранен.'
+                    '\nDownload/${widget.sounds[i]['title']}.aac',
+              ),
+            },
           );
         }
-      },
+      }
+    }
+  }
+
+  void _delete() {
+    if (!_chek()) {
+      _choiseSnackBar(context);
+    } else {
+      for (int i = 0; i < widget.sounds.length; i++) {
+        if (widget.sounds[i]['chek']) {
+          Database.createOrUpdateSound(
+            {
+              'deleted': true,
+              'dateDeleted': Timestamp.now(),
+              'id': widget.sounds[i]['id'],
+            },
+          );
+          widget.set(i);
+        }
+      }
+    }
+  }
+
+  bool _chek() {
+    bool chek = false;
+    for (var map in widget.sounds) {
+      if (map.containsKey('chek')) {
+        if (map['chek']) {
+          chek = true;
+        }
+      }
+    }
+    return chek;
+  }
+
+  void _choiseSnackBar(BuildContext context) {
+    GlobalRepo.showSnackBar(
+      context: context,
+      title: 'Перед этим нужно сделать выбор',
     );
   }
 
-  Widget _playAllButton(
-    double width,
-    int length,
-    AsyncSnapshot snapshot,
-  ) {
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuPickFew(
+      onSelected: (value) async {
+        if (value == 0) widget.cancel();
+        if (value == 1) _addInCompilation();
+        if (value == 2) _share();
+        if (value == 3) _download();
+        if (value == 4) _delete();
+      },
+    );
+  }
+}
+
+class _PlayAllButton extends StatefulWidget {
+  const _PlayAllButton({
+    Key? key,
+    required this.width,
+    required this.repeat,
+    required this.isPlay,
+    required this.tapRepeat,
+    required this.play,
+    required this.stop,
+  }) : super(key: key);
+
+  final double width;
+  final bool repeat;
+  final bool isPlay;
+  final void Function() tapRepeat;
+  final void Function(int) play;
+  final void Function() stop;
+
+  @override
+  State<_PlayAllButton> createState() => _PlayAllButtonState();
+}
+
+class _PlayAllButtonState extends State<_PlayAllButton> {
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       children: [
         Row(
           children: [
             SizedBox(
-              width: width * 0.29,
+              width: widget.width * 0.29,
             ),
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                backgroundColor:
-                    _repeat ? AppColor.greyActive : AppColor.greyDisActive,
+                backgroundColor: widget.repeat
+                    ? AppColor.greyActive
+                    : AppColor.greyDisActive,
                 minimumSize: const Size(100.0, 46.0),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(50.0),
                 ),
               ),
-              onPressed: () {
-                setState(() {
-                  _repeat = !_repeat;
-                });
-              },
+              onPressed: () => widget.tapRepeat(),
               child: Container(
                 margin: const EdgeInsets.only(
                   left: 45.0,
@@ -316,13 +418,16 @@ class _AudioPageState extends State<AudioPage> {
               borderRadius: BorderRadius.circular(50.0),
             ),
           ),
-          onPressed: () => _playAll(snapshot, length),
+          onPressed: () {
+            widget.isPlay ? widget.stop() : widget.play(0);
+            setState(() {});
+          },
           child: Align(
             widthFactor: 0.6,
             heightFactor: 0.0,
             alignment: AlignmentDirectional.centerStart,
             child: Text(
-              _isPlayAll ? 'Остановить' : 'Запустить все',
+              widget.isPlay ? 'Остановить' : 'Запустить все',
               textAlign: TextAlign.end,
               style: const TextStyle(
                 fontFamily: 'TTNormsL',
@@ -338,9 +443,12 @@ class _AudioPageState extends State<AudioPage> {
           scale: 1.3,
           child: ColorFiltered(
             child: IconButton(
-              onPressed: () => _playAll(snapshot, length),
+              onPressed: () {
+                widget.isPlay ? widget.stop() : widget.play(0);
+                setState(() {});
+              },
               icon: Image.asset(
-                current.contains(true) ? AppIcons.pauseRecord : AppIcons.play,
+                widget.isPlay ? AppIcons.pauseRecord : AppIcons.play,
               ),
             ),
             colorFilter: const ColorFilter.mode(
@@ -350,277 +458,6 @@ class _AudioPageState extends State<AudioPage> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _listSound(
-    AsyncSnapshot snapshot,
-    int length,
-  ) {
-    return ListView.builder(
-      itemCount: snapshot.data.docs.length,
-      itemBuilder: (context, index) {
-        Color color =
-            current[index] ? const Color(0xffF1B488) : AppColor.active;
-        final String url = snapshot.data.docs[index]['song'];
-        final String id = snapshot.data.docs[index].id;
-        final String title = snapshot.data.docs[index]['title'];
-        return Column(
-          children: [
-            SoundContainer(
-              color: color,
-              title: title,
-              time: (snapshot.data.docs[index]['time'] / 60).toStringAsFixed(1),
-              buttonRight: Align(
-                alignment: const AlignmentDirectional(0.9, -1.0),
-                child: _pickFew
-                    ? CustomCheckBox(
-                        value: chek[index],
-                        onTap: () {
-                          setState(() {
-                            chek[index] = !chek[index];
-                          });
-                        },
-                        color: Colors.black87,
-                      )
-                    : PopupMenuSoundContainer(
-                        size: 30.0,
-                        title: title,
-                        id: id,
-                        url: url,
-                        onDelete: () {
-                          if (current[index]) {
-                            setState(() {
-                              _player = const Text('');
-                            });
-                          }
-                          current.removeAt(index);
-                        },
-                      ),
-              ),
-              onTap: () => _play(
-                index,
-                length,
-                url,
-                id,
-                title,
-              ),
-            ),
-            const SizedBox(
-              height: 7.0,
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _popupPickFew() {
-    return PopupMenuButton(
-      shape: ShapeBorder.lerp(
-        const RoundedRectangleBorder(),
-        const CircleBorder(),
-        0.2,
-      ),
-      onSelected: (value) {
-        if (value == 0) {
-          setState(() {
-            _pickFew = true;
-          });
-        }
-      },
-      itemBuilder: (_) => const [
-        PopupMenuItem(
-          value: 0,
-          child: Text(
-            'Выбрать несколько',
-            style: TextStyle(
-              fontSize: 14.0,
-            ),
-          ),
-        ),
-      ],
-      child: const Text(
-        '...',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 48.0,
-          letterSpacing: 3.0,
-        ),
-      ),
-    );
-  }
-
-  Widget _popupMenu(AsyncSnapshot snapshot) {
-    return PopupMenuPickFew(
-      onSelected: (value) async {
-        if (value == 0) {
-          setState(() {
-            _pickFew = false;
-          });
-        }
-        if (value == 1) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            for (int i = 0; i < snapshot.data.docs.length; i++) {
-              if (chek[i]) currentId.add(snapshot.data.docs[i]['id']);
-            }
-            MainPage.globalKey.currentState!
-                .pushReplacementNamed(CompilationPage.routName);
-            context.read<CompilationBloc>().add(
-                  ToAddInCompilation(
-                    listId: currentId,
-                  ),
-                );
-            context.read<BlocIndex>().add(
-                  ColorCategory(),
-                );
-          }
-        }
-        if (value == 2) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            List<String> url = [];
-            List<String> title = [];
-            for (int i = 0; i < snapshot.data.docs.length; i++) {
-              if (chek[i]) {
-                url.add(snapshot.data.docs[i]['song']);
-                title.add(snapshot.data.docs[i]['title']);
-
-                setState(() {
-                  chek[i] = false;
-                });
-              }
-            }
-            GlobalRepo.share(url, title);
-          }
-        }
-        if (value == 3) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            for (int i = 0; i < snapshot.data.docs.length; i++) {
-              if (chek[i]) {
-                GlobalRepo.download(
-                  snapshot.data.docs[i]['song'],
-                  snapshot.data.docs[i]['title'],
-                ).then((value) => {
-                      GlobalRepo.showSnackBar(
-                        context: context,
-                        title: 'Файл сохранен.'
-                            '\nDownload/${snapshot.data.docs[i]['title']}.aac',
-                      ),
-                    });
-
-                setState(() {
-                  chek[i] = false;
-                });
-              }
-            }
-          }
-        }
-        if (value == 4) {
-          if (!chek.contains(true)) {
-            _choiseSnackBar(context);
-          } else {
-            for (int i = 0; i < snapshot.data.docs.length; i++) {
-              if (chek[i]) {
-                Database.createOrUpdateSound(
-                  {
-                    'deleted': true,
-                    'dateDeleted': Timestamp.now(),
-                    'id': snapshot.data.docs[i]['id'],
-                  },
-                );
-                setState(() {
-                  chek[i] = false;
-                });
-              }
-            }
-          }
-        }
-      },
-    );
-  }
-
-  Widget _next({
-    required int index,
-    required int length,
-    required AsyncSnapshot snapshot,
-  }) {
-    final String title = snapshot.data.docs[index]['title'];
-    final String url = snapshot.data.docs[index]['song'];
-    final String id = snapshot.data.docs[index].id;
-    setState(() {
-      current[index] = true;
-    });
-
-    return Dismissible(
-      key: const Key(''),
-      direction: DismissDirection.down,
-      onDismissed: (direction) {
-        setState(() {
-          _player = const Text('');
-          _bottom = 10.0;
-          _isPlayAll = false;
-          current[index] = false;
-        });
-      },
-      child: PlayerContainer(
-        title: title,
-        url: url,
-        id: id,
-        onPressed: () => GlobalRepo.toPlayPage(
-          context: context,
-          url: url,
-          title: title,
-          id: id,
-          routName: AudioPage.routName,
-        ),
-        whenComplete: () {
-          if (index + 1 < length) {
-            setState(() {
-              _player = const Text('');
-              current[index] = false;
-            });
-            Future.delayed(const Duration(milliseconds: 50), () {
-              setState(() {
-                _player = _next(
-                  index: index + 1,
-                  length: length,
-                  snapshot: snapshot,
-                );
-              });
-            });
-          }
-          if (index + 1 == length) {
-            if (_repeat) {
-              setState(() {
-                _player = const Text('');
-                current[index] = false;
-              });
-              Future.delayed(const Duration(milliseconds: 50), () {
-                setState(() {
-                  _player = _next(
-                    index: 0,
-                    length: length,
-                    snapshot: snapshot,
-                  );
-                });
-              });
-            }
-          }
-        },
-      ),
-    );
-  }
-
-  void _choiseSnackBar(BuildContext context) {
-    GlobalRepo.showSnackBar(
-      context: context,
-      title: 'Перед этим нужно сделать выбор',
     );
   }
 }

@@ -10,7 +10,7 @@ import '../../../../utils/database.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
 import '../../../widgets/menu/popup_menu_pick_few.dart';
-import '../../../widgets/uncategorized/sound_list.dart';
+import '../../../widgets/uncategorized/sound_list_play_all.dart';
 import '../compilation_current_page/compilation_current_page.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../compilation_page/compilation_bloc/compilation_event.dart';
@@ -166,6 +166,7 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                   routName: PickFewCompilationPage.routName,
                   isPopup: false,
                   compilationId: widget.id,
+                  repeat: false,
                 ),
               ),
             ],
@@ -177,11 +178,6 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
 }
 
 class _PopupMenu extends StatefulWidget {
-  final List<Map<String, dynamic>> sounds;
-  final String id;
-  final void Function() cancel;
-  final void Function(int i) set;
-
   const _PopupMenu({
     Key? key,
     required this.sounds,
@@ -189,6 +185,11 @@ class _PopupMenu extends StatefulWidget {
     required this.cancel,
     required this.set,
   }) : super(key: key);
+
+  final List<Map<String, dynamic>> sounds;
+  final String id;
+  final void Function() cancel;
+  final void Function(int i) set;
 
   @override
   State<_PopupMenu> createState() => _PopupMenuState();
