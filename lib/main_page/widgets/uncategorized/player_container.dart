@@ -12,12 +12,6 @@ import '../../resources/thumb_shape.dart';
 
 //ignore: must_be_immutable
 class PlayerContainer extends StatefulWidget {
-  String title;
-  String url;
-  String id;
-  void Function()? onPressed;
-  void Function()? whenComplete;
-
   PlayerContainer({
     Key? key,
     required this.url,
@@ -26,6 +20,12 @@ class PlayerContainer extends StatefulWidget {
     this.onPressed,
     this.whenComplete,
   }) : super(key: key);
+
+  String title;
+  String url;
+  String id;
+  void Function()? onPressed;
+  void Function()? whenComplete;
 
   @override
   State<PlayerContainer> createState() => _PlayerContainerState();
@@ -64,12 +64,14 @@ class _PlayerContainerState extends State<PlayerContainer> {
     super.dispose();
   }
 
-  void valuePlayer() {
+  void _valuePlayer() {
     _playerSubscription = _player.onProgress!.listen((e) {
       maxDuration = e.duration.inMilliseconds.toDouble();
       if (maxDuration <= 0) maxDuration = 0.0;
 
-      DateTime _date = DateTime.fromMillisecondsSinceEpoch(maxDuration.toInt());
+      DateTime _date = DateTime.fromMillisecondsSinceEpoch(
+        maxDuration.toInt(),
+      );
       _length = DateFormat('mm:ss', 'en_GB').format(_date);
 
       sliderCurrentPosition =
@@ -94,11 +96,36 @@ class _PlayerContainerState extends State<PlayerContainer> {
     });
   }
 
-  void refreshTimer(double value) {
-    DateTime date =
-        DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
+  void _refreshTimer(double value) {
+    DateTime date = DateTime.fromMillisecondsSinceEpoch(
+      value.toInt(),
+      isUtc: true,
+    );
     String txt = DateFormat('mm:ss', 'en_GB').format(date);
     _playTxtChange = txt.substring(0, 5);
+  }
+
+  void _playButton() {
+    if (_isPlay) _isPause ? _resumePlay() : _pausePlay();
+    if (!_isPlay) _play(widget.url);
+    _refreshTimer(sliderCurrentPosition);
+    setState(() {});
+  }
+
+  void _onChangedSlider(double value) {
+    if (_isPause) {
+      sliderCurrentPosition = value;
+    } else {
+      val = value;
+    }
+    _refreshTimer(value);
+    _onChanged = true;
+  }
+
+  Future<void> _onChangedEndSlider(double value) async {
+    await seek(value.toInt());
+    val = sliderCurrentPosition;
+    _onChanged = false;
   }
 
   @override
@@ -115,7 +142,10 @@ class _PlayerContainerState extends State<PlayerContainer> {
       height: MediaQuery.of(context).size.height * 0.1,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: <Color>[Color(0xff8C84E2), Color(0xff6C689F)],
+          colors: <Color>[
+            Color(0xff8C84E2),
+            Color(0xff6C689F),
+          ],
         ),
         borderRadius: BorderRadius.circular(41.0),
       ),
@@ -139,12 +169,7 @@ class _PlayerContainerState extends State<PlayerContainer> {
                       BlendMode.srcATop,
                     ),
                   ),
-                  onTap: () {
-                    if (_isPlay) _isPause ? _resumePlay() : _pausePlay();
-                    if (!_isPlay) _play(widget.url);
-                    refreshTimer(sliderCurrentPosition);
-                    setState(() {});
-                  },
+                  onTap: () => _playButton(),
                 ),
               ),
               Padding(
@@ -152,7 +177,10 @@ class _PlayerContainerState extends State<PlayerContainer> {
                 child: Stack(
                   children: [
                     Align(
-                      alignment: const AlignmentDirectional(0.0, -0.5),
+                      alignment: const AlignmentDirectional(
+                        0.0,
+                        -0.5,
+                      ),
                       child: Text(
                         widget.title,
                         style: const TextStyle(
@@ -161,7 +189,10 @@ class _PlayerContainerState extends State<PlayerContainer> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 12.0, top: 10.0),
+                      padding: const EdgeInsets.only(
+                        left: 12.0,
+                        top: 10.0,
+                      ),
                       child: Transform.scale(
                         scaleY: 0.6,
                         scaleX: _width * 0.0038,
@@ -178,20 +209,8 @@ class _PlayerContainerState extends State<PlayerContainer> {
                             ),
                             activeColor: Colors.white,
                             inactiveColor: Colors.white,
-                            onChanged: (value) {
-                              if (_isPause) {
-                                sliderCurrentPosition = value;
-                              } else {
-                                val = value;
-                              }
-                              refreshTimer(value);
-                              _onChanged = true;
-                            },
-                            onChangeEnd: (value) async {
-                              await seek(value.toInt());
-                              val = sliderCurrentPosition;
-                              _onChanged = false;
-                            },
+                            onChanged: (value) => _onChangedSlider(value),
+                            onChangeEnd: (value) => _onChangedEndSlider(value),
                           ),
                         ),
                       ),
@@ -251,7 +270,7 @@ class _PlayerContainerState extends State<PlayerContainer> {
     });
 
     setState(() {
-      valuePlayer();
+      _valuePlayer();
     });
     _isPlay = true;
   }

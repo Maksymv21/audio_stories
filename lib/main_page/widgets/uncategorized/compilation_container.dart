@@ -1,12 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CompilationContainer extends StatelessWidget {
-  final String url;
-  final double height;
-  final String title;
-  final int length;
-  final double width;
-
   const CompilationContainer({
     Key? key,
     required this.url,
@@ -15,6 +9,12 @@ class CompilationContainer extends StatelessWidget {
     required this.length,
     required this.width,
   }) : super(key: key);
+
+  final String url;
+  final double height;
+  final String title;
+  final int length;
+  final double width;
 
   @override
   Widget build(BuildContext context) {

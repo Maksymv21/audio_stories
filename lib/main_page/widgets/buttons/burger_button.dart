@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
 class BurgerButton extends StatelessWidget {
-  final String icon;
-  final String title;
-  final void Function() onTap;
-
   const BurgerButton({
     Key? key,
     required this.onTap,
     required this.icon,
     required this.title,
   }) : super(key: key);
+
+  final String icon;
+  final String title;
+  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {

@@ -3,12 +3,6 @@ import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
 class SoundContainer extends StatelessWidget {
-  String title;
-  String time;
-  Color color;
-  Widget buttonRight;
-  void Function()? onTap;
-
   SoundContainer({
     Key? key,
     required this.title,
@@ -17,6 +11,12 @@ class SoundContainer extends StatelessWidget {
     required this.buttonRight,
     this.onTap,
   }) : super(key: key);
+
+  String title;
+  String time;
+  Color color;
+  Widget buttonRight;
+  void Function()? onTap;
 
   @override
   Widget build(BuildContext context) {

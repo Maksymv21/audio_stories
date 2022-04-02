@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/local_db.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -265,7 +264,7 @@ class _CustomProgress extends StatelessWidget {
       color = Colors.red;
     }
     double width = MediaQuery.of(context).size.width * 0.78;
-    double padding = width * (1.0 - value > max ? max : value / max);
+    double padding = width * (1.0 - (value > max ? max : value) / max);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(15.0),

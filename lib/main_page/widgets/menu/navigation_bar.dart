@@ -23,6 +23,19 @@ class MyNavigationBar extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  void _toPage(
+    BuildContext context,
+    String route,
+    IndexEvent event,
+  ) {
+    MainPage.globalKey.currentState!.pushReplacementNamed(
+      route,
+    );
+    context.read<BlocIndex>().add(
+          event,
+        );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -45,7 +58,10 @@ class MyNavigationBar extends StatelessWidget {
           children: [
             index == 2
                 ? Align(
-                    alignment: const AlignmentDirectional(-0.035, -3.5),
+                    alignment: const AlignmentDirectional(
+                      -0.035,
+                      -3.5,
+                    ),
                     child: Container(
                       width: 4.0,
                       height: 45.0,
@@ -64,11 +80,11 @@ class MyNavigationBar extends StatelessWidget {
                   color: index == 0 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
                     if (index != 0) {
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(HomePage.routName);
-                      context.read<BlocIndex>().add(
-                            ColorHome(),
-                          );
+                      _toPage(
+                        context,
+                        HomePage.routName,
+                        ColorHome(),
+                      );
                     }
                   },
                 ),
@@ -77,13 +93,12 @@ class MyNavigationBar extends StatelessWidget {
                   title: 'Подборки',
                   color: index == 1 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
-                    // if index != 1
                     if (index != 1) {
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(CompilationPage.routName);
-                      context.read<BlocIndex>().add(
-                            ColorCategory(),
-                          );
+                      _toPage(
+                        context,
+                        CompilationPage.routName,
+                        ColorCategory(),
+                      );
                       context.read<CompilationBloc>().add(
                             ToInitialCompilation(),
                           );
@@ -93,17 +108,21 @@ class MyNavigationBar extends StatelessWidget {
                 GestureDetector(
                   onTap: () {
                     if (index != 2) {
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(RecordPage.routName);
-                      context.read<BlocIndex>().add(
-                            ColorRecord(),
-                          );
+                      _toPage(
+                        context,
+                        RecordPage.routName,
+                        ColorRecord(),
+                      );
                     }
                   },
                   child: index == 2 || index == 6
                       ? Padding(
                           padding: const EdgeInsets.only(
-                              left: 4.0, top: 7.0, right: 4.0, bottom: 20.0),
+                            left: 4.0,
+                            top: 7.0,
+                            right: 4.0,
+                            bottom: 20.0,
+                          ),
                           child: Container(
                             width: 45.0,
                             height: 57.0,
@@ -131,13 +150,11 @@ class MyNavigationBar extends StatelessWidget {
                   color: index == 3 ? AppColor.active : AppColor.disActive,
                   onPressed: () {
                     if (index != 3) {
-                      // MainPage.globalKey.currentState!
-                      //     .pushReplacementNamed(TestPage.routName);
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(AudioPage.routName);
-                      context.read<BlocIndex>().add(
-                            ColorAudio(),
-                          );
+                      _toPage(
+                        context,
+                        AudioPage.routName,
+                        ColorAudio(),
+                      );
                     }
                   },
                 ),
@@ -149,11 +166,11 @@ class MyNavigationBar extends StatelessWidget {
                     if (index != 4) {
                       User? _user = FirebaseAuth.instance.currentUser;
                       if (_user != null) {
-                        MainPage.globalKey.currentState!
-                            .pushReplacementNamed(ProfilePage.routName);
-                        context.read<BlocIndex>().add(
-                              ColorProfile(),
-                            );
+                        _toPage(
+                          context,
+                          ProfilePage.routName,
+                          ColorProfile(),
+                        );
                       } else {
                         MyApp.firstKey.currentState!
                             .pushReplacementNamed(AuthPage.routName);

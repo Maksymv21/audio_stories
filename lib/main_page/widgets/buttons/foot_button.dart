@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
 
 class FootButton extends StatelessWidget {
-  final String icon;
-  final String title;
-  final Color color;
-  final void Function() onPressed;
-
   const FootButton({
     Key? key,
     required this.onPressed,
@@ -13,6 +8,11 @@ class FootButton extends StatelessWidget {
     required this.title,
     required this.color,
   }) : super(key: key);
+
+  final String icon;
+  final String title;
+  final Color color;
+  final void Function() onPressed;
 
   @override
   Widget build(BuildContext context) {

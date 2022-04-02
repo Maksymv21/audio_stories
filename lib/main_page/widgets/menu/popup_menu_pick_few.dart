@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 //ignore: must_be_immutable
 class PopupMenuPickFew extends StatelessWidget {
-  void Function(int)? onSelected;
-
   PopupMenuPickFew({
     Key? key,
     required this.onSelected,
   }) : super(key: key);
+
+  void Function(int)? onSelected;
 
   @override
   Widget build(BuildContext context) {

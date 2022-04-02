@@ -1,3 +1,4 @@
+import 'package:audio_stories/main_page/pages/sounds_contain_pages/home_page/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,6 +22,94 @@ import '../buttons/burger_button.dart';
 
 class BurgerMenu extends StatelessWidget {
   const BurgerMenu({Key? key}) : super(key: key);
+
+  void _toPage(
+    BuildContext context,
+    String page,
+    IndexEvent event,
+  ) {
+    MainPage.globalKey.currentState!.pushReplacementNamed(page);
+    Scaffold.of(context).openEndDrawer();
+    context.read<BlocIndex>().add(
+          event,
+        );
+  }
+
+  void _toHome(BuildContext context) {
+    _toPage(
+      context,
+      HomePage.routName,
+      ColorHome(),
+    );
+  }
+
+  void _toProfile(BuildContext context) {
+    User? _user = FirebaseAuth.instance.currentUser;
+    if (_user != null) {
+      _toPage(
+        context,
+        ProfilePage.routName,
+        ColorProfile(),
+      );
+    } else {
+      MyApp.firstKey.currentState!.pushReplacementNamed(
+        AuthPage.routName,
+      );
+    }
+  }
+
+  void _toCompilation(BuildContext context) {
+    _toPage(
+      context,
+      CompilationPage.routName,
+      ColorCategory(),
+    );
+    context.read<CompilationBloc>().add(
+          ToInitialCompilation(),
+        );
+  }
+
+  void _toAudios(BuildContext context) {
+    _toPage(
+      context,
+      AudioPage.routName,
+      ColorAudio(),
+    );
+  }
+
+  void _toSearch(BuildContext context) {
+    _toPage(
+      context,
+      SearchPage.routName,
+      NoColor(),
+    );
+  }
+
+  void _toDeleted(BuildContext context) {
+    _toPage(
+      context,
+      RecentlyDeletedPage.routName,
+      NoColor(),
+    );
+  }
+
+  void _toSubscription(BuildContext context) {
+    _toPage(
+      context,
+      SubscriptionPage.routName,
+      NoColor(),
+    );
+  }
+
+  Future<void> _sendEmail() async {
+    final Email email = Email(
+      subject: 'Support',
+      recipients: ['maksymv21@gmail.com'],
+      isHTML: false,
+    );
+
+    await FlutterEmailSender.send(email);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,83 +155,32 @@ class BurgerMenu extends StatelessWidget {
                 BurgerButton(
                   icon: AppIcons.home,
                   title: 'Главная',
-                  onTap: () {
-                    MainPage.globalKey.currentState!
-                        .pushReplacementNamed(MainPage.routName);
-                    Scaffold.of(context).openEndDrawer();
-                    context.read<BlocIndex>().add(
-                          ColorHome(),
-                        );
-                  },
+                  onTap: () => _toHome(context),
                 ),
                 BurgerButton(
                   icon: AppIcons.profile,
                   title: 'Профиль',
-                  onTap: () {
-                    User? _user = FirebaseAuth.instance.currentUser;
-                    if (_user != null) {
-                      MainPage.globalKey.currentState!
-                          .pushReplacementNamed(ProfilePage.routName);
-                      Scaffold.of(context).openEndDrawer();
-                      context.read<BlocIndex>().add(
-                            ColorProfile(),
-                          );
-                    } else {
-                      MyApp.firstKey.currentState!
-                          .pushReplacementNamed(AuthPage.routName);
-                    }
-                  },
+                  onTap: () => _toProfile(context),
                 ),
                 BurgerButton(
                   icon: AppIcons.category,
                   title: 'Подборки',
-                  onTap: () {
-                    MainPage.globalKey.currentState!
-                        .pushReplacementNamed(CompilationPage.routName);
-                    Scaffold.of(context).openEndDrawer();
-                    context.read<BlocIndex>().add(
-                          ColorCategory(),
-                        );
-                    context.read<CompilationBloc>().add(
-                          ToInitialCompilation(),
-                        );
-                  },
+                  onTap: () => _toCompilation(context),
                 ),
                 BurgerButton(
                   icon: AppIcons.paper,
                   title: 'Все аудиофайлы',
-                  onTap: () {
-                    MainPage.globalKey.currentState!
-                        .pushReplacementNamed(AudioPage.routName);
-                    Scaffold.of(context).openEndDrawer();
-                    context.read<BlocIndex>().add(
-                          ColorAudio(),
-                        );
-                  },
+                  onTap: () => _toAudios(context),
                 ),
                 BurgerButton(
                   icon: AppIcons.search,
                   title: 'Поиск',
-                  onTap: () {
-                    MainPage.globalKey.currentState!
-                        .pushReplacementNamed(SearchPage.routName);
-                    Scaffold.of(context).openEndDrawer();
-                    context.read<BlocIndex>().add(
-                          NoColor(),
-                        );
-                  },
+                  onTap: () => _toSearch(context),
                 ),
                 BurgerButton(
                   icon: AppIcons.delete,
                   title: 'Недавно удаленные',
-                  onTap: () {
-                    MainPage.globalKey.currentState!
-                        .pushReplacementNamed(RecentlyDeletedPage.routName);
-                    Scaffold.of(context).openEndDrawer();
-                    context.read<BlocIndex>().add(
-                          NoColor(),
-                        );
-                  },
+                  onTap: () => _toDeleted(context),
                 ),
               ],
             ),
@@ -153,14 +191,7 @@ class BurgerMenu extends StatelessWidget {
             child: BurgerButton(
               icon: AppIcons.wallet,
               title: 'Подписка',
-              onTap: () {
-                MainPage.globalKey.currentState!
-                    .pushReplacementNamed(SubscriptionPage.routName);
-                Scaffold.of(context).openEndDrawer();
-                context.read<BlocIndex>().add(
-                      NoColor(),
-                    );
-              },
+              onTap: () => _toSubscription(context),
             ),
           ),
           const Spacer(),
@@ -179,15 +210,5 @@ class BurgerMenu extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<void> _sendEmail() async {
-    final Email email = Email(
-      subject: 'Support',
-      recipients: ['maksymv21@gmail.com'],
-      isHTML: false,
-    );
-
-    await FlutterEmailSender.send(email);
   }
 }
