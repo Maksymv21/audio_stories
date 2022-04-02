@@ -14,7 +14,7 @@ import '../../pages/compilation_pages/compilation_page/compilation_bloc/compilat
 import '../../pages/compilation_pages/compilation_page/compilation_page.dart';
 import '../../pages/profile_pages/profile_page/profile_page.dart';
 import '../../pages/sounds_contain_pages/audio_page/audio_page/audio_page.dart';
-import '../../pages/sounds_contain_pages/home_pages/home_page/home_page.dart';
+import '../../pages/sounds_contain_pages/home_page/home_page.dart';
 import '../../pages/uncategorized_pages/record_page/record_page.dart';
 import '../buttons/foot_button.dart';
 

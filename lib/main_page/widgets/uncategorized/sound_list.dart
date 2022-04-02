@@ -10,8 +10,8 @@ import 'custom_checkbox.dart';
 import 'custom_player.dart';
 
 //ignore: must_be_immutable
-class SoundsList extends StatefulWidget {
-  const SoundsList({
+class SoundsListPlayAll extends StatefulWidget {
+  const SoundsListPlayAll({
     Key? key,
     required this.sounds,
     required this.routName,
@@ -31,10 +31,10 @@ class SoundsList extends StatefulWidget {
   final String? page;
 
   @override
-  State<SoundsList> createState() => SoundsListState();
+  State<SoundsListPlayAll> createState() => SoundsListPlayAllState();
 }
 
-class SoundsListState extends State<SoundsList> {
+class SoundsListPlayAllState extends State<SoundsListPlayAll> {
   Widget? _player;
   double _bottom = 10.0;
   bool isPlay = false;
@@ -97,13 +97,15 @@ class SoundsListState extends State<SoundsList> {
   }
 
   void stop() {
-    setState(() {
-      _player = null;
-      _bottom = 10.0;
-      for (int i = 0; i < widget.sounds.length; i++) {
-        widget.sounds[i]['current'] = false;
-      }
-    });
+    setState(
+      () {
+        _player = null;
+        _bottom = 10.0;
+        for (int i = 0; i < widget.sounds.length; i++) {
+          widget.sounds[i]['current'] = false;
+        }
+      },
+    );
   }
 
   void playAll(

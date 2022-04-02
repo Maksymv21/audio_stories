@@ -36,6 +36,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
   final TextEditingController _textController = TextEditingController();
   File? _image;
   String? _url;
+  List<Map<String, dynamic>> sounds = [];
   List listId = []; // this listId need to fixed bug with text controller
   bool loading = false;
 
@@ -64,6 +65,23 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     );
   }
 
+  void _create(AsyncSnapshot snapshot) {
+    if (sounds.isEmpty) {
+      for (int i = 0; i < snapshot.data.docs.length; i++) {
+        for (int j = 0; j < listId.length; j++) {
+          if (snapshot.data.docs[i]['id'] == listId[j]) {
+            sounds.add(
+              {
+                'title': snapshot.data.docs[i]['title'],
+                'time': snapshot.data.docs[i]['time'],
+              },
+            );
+          }
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
@@ -71,52 +89,47 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
 
     return BlocBuilder<AddInCompilationBloc, AddInCompilationState>(
       builder: (context, state) {
-        Widget _list = Expanded(
-          flex: 4,
-          child: Container(),
-        );
         String _titlePage = 'Создание';
 
-        if (state is AddInCompilationInitial) {
-          _list = Expanded(
-            flex: 5,
-            child: Column(
-              children: [
-                const Spacer(),
-                Expanded(
-                  child: TextButton(
-                      style: const ButtonStyle(
-                        splashFactory: NoSplash.splashFactory,
+        Widget _list = Expanded(
+          flex: 5,
+          child: Column(
+            children: [
+              const Spacer(),
+              Expanded(
+                child: TextButton(
+                    style: const ButtonStyle(
+                      splashFactory: NoSplash.splashFactory,
+                    ),
+                    onPressed: () => _addAudio(context),
+                    child: Container(
+                      padding: const EdgeInsets.only(
+                        bottom: 1.0,
                       ),
-                      onPressed: () => _addAudio(context),
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                          bottom: 1.0,
-                        ),
-                        decoration: const BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.black,
-                              width: 1.0,
-                            ),
-                          ),
-                        ),
-                        child: const Text(
-                          "Добавить аудиофайл",
-                          style: TextStyle(
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
                             color: Colors.black,
-                            fontSize: 15.0,
+                            width: 1.0,
                           ),
                         ),
-                      )),
-                ),
-                const Spacer(
-                  flex: 2,
-                ),
-              ],
-            ),
-          );
-        }
+                      ),
+                      child: const Text(
+                        "Добавить аудиофайл",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15.0,
+                        ),
+                      ),
+                    )),
+              ),
+              const Spacer(
+                flex: 2,
+              ),
+            ],
+          ),
+        );
+
         if (state is Create) {
           if (listId != state.listId) {
             listId = state.listId;
@@ -128,8 +141,11 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
           if (_url != null) _titlePage = '';
           _list = Expanded(
             flex: 5,
-            child: _SoundList(
-              listId: listId,
+            child: SoundStream(
+              create: _create,
+              child: _SoundList(
+                sounds: sounds,
+              ),
             ),
           );
         }
@@ -423,57 +439,34 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
   }
 }
 
-//ignore: must_be_immutable
 class _SoundList extends StatelessWidget {
-  _SoundList({
+  const _SoundList({
     Key? key,
-    required this.listId,
+    required this.sounds,
   }) : super(key: key);
-  final List listId;
-
-  List<Map<String, dynamic>> sounds = [];
-
-  void _create(AsyncSnapshot snapshot) {
-    if (sounds.isEmpty) {
-      for (int i = 0; i < snapshot.data.docs.length; i++) {
-        for (int j = 0; j < listId.length; j++) {
-          if (snapshot.data.docs[i]['id'] == listId[j]) {
-            sounds.add(
-              {
-                'title': snapshot.data.docs[i]['title'],
-                'time': snapshot.data.docs[i]['time'],
-              },
-            );
-          }
-        }
-      }
-    }
-  }
+  final List<Map<String, dynamic>> sounds;
 
   @override
   Widget build(BuildContext context) {
-    return SoundStream(
-      create: _create,
-      child: ListView.builder(
-        padding: EdgeInsets.zero,
-        itemCount: sounds.length,
-        itemBuilder: (context, index) {
-          return Column(
-            children: [
-              SoundContainer(
-                color: AppColor.active,
-                title: sounds[index]['title'],
-                time: (sounds[index]['time'] / 60).toStringAsFixed(1),
-                onTap: () {},
-                buttonRight: Container(),
-              ),
-              const SizedBox(
-                height: 7.0,
-              ),
-            ],
-          );
-        },
-      ),
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: sounds.length,
+      itemBuilder: (context, index) {
+        return Column(
+          children: [
+            SoundContainer(
+              color: AppColor.active,
+              title: sounds[index]['title'],
+              time: (sounds[index]['time'] / 60).toStringAsFixed(1),
+              onTap: () {},
+              buttonRight: Container(),
+            ),
+            const SizedBox(
+              height: 7.0,
+            ),
+          ],
+        );
+      },
     );
   }
 }

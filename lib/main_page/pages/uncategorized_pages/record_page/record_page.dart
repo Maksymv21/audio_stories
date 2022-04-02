@@ -20,9 +20,7 @@ import '../../../../utils/local_db.dart';
 import '../../../main_page.dart';
 import '../../../resources/thumb_shape.dart';
 import '../../../widgets/buttons/button_menu.dart';
-import '../../sounds_contain_pages/home_pages/home_page/home_page.dart';
-
-
+import '../../sounds_contain_pages/home_page/home_page.dart';
 
 class RecordPage extends StatefulWidget {
   static const routName = '/record';

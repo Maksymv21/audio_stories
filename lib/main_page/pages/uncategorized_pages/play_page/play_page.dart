@@ -22,8 +22,7 @@ import '../../compilation_pages/compilation_current_page/compilation_current_pag
 import '../../compilation_pages/compilation_page/compilation_page.dart';
 import '../../compilation_pages/pick_few_compilation_page/pick_few_compilation_page.dart';
 import '../../sounds_contain_pages/audio_page/audio_page/audio_page.dart';
-import '../../sounds_contain_pages/home_pages/home_page/home_page.dart';
-
+import '../../sounds_contain_pages/home_page/home_page.dart';
 
 //ignore: must_be_immutable
 class PlayPage extends StatefulWidget {
@@ -160,8 +159,9 @@ class _PlayPageState extends State<PlayPage> {
                         child: IconButton(
                           onPressed: () {
                             if (widget.page ==
-                                PickFewCompilationPage.routName ||
-                            widget.page == CurrentCompilationPage.routName) {
+                                    PickFewCompilationPage.routName ||
+                                widget.page ==
+                                    CurrentCompilationPage.routName) {
                               Navigator.of(context).pop();
                               context.read<BlocIndex>().add(
                                     ColorCategory(),

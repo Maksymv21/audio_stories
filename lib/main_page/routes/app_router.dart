@@ -9,7 +9,7 @@ import '../pages/profile_pages/profile_page/edit_profile_page.dart';
 import '../pages/profile_pages/profile_page/profile_page.dart';
 import '../pages/sounds_contain_pages/audio_page/audio_page/audio_page.dart';
 import '../pages/sounds_contain_pages/audio_page/audio_page/test_page.dart';
-import '../pages/sounds_contain_pages/home_pages/home_page/home_page.dart';
+import '../pages/sounds_contain_pages/home_page/home_page.dart';
 import '../pages/sounds_contain_pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
 import '../pages/sounds_contain_pages/search_pages/search_page/search_page.dart';
 import '../pages/uncategorized_pages/play_page/play_page.dart';

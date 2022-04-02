@@ -160,7 +160,7 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
               ),
               Expanded(
                 flex: 6,
-                child: SoundsList(
+                child: SoundsListPlayAll(
                   sounds: widget.sounds,
                   routName: PickFewCompilationPage.routName,
                   isPopup: false,

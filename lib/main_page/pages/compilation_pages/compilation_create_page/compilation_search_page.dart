@@ -1,16 +1,12 @@
+import 'package:audio_stories/main_page/widgets/uncategorized/search_sound_list.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../resources/app_color.dart';
 import '../../../../resources/app_icons.dart';
-import '../../../../utils/local_db.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
-import '../../../widgets/uncategorized/custom_checkbox.dart';
-import '../../../widgets/uncategorized/player_container.dart';
-import '../../../widgets/uncategorized/sound_container.dart';
 import 'compilation_create_bloc/add_in_compilation_bloc.dart';
 import 'compilation_create_bloc/add_in_compilation_event.dart';
 import 'compilation_create_bloc/add_in_compilation_state.dart';
@@ -26,272 +22,192 @@ class CompilationSearchPage extends StatefulWidget {
 }
 
 class _CompilationSearchPageState extends State<CompilationSearchPage> {
-  TextEditingController controller = TextEditingController();
-  List<bool> current = [];
-  List<bool> chek = [];
+  final TextEditingController _controller = TextEditingController();
+  List<Map<String, dynamic>> sounds = [];
   Set<int> search = {};
   List<String> listId = [];
-  double _bottom = 10.0;
 
-  Widget _player = const Text('');
-  Widget _body = const Center(
-    child: CircularProgressIndicator(),
-  );
+  void _createLists(AsyncSnapshot snapshot) {
+    if (sounds.isEmpty) {
+      for (int i = 0; i < snapshot.data.docs.length; i++) {
+        sounds.add(
+          {
+            'chek': false,
+            'current': false,
+            'title': snapshot.data.docs[i]['title'],
+            'time': snapshot.data.docs[i]['time'],
+            'id': snapshot.data.docs[i]['id'],
+            'url': snapshot.data.docs[i]['song'],
+            'search': snapshot.data.docs[i]['search'],
+          },
+        );
+      }
+    }
+  }
+
+  void _createSearch() {
+    search = {};
+    for (int i = 0; i < sounds.length; i++) {
+      if (sounds[i]['search'].contains(_controller.text)) {
+        search.add(i);
+      }
+    }
+  }
+
+  void _add(AddInCompilationState state) {
+    for (int i = 0; i < sounds.length; i++) {
+      if (sounds[i]['chek']) {
+        listId.add(sounds[i]['id']);
+      }
+    }
+    if (listId.isEmpty) {
+      GlobalRepo.showSnackBar(
+        context: context,
+        title: 'Сделайте выбор',
+      );
+    } else {
+      print(listId);
+      if (state is ChoiseSound) {
+        context.read<AddInCompilationBloc>().add(
+              ToCreate(
+                listId: listId,
+                text: state.text,
+                title: state.title,
+                image: state.image,
+              ),
+            );
+      }
+      MainPage.globalKey.currentState!.pushReplacementNamed(
+        CreateCompilationPage.routName,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(LocalDB.uid)
-            .collection('sounds')
-            .where('deleted', isEqualTo: false)
-            .orderBy(
-              'date',
-              descending: true,
-            )
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            final int length = snapshot.data.docs.length;
-            _createLists(snapshot, length);
-            List<int> list = search.toList();
-
-            _body = _soundList(length, list, snapshot);
-          } else {
-            _body = const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return Stack(
+    return Stack(
+      children: [
+        BlocBuilder<AddInCompilationBloc, AddInCompilationState>(
+            builder: (context, state) {
+          return Column(
             children: [
-              BlocBuilder<AddInCompilationBloc, AddInCompilationState>(
-                  builder: (context, state) {
-                return Column(
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      child: Background(
-                        height: 375.0,
-                        image: AppIcons.upGreen,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: const AlignmentDirectional(-1.1, -0.9),
-                              child: IconButton(
-                                onPressed: () {
-                                  MainPage.globalKey.currentState!
-                                      .pushReplacementNamed(
-                                          CreateCompilationPage.routName);
-                                  context.read<AddInCompilationBloc>().add(
-                                        ToCreateCompilation(),
-                                      );
-                                },
-                                icon: Image.asset(AppIcons.back),
-                                iconSize: 60.0,
-                              ),
-                            ),
-                            Align(
-                              alignment:
-                                  const AlignmentDirectional(1.05, -0.65),
-                              child: TextButton(
-                                style: const ButtonStyle(
-                                  splashFactory: NoSplash.splashFactory,
-                                ),
-                                onPressed: () {
-                                  for (int i = 0; i < chek.length; i++) {
-                                    if (chek[i]) {
-                                      listId.add(snapshot.data.docs[i].id);
-                                    }
-                                  }
-                                  if (listId.isEmpty) {
-                                    GlobalRepo.showSnackBar(
-                                      context: context,
-                                      title: 'Сделайте выбор',
-                                    );
-                                  } else {
-                                    if (state is ChoiseSound) {
-                                      context.read<AddInCompilationBloc>().add(
-                                            ToCreate(
-                                              listId: listId,
-                                              text: state.text,
-                                              title: state.title,
-                                              image: state.image,
-                                            ),
-                                          );
-                                    }
-                                    MainPage.globalKey.currentState!
-                                        .pushReplacementNamed(
-                                            CreateCompilationPage.routName);
-                                  }
-                                },
-                                child: const Text(
-                                  'Добавить',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
+              Expanded(
+                flex: 3,
+                child: Background(
+                  height: 375.0,
+                  image: AppIcons.upGreen,
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: const AlignmentDirectional(
+                          -1.1,
+                          -0.9,
+                        ),
+                        child: IconButton(
+                          onPressed: () {
+                            MainPage.globalKey.currentState!
+                                .pushReplacementNamed(
+                                    CreateCompilationPage.routName);
+                            context.read<AddInCompilationBloc>().add(
+                                  ToCreateCompilation(),
+                                );
+                          },
+                          icon: Image.asset(AppIcons.back),
+                          iconSize: 60.0,
                         ),
                       ),
-                    ),
-                    const Spacer(
-                      flex: 5,
-                    ),
-                  ],
-                );
-              }),
-              Center(
-                child: Column(
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.only(top: 40.0, bottom: 5.0),
-                      child: Text(
-                        'Выбрать',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 36.0,
-                          letterSpacing: 3.0,
+                      Align(
+                        alignment: const AlignmentDirectional(
+                          1.05,
+                          -0.65,
                         ),
-                      ),
-                    ),
-                    const Spacer(
-                      flex: 2,
-                    ),
-                    _textForm(
-                      context: context,
-                      controller: controller,
-                      onChanged: (String text) {
-                        setState(() {});
-                      },
-                    ),
-                    const Spacer(),
-                    Expanded(
-                      flex: 17,
-                      child: Stack(
-                        children: [
-                          _body,
-                          Align(
-                            alignment: AlignmentDirectional.bottomCenter,
-                            child: _player,
+                        child: TextButton(
+                          style: const ButtonStyle(
+                            splashFactory: NoSplash.splashFactory,
                           ),
-                        ],
+                          onPressed: () => _add(state),
+                          child: const Text(
+                            'Добавить',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
+              ),
+              const Spacer(
+                flex: 5,
               ),
             ],
           );
-        });
-  }
-
-  Widget _soundList(int length, List<int> list, AsyncSnapshot snapshot) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: _bottom),
-      child: controller.text != '' && search.isEmpty
-          ? const Center(
-              child: Padding(
-                padding: EdgeInsets.only(right: 10.0),
+        }),
+        Center(
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(
+                  top: 40.0,
+                  bottom: 5.0,
+                ),
                 child: Text(
-                  'Ничего не найдено',
+                  'Выбрать',
                   style: TextStyle(
-                    fontSize: 24.0,
-                    color: Colors.grey,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 36.0,
+                    letterSpacing: 3.0,
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ),
-            )
-          : ListView.builder(
-              itemCount: controller.text == '' ? length : search.length,
-              itemBuilder: (context, index) {
-                final int i = controller.text == '' ? index : list[index];
-                Color color =
-                    current[i] ? const Color(0xffF1B488) : AppColor.active;
-                final String title = snapshot.data.docs[i]['title'];
-                final String id = snapshot.data.docs[i].id;
-                final String url = snapshot.data.docs[i]['song'];
-
-                return Column(
-                  children: [
-                    SoundContainer(
-                      color: color,
-                      title: title,
-                      time: (snapshot.data.docs[i]['time'] / 60)
-                          .toStringAsFixed(1),
-                      buttonRight: Align(
-                        alignment: const AlignmentDirectional(0.9, -1.0),
-                        child: CustomCheckBox(
-                          color: Colors.black87,
-                          value: chek[i],
-                          onTap: () {
-                            setState(() {
-                              chek[i] = !chek[i];
-                            });
-                          },
-                        ),
-                      ),
-                      onTap: () {
-                        if (!current[i]) {
-                          for (int i = 0; i < length; i++) {
-                            current[i] = false;
-                          }
-                          setState(() {
-                            _player = const Text('');
-                            _bottom = 90.0;
-                          });
-
-                          Future.delayed(const Duration(milliseconds: 50), () {
-                            setState(() {
-                              current[i] = true;
-                              _player = Dismissible(
-                                key: const Key(''),
-                                direction: DismissDirection.down,
-                                onDismissed: (direction) {
-                                  setState(() {
-                                    _player = const Text('');
-                                    _bottom = 10.0;
-                                    current[i] = false;
-                                  });
-                                },
-                                child: PlayerContainer(
-                                  title: title,
-                                  url: url,
-                                  id: id,
-                                  onPressed: () => GlobalRepo.toPlayPage(
-                                    context: context,
-                                    url: url,
-                                    title: title,
-                                    id: id,
-                                    routName: CompilationSearchPage.routName,
-                                  ),
-                                ),
-                              );
-                            });
-                          });
-                        }
-                      },
-                    ),
-                    const SizedBox(
-                      height: 7.0,
-                    ),
-                  ],
-                );
-              },
-            ),
+              const Spacer(
+                flex: 2,
+              ),
+              _TextForm(
+                controller: _controller,
+                onChanged: (String text) {
+                  setState(() {
+                    _createSearch();
+                  });
+                },
+              ),
+              const Spacer(),
+              Expanded(
+                flex: 17,
+                child: SoundStream(
+                  create: _createLists,
+                  child: SearchSoundList(
+                    sounds: sounds,
+                    search: search.toList(),
+                    routName: CompilationSearchPage.routName,
+                    searchText: _controller.text,
+                    isPopup: false,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
+}
 
-  Widget _textForm({
-    required BuildContext context,
-    required TextEditingController controller,
-    required void Function(String)? onChanged,
-  }) {
+class _TextForm extends StatelessWidget {
+  const _TextForm({
+    Key? key,
+    required this.controller,
+    required this.onChanged,
+  }) : super(key: key);
+
+  final TextEditingController controller;
+  final void Function(String)? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
     return Stack(
       children: [
         PhysicalModel(
@@ -302,7 +218,10 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
             width: MediaQuery.of(context).size.width * 0.9,
             height: MediaQuery.of(context).size.height * 0.08,
             child: Padding(
-              padding: const EdgeInsets.only(left: 15.0, top: 5.0),
+              padding: const EdgeInsets.only(
+                left: 15.0,
+                top: 5.0,
+              ),
               child: TextFormField(
                 controller: controller,
                 style: const TextStyle(
@@ -317,7 +236,6 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
                     child: IconButton(
                       onPressed: () {
                         FocusScopeNode currentFocus = FocusScope.of(context);
-
                         if (!currentFocus.hasPrimaryFocus) {
                           currentFocus.unfocus();
                         }
@@ -335,26 +253,5 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
         ),
       ],
     );
-  }
-
-  void _createLists(AsyncSnapshot snapshot, int length) {
-    if (chek.isEmpty) {
-      for (int i = 0; i < length; i++) {
-        chek.add(false);
-      }
-    }
-    if (current.isEmpty) {
-      for (int i = 0; i < length; i++) {
-        current.add(false);
-      }
-    }
-
-    search = {};
-
-    for (int i = 0; i < length; i++) {
-      if (snapshot.data.docs[i]['search'].contains(controller.text)) {
-        search.add(i);
-      }
-    }
   }
 }

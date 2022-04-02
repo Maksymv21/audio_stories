@@ -61,7 +61,7 @@ class CurrentCompilationPage extends StatefulWidget {
 }
 
 class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
-  final GlobalKey<SoundsListState> _key = GlobalKey();
+  final GlobalKey<SoundsListPlayAllState> _key = GlobalKey();
   List<Map<String, dynamic>> sounds = [];
 
   bool _readMore = false;
@@ -237,7 +237,7 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                     ),
               Expanded(
                 flex: _readMore ? 3 : 4,
-                child: SoundsList(
+                child: SoundsListPlayAll(
                   key: _key,
                   sounds: sounds,
                   routName: CurrentCompilationPage.routName,
