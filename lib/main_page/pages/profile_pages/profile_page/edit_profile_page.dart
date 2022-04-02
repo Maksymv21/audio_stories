@@ -28,6 +28,22 @@ class EditProfilePage extends StatelessWidget {
   final TextEditingController _editNumberController = TextEditingController();
   final TextEditingController _editNameController = TextEditingController();
 
+  void _save(BuildContext context, File? avatar) {
+    if (_editNumberController.text != '') {
+      _dialog(context);
+    } else {
+      context.read<ProfileBloc>().add(
+            ProfileSaveChanges(
+              avatar: avatar,
+              name: _editNameController.text,
+            ),
+          );
+      MainPage.globalKey.currentState!.pushReplacementNamed(
+        ProfilePage.routName,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -39,7 +55,10 @@ class EditProfilePage extends StatelessWidget {
                 height: 375.0,
                 image: AppIcons.up,
                 child: Align(
-                  alignment: const AlignmentDirectional(-1.1, -0.9),
+                  alignment: const AlignmentDirectional(
+                    -1.1,
+                    -0.9,
+                  ),
                   child: IconButton(
                     onPressed: () {
                       MainPage.globalKey.currentState!
@@ -130,7 +149,6 @@ class EditProfilePage extends StatelessWidget {
                         const Spacer(
                           flex: 4,
                         ),
-
                         Container(
                           width: 228.0,
                           height: 228.0,
@@ -164,8 +182,12 @@ class EditProfilePage extends StatelessWidget {
                         Expanded(
                           flex: 3,
                           child: Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(70.0, 0.0, 70.0, 0.0),
+                            padding: const EdgeInsets.fromLTRB(
+                              70.0,
+                              0.0,
+                              70.0,
+                              0.0,
+                            ),
                             child: TextFormField(
                               controller: _editNameController,
                               textAlign: TextAlign.center,
@@ -194,21 +216,10 @@ class EditProfilePage extends StatelessWidget {
                         Expanded(
                           flex: 3,
                           child: TextButton(
-                            onPressed: () async {
-                              if (_editNumberController.text != '') {
-                                _dialog(context);
-                              } else {
-                                context.read<ProfileBloc>().add(
-                                      ProfileSaveChanges(
-                                          avatar: _currentImage,
-                                          name: _editNameController.text),
-                                    );
-                                MainPage.globalKey.currentState!
-                                    .pushReplacementNamed(
-                                  ProfilePage.routName,
-                                );
-                              }
-                            },
+                            onPressed: () => _save(
+                              context,
+                              _currentImage,
+                            ),
                             child: const Text(
                               'Сохранить',
                               style: TextStyle(

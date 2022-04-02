@@ -16,7 +16,6 @@ import '../../../widgets/buttons/button_menu.dart';
 import '../widgets/delete_acc_button.dart';
 import 'edit_profile_page.dart';
 
-
 class ProfilePage extends StatelessWidget {
   static const routName = '/profile';
 
@@ -33,7 +32,10 @@ class ProfilePage extends StatelessWidget {
                 height: 375.0,
                 image: AppIcons.up,
                 child: Align(
-                  alignment: AlignmentDirectional(-1.1, -0.95),
+                  alignment: AlignmentDirectional(
+                    -1.1,
+                    -0.95,
+                  ),
                   child: ButtonMenu(),
                 ),
               ),
@@ -174,9 +176,8 @@ class ProfilePage extends StatelessWidget {
                     ),
                     Expanded(
                       flex: 3,
-                      child: _customProgress(
-                        context,
-                        memoryInt.toDouble(),
+                      child: _CustomProgress(
+                        value: memoryInt.toDouble(),
                       ),
                     ),
                     const Spacer(),
@@ -246,16 +247,24 @@ class ProfilePage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _customProgress(BuildContext context, double value) {
+class _CustomProgress extends StatelessWidget {
+  const _CustomProgress({
+    Key? key,
+    required this.value,
+  }) : super(key: key);
+  final double value;
+
+  @override
+  Widget build(BuildContext context) {
     Color color = const Color(0xffF1B488);
     final double max = (5 * pow(10, 8)).toDouble();
     if (value > max) {
-      value = max;
       color = Colors.red;
     }
     double width = MediaQuery.of(context).size.width * 0.78;
-    double padding = width * (1.0 - value / max);
+    double padding = width * (1.0 - value > max ? max : value / max);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(15.0),
