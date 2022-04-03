@@ -1,3 +1,4 @@
+import 'package:audio_stories/main_page/pages/uncategorized_pages/play_page/play_page.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +13,6 @@ import '../../pages/compilation_pages/compilation_current_page/compilation_curre
 import '../../pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../../pages/compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import '../../pages/compilation_pages/compilation_page/compilation_page.dart';
-import '../../pages/sounds_contain_pages/audio_page/audio_page/audio_page.dart';
 import '../../pages/sounds_contain_pages/home_page/home_page.dart';
 
 //ignore: must_be_immutable
@@ -24,6 +24,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
     required this.title,
     required this.size,
     this.onDelete,
+    this.onRename,
     this.page,
   }) : super(key: key);
 
@@ -33,6 +34,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
   double size;
   String? page;
   void Function()? onDelete;
+  void Function(String)? onRename;
 
   void _addInCompilation(BuildContext context) {
     MainPage.globalKey.currentState!
@@ -77,8 +79,11 @@ class PopupMenuSoundContainer extends StatelessWidget {
                 'search': search,
                 'id': id,
               },
-            );
+            ).whenComplete(() => {
+                  if (onRename != null) onRename!(controller.text),
+                });
           }
+
           Navigator.pop(context, 'Cancel');
         },
       ),
@@ -86,10 +91,12 @@ class PopupMenuSoundContainer extends StatelessWidget {
   }
 
   void _delete(BuildContext context) {
-    if (page != null) {
-      MainPage.globalKey.currentState!.pushReplacementNamed(page!);
+    if (page == PlayPage.routName) {
+      MainPage.globalKey.currentState!.pushReplacementNamed(
+        HomePage.routName,
+      );
       context.read<BlocIndex>().add(
-            _bloc(page!),
+            ColorHome(),
           );
     }
     if (page != CurrentCompilationPage.routName) {
@@ -188,20 +195,5 @@ class PopupMenuSoundContainer extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  IndexEvent _bloc(String page) {
-    IndexEvent event;
-    if (page == HomePage.routName) {
-      event = ColorHome();
-    } else if (page == CompilationPage.routName ||
-        page == CurrentCompilationPage.routName) {
-      event = ColorCategory();
-    } else if (page == AudioPage.routName) {
-      event = ColorAudio();
-    } else {
-      event = NoColor();
-    }
-    return event;
   }
 }

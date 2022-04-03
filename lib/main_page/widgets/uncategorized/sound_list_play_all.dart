@@ -17,6 +17,7 @@ class SoundsListPlayAll extends StatefulWidget {
     required this.routName,
     required this.isPopup,
     required this.repeat,
+    required this.onDelete,
     this.compilationId,
     this.play,
     this.stop,
@@ -26,6 +27,7 @@ class SoundsListPlayAll extends StatefulWidget {
   final List<Map<String, dynamic>> sounds;
   final void Function(int)? play;
   final void Function()? stop;
+  final void Function() onDelete;
   final String routName;
   final bool isPopup;
   final bool repeat;
@@ -149,7 +151,7 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
                   widget.sounds[index]['current'] = false;
                   playAll(index + 1);
                 } else {
-                  if(widget.repeat) {
+                  if (widget.repeat) {
                     widget.sounds[index]['current'] = false;
                     playAll(0);
                   }
@@ -226,8 +228,13 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
                                               context,
                                               index,
                                             );
+                                      widget.onDelete();
                                     },
                                     page: widget.page,
+                                    onRename: (title) {
+                                      widget.sounds[index]['title'] = title;
+                                      setState(() {});
+                                    },
                                   )
                                 : CustomCheckBox(
                                     color: Colors.black87,

@@ -167,6 +167,9 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
                   isPopup: false,
                   compilationId: widget.id,
                   repeat: false,
+                  onDelete: () {
+                    setState(() {});
+                  },
                 ),
               ),
             ],

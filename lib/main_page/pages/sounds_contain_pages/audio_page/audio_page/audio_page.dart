@@ -219,6 +219,9 @@ class _AudioPageState extends State<AudioPage> {
                 setState(() {});
               },
               repeat: _repeat,
+              onDelete: () {
+                setState(() {});
+              },
             ),
           ),
         ),
