@@ -6,22 +6,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../blocs/bloc_icon_color/bloc_index.dart';
-import '../../../../../blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../../../../repositories/global_repository.dart';
-import '../../../../../resources/app_color.dart';
-import '../../../../../utils/database.dart';
-import '../../../../../utils/local_db.dart';
-import '../../../../main_page.dart';
-import '../../../../widgets/buttons/button_menu.dart';
-import '../../../../widgets/uncategorized/custom_checkbox.dart';
-import '../../../../widgets/uncategorized/custom_player.dart';
-import '../../../../widgets/menu/popup_menu_pick_few.dart';
-import '../../../../widgets/menu/popup_menu_sound_container.dart';
-import '../../../../widgets/uncategorized/sound_container.dart';
-import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
-import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
-import '../../../compilation_pages/compilation_page/compilation_page.dart';
+import '../../../../blocs/bloc_icon_color/bloc_index.dart';
+import '../../../../blocs/bloc_icon_color/bloc_index_event.dart';
+import '../../../../repositories/global_repository.dart';
+import '../../../../resources/app_color.dart';
+import '../../../../utils/database.dart';
+import '../../../../utils/local_db.dart';
+import '../../../main_page.dart';
+import '../../../widgets/buttons/button_menu.dart';
+import '../../../widgets/uncategorized/custom_checkbox.dart';
+import '../../../widgets/uncategorized/custom_player.dart';
+import '../../../widgets/menu/popup_menu_pick_few.dart';
+import '../../../widgets/menu/popup_menu_sound_container.dart';
+import '../../../widgets/uncategorized/sound_container.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
+import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 
 class SearchPage extends StatefulWidget {

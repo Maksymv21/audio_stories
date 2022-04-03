@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
+import 'package:audio_stories/pages/welcome_pages/welcome_page.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../splash_glad_page/splash_glad_page.dart';
+import 'splash_glad_page.dart';
 
 class SplashPage extends StatefulWidget {
   static const routName = '/';

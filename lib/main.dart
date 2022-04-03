@@ -1,9 +1,9 @@
 import 'package:audio_stories/pages/auth_pages/auth_bloc/bloc_auth.dart';
-import 'package:audio_stories/pages/auth_pages/auth_page/auth_page.dart';
+import 'package:audio_stories/pages/auth_pages/auth_page.dart';
 import 'package:audio_stories/pages/auth_pages/auth_repository/auth_repository.dart';
-import 'package:audio_stories/pages/splash_pages/splash_glad_page/splash_glad_page.dart';
-import 'package:audio_stories/pages/splash_pages/splash_page/splash_page.dart';
-import 'package:audio_stories/pages/welcome_pages/welcome_page/welcome_page.dart';
+import 'package:audio_stories/pages/splash_pages/splash_glad_page.dart';
+import 'package:audio_stories/pages/splash_pages/splash_page.dart';
+import 'package:audio_stories/pages/welcome_pages/welcome_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +13,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'main_page/main_page.dart';
-import 'main_page/pages/sounds_contain_pages/recently_deleted_pages/recently_deleted_page/edit_deleted_page.dart';
+import 'main_page/pages/sounds_contain_pages/recently_deleted_pages/edit_deleted_page.dart';
 
 void main() async {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(

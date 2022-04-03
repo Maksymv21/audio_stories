@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../widgets/buttons/button_menu.dart';
+import '../../../widgets/buttons/button_menu.dart';
 import 'general_deleted_page.dart';
 
 

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:audio_stories/main_page/pages/profile_pages/profile_page/profile_page.dart';
+import 'package:audio_stories/main_page/pages/profile_pages/profile_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/local_db.dart';
@@ -12,14 +12,14 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../main.dart';
-import '../../../../pages/auth_pages/auth_page/auth_page.dart';
-import '../../../../pages/auth_pages/registration_page/registration_page.dart';
-import '../../../main_page.dart';
-import '../blocs/bloc_profile.dart';
-import '../blocs/bloc_profile_event.dart';
-import '../blocs/bloc_profile_state.dart';
-import '../repository/profile_repository.dart';
+import '../../../main.dart';
+import '../../../pages/auth_pages/auth_page.dart';
+import '../../../pages/auth_pages/registration_page.dart';
+import '../../main_page.dart';
+import 'blocs/bloc_profile.dart';
+import 'blocs/bloc_profile_event.dart';
+import 'blocs/bloc_profile_state.dart';
+import 'repository/profile_repository.dart';
 
 class EditProfilePage extends StatelessWidget {
   static const routName = '/editProfile';

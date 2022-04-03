@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../../blocs/bloc_icon_color/bloc_index.dart';
 import '../../../../../blocs/bloc_icon_color/bloc_index_event.dart';
 import '../../../../main_page.dart';
-import '../../audio_page/audio_page/audio_page.dart';
+import '../../audio_page/audio_page.dart';
 
 class OpenAllButton extends StatelessWidget {
   const OpenAllButton({

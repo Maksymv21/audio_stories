@@ -6,9 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../main.dart';
-import '../../../../pages/auth_pages/auth_page/auth_page.dart';
-import '../../../../pages/auth_pages/registration_page/registration_page.dart';
-import '../../../../pages/welcome_pages/welcome_page/welcome_page.dart';
+import '../../../../pages/auth_pages/auth_page.dart';
+import '../../../../pages/auth_pages/registration_page.dart';
+import '../../../../pages/welcome_pages/welcome_page.dart';
 
 class DeleteAccButton extends StatelessWidget {
   const DeleteAccButton({Key? key}) : super(key: key);

@@ -8,12 +8,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../main.dart';
-import '../../../../pages/auth_pages/auth_page/auth_page.dart';
-import '../../../../pages/auth_pages/registration_page/registration_page.dart';
-import '../../../main_page.dart';
-import '../../../widgets/buttons/button_menu.dart';
-import '../widgets/delete_acc_button.dart';
+import '../../../main.dart';
+import '../../../pages/auth_pages/auth_page.dart';
+import '../../../pages/auth_pages/registration_page.dart';
+import '../../main_page.dart';
+import '../../widgets/buttons/button_menu.dart';
+import 'widgets/delete_acc_button.dart';
 import 'edit_profile_page.dart';
 
 class ProfilePage extends StatelessWidget {

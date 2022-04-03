@@ -7,17 +7,17 @@ import 'package:flutter_email_sender/flutter_email_sender.dart';
 import '../../../../main.dart';
 import '../../../blocs/bloc_icon_color/bloc_index.dart';
 import '../../../blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../../pages/auth_pages/auth_page/auth_page.dart';
+import '../../../pages/auth_pages/auth_page.dart';
 import '../../../resources/app_icons.dart';
 import '../../main_page.dart';
 import '../../pages/compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
 import '../../pages/compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
 import '../../pages/compilation_pages/compilation_page/compilation_page.dart';
-import '../../pages/profile_pages/profile_page/profile_page.dart';
-import '../../pages/sounds_contain_pages/audio_page/audio_page/audio_page.dart';
-import '../../pages/sounds_contain_pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
-import '../../pages/sounds_contain_pages/search_pages/search_page/search_page.dart';
-import '../../pages/uncategorized_pages/subscription_pages/subscription_page/subscription_page.dart';
+import '../../pages/profile_pages/profile_page.dart';
+import '../../pages/sounds_contain_pages/audio_page/audio_page.dart';
+import '../../pages/sounds_contain_pages/recently_deleted_pages/recently_deleted_page.dart';
+import '../../pages/sounds_contain_pages/search_pages/search_page.dart';
+import '../../pages/uncategorized_pages/subscription_pages/subscription_page.dart';
 import '../buttons/burger_button.dart';
 
 class BurgerMenu extends StatelessWidget {

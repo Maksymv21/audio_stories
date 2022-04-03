@@ -1,21 +1,21 @@
-import 'package:audio_stories/main_page/pages/sounds_contain_pages/recently_deleted_pages/recently_deleted_page/recently_deleted_page.dart';
+import 'package:audio_stories/main_page/pages/sounds_contain_pages/recently_deleted_pages/recently_deleted_page.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grouped_list/grouped_list.dart';
 
-import '../../../../../main.dart';
-import '../../../../../resources/app_color.dart';
-import '../../../../../resources/app_icons.dart';
-import '../../../../../resources/app_images.dart';
-import '../../../../../utils/database.dart';
-import '../../../../../utils/local_db.dart';
-import '../../../../../widgets/background.dart';
-import '../../../../widgets/uncategorized/custom_checkbox.dart';
-import '../../../../widgets/uncategorized/player_container.dart';
-import '../../../../widgets/uncategorized/sound_container.dart';
-import '../widgets/delete_bottom_bar.dart';
+import '../../../../main.dart';
+import '../../../../resources/app_color.dart';
+import '../../../../resources/app_icons.dart';
+import '../../../../resources/app_images.dart';
+import '../../../../utils/database.dart';
+import '../../../../utils/local_db.dart';
+import '../../../../widgets/background.dart';
+import '../../../widgets/uncategorized/custom_checkbox.dart';
+import '../../../widgets/uncategorized/player_container.dart';
+import '../../../widgets/uncategorized/sound_container.dart';
+import 'widgets/delete_bottom_bar.dart';
 import 'edit_deleted_page.dart';
 
 //ignore: must_be_immutable

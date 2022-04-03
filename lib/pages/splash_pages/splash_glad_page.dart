@@ -8,7 +8,7 @@ import 'package:audio_stories/widgets/welcome_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../../../main_page/main_page.dart';
+import '../../main_page/main_page.dart';
 
 class SplashGladPage extends StatefulWidget {
   static const routName = '/glad';

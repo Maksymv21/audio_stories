@@ -11,16 +11,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../../blocs/bloc_icon_color/bloc_index.dart';
-import '../../../../../blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../../../../utils/database.dart';
-import '../../../../main_page.dart';
-import '../../../../widgets/buttons/button_menu.dart';
-import '../../../../widgets/menu/popup_menu_pick_few.dart';
-import '../../../../widgets/uncategorized/sound_list_play_all.dart';
-import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
-import '../../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
-import '../../../compilation_pages/compilation_page/compilation_page.dart';
+import '../../../../blocs/bloc_icon_color/bloc_index.dart';
+import '../../../../blocs/bloc_icon_color/bloc_index_event.dart';
+import '../../../../utils/database.dart';
+import '../../../main_page.dart';
+import '../../../widgets/buttons/button_menu.dart';
+import '../../../widgets/menu/popup_menu_pick_few.dart';
+import '../../../widgets/uncategorized/sound_list_play_all.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
+import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
+import '../../compilation_pages/compilation_page/compilation_page.dart';
 
 class AudioPage extends StatefulWidget {
   static const routName = '/audio';
