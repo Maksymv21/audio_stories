@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,12 +7,12 @@ import '../../../../main_page.dart';
 import '../../audio_page/audio_page/audio_page.dart';
 
 class OpenAllButton extends StatelessWidget {
-  final Color color;
-
   const OpenAllButton({
     Key? key,
     required this.color,
   }) : super(key: key);
+
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +26,8 @@ class OpenAllButton extends StatelessWidget {
           MainPage.globalKey.currentState!
               .pushReplacementNamed(AudioPage.routName);
           context.read<BlocIndex>().add(
-            ColorAudio(),
-          );
+                ColorAudio(),
+              );
         },
         child: Text(
           'Открыть все',

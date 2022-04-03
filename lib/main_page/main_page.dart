@@ -26,15 +26,22 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   @override
-  Widget build(BuildContext context) {
-    rebuildAllChildren(context);
-    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-    User? _user = firebaseAuth.currentUser;
+  void initState() {
+    _setInitialData();
+    super.initState();
+  }
+
+  void _setInitialData() {
+    final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+    final User? _user = _firebaseAuth.currentUser;
     if (_user != null) {
       LocalDB.uid = _user.uid;
-
-      PhoneAuthRepository(firebaseAuth: firebaseAuth).createUser();
+      PhoneAuthRepository(firebaseAuth: _firebaseAuth).createUser();
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -60,14 +67,5 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
     );
-  }
-
-  void rebuildAllChildren(BuildContext context) {
-    void rebuild(Element el) {
-      el.markNeedsBuild();
-      el.visitChildren(rebuild);
-    }
-
-    (context as Element).visitChildren(rebuild);
   }
 }

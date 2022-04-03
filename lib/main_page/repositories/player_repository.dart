@@ -5,17 +5,18 @@ class PlayerRepository {
 
   Stream<PlaybackDisposition>? get onProgress => _player!.onProgress;
 
-  Future openSession() async {
+  Future<void> openSession() async {
     _player = FlutterSoundPlayer();
-    _player!.openAudioSession();
+    await _player!.openAudioSession();
     await _player?.setSubscriptionDuration(
       const Duration(
         milliseconds: 50,
       ),
     );
+
   }
 
-  Future close() async {
+  Future<void> close() async {
     _player!.closeAudioSession();
     _player = null;
   }

@@ -1,7 +1,6 @@
 import 'package:audio_stories/main_page/pages/compilation_pages/compilation_current_page/compilation_current_page.dart';
 import 'package:audio_stories/main_page/widgets/menu/pick_few_popup.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
-import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/database.dart';
 import 'package:audio_stories/widgets/background.dart';

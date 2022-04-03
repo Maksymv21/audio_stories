@@ -49,11 +49,9 @@ class _PlayerContainerState extends State<PlayerContainer> {
   @override
   void initState() {
     super.initState();
-    _player.openSession().then((value) {
-      setState(() {});
-    }).whenComplete(
-      () => _play(widget.url),
-    );
+    _player.openSession().whenComplete(() {
+      _play(widget.url);
+    });
     _isPlay = true;
   }
 

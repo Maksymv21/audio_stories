@@ -252,7 +252,6 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
                     setState(() {});
                   },
                   repeat: false,
-                  page: CurrentCompilationPage.routName,
                   onDelete: () {
                     setState(() {});
                   },

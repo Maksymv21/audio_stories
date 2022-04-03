@@ -21,7 +21,6 @@ class SoundsListPlayAll extends StatefulWidget {
     this.compilationId,
     this.play,
     this.stop,
-    this.page,
   }) : super(key: key);
 
   final List<Map<String, dynamic>> sounds;
@@ -32,7 +31,6 @@ class SoundsListPlayAll extends StatefulWidget {
   final bool isPopup;
   final bool repeat;
   final String? compilationId;
-  final String? page;
 
   @override
   State<SoundsListPlayAll> createState() => SoundsListPlayAllState();
@@ -230,7 +228,7 @@ class SoundsListPlayAllState extends State<SoundsListPlayAll> {
                                             );
                                       widget.onDelete();
                                     },
-                                    page: widget.page,
+                                    page: widget.routName,
                                     onRename: (title) {
                                       widget.sounds[index]['title'] = title;
                                       setState(() {});

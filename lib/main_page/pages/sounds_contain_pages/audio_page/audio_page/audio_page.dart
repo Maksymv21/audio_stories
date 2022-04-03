@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_stories/main_page/widgets/menu/pick_few_popup.dart';
 import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
@@ -9,6 +11,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../blocs/bloc_icon_color/bloc_index.dart';
+import '../../../../../blocs/bloc_icon_color/bloc_index_event.dart';
 import '../../../../../utils/database.dart';
 import '../../../../main_page.dart';
 import '../../../../widgets/buttons/button_menu.dart';
@@ -30,6 +34,7 @@ class AudioPage extends StatefulWidget {
 class _AudioPageState extends State<AudioPage> {
   final GlobalKey<SoundsListPlayAllState> _key = GlobalKey();
   List<Map<String, dynamic>> sounds = [];
+  Timer? timer;
   bool _repeat = false;
   bool _pickFew = false;
   bool _isPlay = false;
@@ -41,14 +46,25 @@ class _AudioPageState extends State<AudioPage> {
   }
 
   void _setInitialData() {
-    Future.delayed(
-      const Duration(
-        seconds: 1,
-      ),
+    timer = Timer(
+      const Duration(milliseconds: 50),
       () {
-        setState(() {});
+        Future.delayed(
+          const Duration(
+            milliseconds: 10,
+          ),
+          () {
+            setState(() {});
+          },
+        );
       },
     );
+  }
+
+  @override
+  void dispose() {
+    timer!.cancel();
+    super.dispose();
   }
 
   void _createList(AsyncSnapshot snapshot) {
@@ -155,18 +171,21 @@ class _AudioPageState extends State<AudioPage> {
                   SizedBox(
                     width: _width * 0.035,
                   ),
-                  Text(
-                    '${sounds.length} аудио'
-                    '\n0 часов',
-                    style: const TextStyle(
-                      fontFamily: 'TTNormsL',
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14.0,
+                  SizedBox(
+                    width: _width * 0.16,
+                    child: Text(
+                      '${sounds.length} аудио'
+                      '\n0 часов',
+                      style: const TextStyle(
+                        fontFamily: 'TTNormsL',
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.0,
+                      ),
                     ),
                   ),
                   SizedBox(
-                    width: _width * 0.25,
+                    width: _width * 0.23,
                   ),
                   _PlayAllButton(
                     width: _width,
@@ -247,7 +266,7 @@ class _PopupMenuPickFew extends StatefulWidget {
 }
 
 class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
-  void _addInCompilation() {
+  void _addInCompilation(BuildContext context) {
     if (!_chek()) {
       _choiseSnackBar(context);
     } else {
@@ -264,10 +283,11 @@ class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
               listId: currentId,
             ),
           );
+      context.read<BlocIndex>().add(ColorCategory());
     }
   }
 
-  void _share() {
+  void _share(BuildContext context) {
     if (!_chek()) {
       _choiseSnackBar(context);
     } else {
@@ -283,7 +303,7 @@ class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
     }
   }
 
-  void _download() {
+  void _download(BuildContext context) {
     if (!_chek()) {
       _choiseSnackBar(context);
     } else {
@@ -306,7 +326,7 @@ class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
     }
   }
 
-  void _delete() {
+  void _delete(BuildContext context) {
     if (!_chek()) {
       _choiseSnackBar(context);
     } else {
@@ -349,10 +369,10 @@ class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
     return PopupMenuPickFew(
       onSelected: (value) async {
         if (value == 0) widget.cancel();
-        if (value == 1) _addInCompilation();
-        if (value == 2) _share();
-        if (value == 3) _download();
-        if (value == 4) _delete();
+        if (value == 1) _addInCompilation(context);
+        if (value == 2) _share(context);
+        if (value == 3) _download(context);
+        if (value == 4) _delete(context);
       },
     );
   }
