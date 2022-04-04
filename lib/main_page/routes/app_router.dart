@@ -81,7 +81,13 @@ class AppRouter {
         page = const RecordPage();
         break;
       case PlayPage.routName:
-        page = PlayPage();
+        final PlayPageArguments args = arguments as PlayPageArguments;
+        page = PlayPage(
+          title: args.title,
+          id: args.id,
+          page: args.page,
+          url: args.url,
+        );
         break;
       default:
         page = const HomePage();

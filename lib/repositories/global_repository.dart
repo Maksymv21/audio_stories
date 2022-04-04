@@ -69,14 +69,14 @@ class GlobalRepo {
     required String id,
     required String routName,
   }) {
-    Navigator.of(context).pushReplacement(
-      PageRouteBuilder(
-        pageBuilder: (_, __, ___) => PlayPage(
-          url: url,
-          title: title,
-          id: id,
-          page: routName,
-        ),
+    Navigator.pushReplacementNamed(
+      context,
+      PlayPage.routName,
+      arguments: PlayPageArguments(
+        title: title,
+        url: url,
+        id: id,
+        page: routName,
       ),
     );
     context.read<BlocIndex>().add(

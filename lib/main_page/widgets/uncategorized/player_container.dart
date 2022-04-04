@@ -48,7 +48,11 @@ class _PlayerContainerState extends State<PlayerContainer> {
 
   @override
   void initState() {
+    _setInitialData();
     super.initState();
+  }
+
+  void _setInitialData() {
     _player.openSession().whenComplete(() {
       _play(widget.url);
     });

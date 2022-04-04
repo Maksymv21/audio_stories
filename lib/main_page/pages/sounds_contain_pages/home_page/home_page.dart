@@ -42,7 +42,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  Future _setInitialData() async {
+  Future<void> _setInitialData() async {
     await Permission.storage.request();
     await Permission.manageExternalStorage.request();
     await Permission.microphone.request();

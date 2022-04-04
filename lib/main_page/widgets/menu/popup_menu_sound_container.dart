@@ -1,4 +1,3 @@
-import 'package:audio_stories/main_page/pages/uncategorized_pages/play_page/play_page.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +25,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
     this.onDelete,
     this.onRename,
     this.page,
+    this.playPage,
   }) : super(key: key);
 
   String url;
@@ -35,6 +35,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
   String? page;
   void Function()? onDelete;
   void Function(String)? onRename;
+  bool? playPage;
 
   void _addInCompilation(BuildContext context) {
     MainPage.globalKey.currentState!
@@ -91,7 +92,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
   }
 
   void _delete(BuildContext context) {
-    if (page == PlayPage.routName) {
+    if (playPage != null) {
       MainPage.globalKey.currentState!.pushReplacementNamed(
         HomePage.routName,
       );
