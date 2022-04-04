@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../repositories/global_repository.dart';
 import '../../../../resources/app_icons.dart';
 import '../../../../widgets/background.dart';
+import '../../../../widgets/dialog_profile.dart';
 import '../../../main_page.dart';
 import '../compilation_create_page/compilation_create_bloc/add_in_compilation_bloc.dart';
 import '../compilation_create_page/compilation_create_bloc/add_in_compilation_event.dart';
@@ -321,18 +322,24 @@ class _PopupMenu extends StatelessWidget {
     );
   }
 
-  void _delete(BuildContext context) {
-    Database.deleteCompilation({
+  Future<void> _delete(BuildContext context) async {
+    List listId = [];
+    for (int i = 0; i < sounds.length; i++) {
+      listId.add(sounds[i]['id']);
+    }
+    await Database.deleteCompilation({
       'id': id,
       'title': title,
       'date': date,
+      'sounds': listId,
+    }).then((value) {
+      MainPage.globalKey.currentState!.pushReplacementNamed(
+        CompilationPage.routName,
+      );
+      context.read<CompilationBloc>().add(
+            ToInitialCompilation(),
+          );
     });
-    MainPage.globalKey.currentState!.pushReplacementNamed(
-      CompilationPage.routName,
-    );
-    context.read<CompilationBloc>().add(
-          ToInitialCompilation(),
-        );
   }
 
   void _share() {
@@ -356,7 +363,7 @@ class _PopupMenu extends StatelessWidget {
       onSelected: (value) {
         if (value == 0) _edit(context);
         if (value == 1) _pickFew(context);
-        if (value == 2) _delete(context);
+        if (value == 2) _dialogDelete(context);
         if (value == 3) _share();
       },
       itemBuilder: (_) => const [
@@ -407,9 +414,22 @@ class _PopupMenu extends StatelessWidget {
       ),
     );
   }
-}
 
-// if do PlayAllButton private then everything breaks
+  Future<String?> _dialogDelete(BuildContext context) {
+    return showDialog<String>(
+      context: context,
+      builder: (_) => DialogProfile(
+        title: 'Вы уверены, что'
+            '\nхотите удалить подборку?',
+        onPressedNo: () => Navigator.pop(_, 'Cancel'),
+        onPressedYes: () {
+          Navigator.pop(_, 'Cancel');
+          _delete(context);
+        },
+      ),
+    );
+  }
+}
 
 //ignore: must_be_immutable
 class _PlayAllButton extends StatefulWidget {

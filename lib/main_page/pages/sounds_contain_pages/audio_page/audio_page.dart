@@ -12,7 +12,6 @@ import '../../../widgets/buttons/button_menu.dart';
 import '../../../widgets/menu/popup_menu_pick_few.dart';
 import '../../../widgets/uncategorized/sound_list_play_all.dart';
 
-
 class AudioPage extends StatefulWidget {
   static const routName = '/audio';
 
@@ -28,6 +27,7 @@ class _AudioPageState extends State<AudioPage> {
   bool _repeat = false;
   bool _pickFew = false;
   bool _isPlay = false;
+  double _hours = 0;
 
   Future<void> _createList(AsyncSnapshot snapshot) async {
     if (sounds.isEmpty) {
@@ -42,6 +42,7 @@ class _AudioPageState extends State<AudioPage> {
             'url': snapshot.data.docs[i]['song'],
           },
         );
+        _hours = (_hours + snapshot.data.docs[i]['time']) / 3600;
       }
       Future.delayed(const Duration(milliseconds: 20), () {
         setState(() {});
@@ -147,7 +148,7 @@ class _AudioPageState extends State<AudioPage> {
                     width: _width * 0.16,
                     child: Text(
                       '${sounds.length} аудио'
-                      '\n0 часов',
+                      '\n${_hours.toStringAsFixed(0)} ${_hoursFormat(_hours)}',
                       style: const TextStyle(
                         fontFamily: 'TTNormsL',
                         color: Colors.white,
@@ -218,6 +219,17 @@ class _AudioPageState extends State<AudioPage> {
         ),
       ],
     );
+  }
+
+  String _hoursFormat(double hours) {
+    if (hours > 1 && hours < 5) {
+      return 'часа';
+    }
+    if (hours == 1) {
+      return 'час';
+    } else {
+      return 'часов';
+    }
   }
 }
 
