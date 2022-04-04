@@ -45,6 +45,7 @@ class _RecordPageState extends State<RecordPage> {
   bool _isPlay = false;
   bool _isPause = false;
   bool _onChanged = false;
+  bool _loading = false;
   double val = 0.0;
 
   @override
@@ -491,6 +492,12 @@ class _RecordPageState extends State<RecordPage> {
             ),
           ),
         ),
+        Visibility(
+          visible: _loading,
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        ),
       ],
     );
   }
@@ -610,18 +617,24 @@ class _RecordPageState extends State<RecordPage> {
 
     length ??= 0;
 
-    _recorder.uploadSound(
+    _loading = true;
+    setState(() {});
+
+    await _recorder
+        .uploadSound(
       'Аудиозапись ${length + 1}',
       _time,
       Timestamp.now(),
       memory!,
       MainPage.globalKey.currentContext!,
-    );
-    context.read<BlocIndex>().add(
-          ColorHome(),
-        );
-    MainPage.globalKey.currentState!.pushReplacementNamed(
-      HomePage.routName,
-    );
+    )
+        .then((value) {
+      context.read<BlocIndex>().add(
+            ColorHome(),
+          );
+      MainPage.globalKey.currentState!.pushReplacementNamed(
+        HomePage.routName,
+      );
+    });
   }
 }

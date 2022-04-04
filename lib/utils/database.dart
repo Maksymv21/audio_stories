@@ -48,7 +48,7 @@ class Database {
         .child('Sounds')
         .child(LocalDB.uid.toString())
         .child(
-          title + '.' + date,
+          path,
         )
         .delete();
 

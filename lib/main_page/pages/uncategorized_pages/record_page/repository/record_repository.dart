@@ -116,6 +116,9 @@ class RecordRepository {
     File sound = await File(_path!).create();
     final int length = sound.lengthSync();
 
+    const Uuid uuid = Uuid();
+    final String id = uuid.v1();
+
     if (memory + length <= 500000000) {
       FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
       Reference reference = _firebaseStorage
@@ -123,7 +126,7 @@ class RecordRepository {
           .child('Sounds')
           .child(LocalDB.uid.toString())
           .child(
-            title + '.' + date.toString(),
+            id,
           );
 
       await reference.putFile(sound);
@@ -134,8 +137,7 @@ class RecordRepository {
         search.add(title.substring(0, i).toLowerCase());
       }
 
-      const Uuid uuid = Uuid();
-      final String id = uuid.v1();
+
 
       Database.createOrUpdateSound({
         'id': id,

@@ -32,9 +32,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Timer? timer;
   List<Map<String, dynamic>> compilations = [];
   List<Map<String, dynamic>> sounds = [];
+  bool update = false;
 
   @override
   void initState() {
@@ -46,26 +46,6 @@ class _HomePageState extends State<HomePage> {
     await Permission.storage.request();
     await Permission.manageExternalStorage.request();
     await Permission.microphone.request();
-
-    timer = Timer(
-      const Duration(milliseconds: 25),
-      () {
-        Future.delayed(
-          const Duration(
-            milliseconds: 10,
-          ),
-          () {
-            setState(() {});
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    timer!.cancel();
-    super.dispose();
   }
 
   Future<void> _createCompilations(AsyncSnapshot snapshot) async {
@@ -82,7 +62,7 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _createSounds(AsyncSnapshot snapshot) {
+  Future<void> _createSounds(AsyncSnapshot snapshot) async {
     if (sounds.isEmpty) {
       for (int i = 0; i < snapshot.data.docs.length; i++) {
         sounds.add(
@@ -98,26 +78,34 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void _createCompilationsContainers(int length) {
-    if (FirebaseAuth.instance.currentUser != null) {
+  Future<void> _createCompilationsContainers(int length) async {
+    if (FirebaseAuth.instance.currentUser != null && !update) {
       if (length > 0) {
         _firstContainer = _CompilationHomeContainer(
           compilations: compilations,
           index: 0,
         );
+        //setState(() {});
         if (length > 1) {
           _secondContainer = _CompilationHomeContainer(
             compilations: compilations,
             index: 1,
           );
+          //setState(() {});
           if (length > 2) {
             _thirdContainer = _CompilationHomeContainer(
               compilations: compilations,
               index: 2,
             );
+            //setState(() {});
           }
         }
       }
+      Future.delayed(const Duration(milliseconds: 20), () {
+        setState(() {
+          update = true;
+        });
+      });
     }
   }
 
@@ -264,8 +252,10 @@ class _HomePageState extends State<HomePage> {
                     child: SoundsList(
                       sounds: sounds,
                       routName: HomePage.routName,
-                      onDelete: () {
-                        setState(() {});
+                      onDelete: (i) {
+                        setState(() {
+                          sounds.removeAt(i);
+                        });
                       },
                     ),
                   ),
@@ -423,7 +413,7 @@ class _CompilationStream extends StatefulWidget {
     required this.create,
   }) : super(key: key);
 
-  final void Function(int) createContainers;
+  final Future<void> Function(int) createContainers;
   final Future<void> Function(AsyncSnapshot) create;
   final Widget child;
 
@@ -450,10 +440,10 @@ class _CompilationStreamState extends State<_CompilationStream> {
       ) {
         if (snapshot.hasData) {
           widget.create(snapshot).whenComplete(
-                () => {
-                  widget.createContainers(snapshot.data.docs.length),
-                },
-              );
+            () {
+              widget.createContainers(snapshot.data.docs.length);
+            },
+          );
 
           return widget.child;
         } else {

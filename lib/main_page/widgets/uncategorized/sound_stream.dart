@@ -10,7 +10,7 @@ class SoundStream extends StatelessWidget {
     this.create,
   }) : super(key: key);
 
-  final void Function(AsyncSnapshot)? create;
+  final Future<void> Function(AsyncSnapshot)? create;
   final Widget child;
 
   @override

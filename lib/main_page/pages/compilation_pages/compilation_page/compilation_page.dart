@@ -134,9 +134,10 @@ class _CompilationPageState extends State<CompilationPage> {
                 set: () {
                   Future.delayed(
                       const Duration(
-                        milliseconds: 50,
+                        milliseconds: 1000,
                       ), () {
                     setState(() {
+                      compilations = [];
                       _pickFew = false;
                     });
                   });
@@ -283,7 +284,6 @@ class _PopupMenu extends StatelessWidget {
             'sounds': compilations[i]['listId'],
           },
         );
-        compilations.removeAt(i);
       }
     }
   }

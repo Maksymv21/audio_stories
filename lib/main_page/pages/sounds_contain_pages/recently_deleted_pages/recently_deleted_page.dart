@@ -4,8 +4,6 @@ import '../../../widgets/buttons/button_menu.dart';
 import 'general_deleted_page.dart';
 
 
-
-
 class RecentlyDeletedPage extends StatelessWidget {
   static const routName = '/deleted';
 

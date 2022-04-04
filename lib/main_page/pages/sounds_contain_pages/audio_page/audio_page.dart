@@ -34,40 +34,11 @@ class AudioPage extends StatefulWidget {
 class _AudioPageState extends State<AudioPage> {
   final GlobalKey<SoundsListPlayAllState> _key = GlobalKey();
   List<Map<String, dynamic>> sounds = [];
-  Timer? timer;
   bool _repeat = false;
   bool _pickFew = false;
   bool _isPlay = false;
 
-  @override
-  void initState() {
-    _setInitialData();
-    super.initState();
-  }
-
-  void _setInitialData() {
-    timer = Timer(
-      const Duration(milliseconds: 50),
-      () {
-        Future.delayed(
-          const Duration(
-            milliseconds: 10,
-          ),
-          () {
-            setState(() {});
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    timer!.cancel();
-    super.dispose();
-  }
-
-  void _createList(AsyncSnapshot snapshot) {
+  Future<void> _createList(AsyncSnapshot snapshot) async {
     if (sounds.isEmpty) {
       for (int i = 0; i < snapshot.data.docs.length; i++) {
         sounds.add(
@@ -81,6 +52,9 @@ class _AudioPageState extends State<AudioPage> {
           },
         );
       }
+      Future.delayed(const Duration(milliseconds: 20), () {
+        setState(() {});
+      });
     }
   }
 
@@ -133,12 +107,19 @@ class _AudioPageState extends State<AudioPage> {
               ? _PopupMenuPickFew(
                   sounds: sounds,
                   cancel: () {
-                    _pickFew = false;
-                    setState(() {});
+                    setState(() {
+                      _pickFew = false;
+                    });
                   },
-                  set: (i) {
-                    sounds.removeAt(i);
-                    setState(() {});
+                  set: () {
+                    Future.delayed(
+                        const Duration(
+                          milliseconds: 1000,
+                        ), () {
+                      setState(() {
+                        sounds = [];
+                      });
+                    });
                   },
                 )
               : PickFewPopup(
@@ -259,7 +240,7 @@ class _PopupMenuPickFew extends StatefulWidget {
 
   final List<Map<String, dynamic>> sounds;
   final void Function() cancel;
-  final void Function(int i) set;
+  final void Function() set;
 
   @override
   State<_PopupMenuPickFew> createState() => _PopupMenuPickFewState();
@@ -330,7 +311,7 @@ class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
     if (!_chek()) {
       _choiseSnackBar(context);
     } else {
-      for (int i = 0; i < widget.sounds.length; i++) {
+      for (int i = widget.sounds.length - 1; i >= 0; i = i - 1) {
         if (widget.sounds[i]['chek']) {
           Database.createOrUpdateSound(
             {
@@ -339,9 +320,9 @@ class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
               'id': widget.sounds[i]['id'],
             },
           );
-          widget.set(i);
         }
       }
+      widget.set();
     }
   }
 

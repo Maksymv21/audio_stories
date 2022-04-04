@@ -66,7 +66,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
     );
   }
 
-  void _create(AsyncSnapshot snapshot) {
+  Future<void> _create(AsyncSnapshot snapshot) async {
     if (sounds.isEmpty) {
       for (int i = 0; i < snapshot.data.docs.length; i++) {
         for (int j = 0; j < listId.length; j++) {

@@ -4,17 +4,16 @@ import '../../../../../resources/app_color.dart';
 import '../../../../../resources/app_icons.dart';
 import '../../../../widgets/buttons/foot_button.dart';
 
-
 //ignore: must_be_immutable
 class DeleteBottomBar extends StatelessWidget {
-  void Function() rees;
-  void Function() delete;
-
   DeleteBottomBar({
     Key? key,
     required this.rees,
     required this.delete,
   }) : super(key: key);
+
+  void Function() rees;
+  void Function() delete;
 
   @override
   Widget build(BuildContext context) {

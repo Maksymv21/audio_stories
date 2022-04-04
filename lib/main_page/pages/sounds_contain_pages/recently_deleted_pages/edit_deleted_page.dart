@@ -1,5 +1,8 @@
+import 'package:audio_stories/main_page/main_page.dart';
+import 'package:audio_stories/main_page/pages/sounds_contain_pages/recently_deleted_pages/recently_deleted_page.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../widgets/custom_will_pop_scope.dart';
 import 'general_deleted_page.dart';
 
 class EditDeletedPage extends StatelessWidget {
@@ -9,23 +12,28 @@ class EditDeletedPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GeneralDeletedPage(
-        button: Align(
-          alignment: const AlignmentDirectional(1.05, 0.5),
-          child: TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              'Отменить',
-              style: TextStyle(
-                color: Colors.white,
+    return CustomWillPopScope(
+      child: Scaffold(
+        body: GeneralDeletedPage(
+          button: Align(
+            alignment: const AlignmentDirectional(1.05, 0.5),
+            child: TextButton(
+              onPressed: () {
+                // MainPage.globalKey.currentState!.pushReplacementNamed(
+                //   RecentlyDeletedPage.routName,
+                // );
+                Navigator.pop(context, 'back');
+              },
+              child: const Text(
+                'Отменить',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
+          edit: true,
         ),
-        edit: true,
       ),
     );
   }

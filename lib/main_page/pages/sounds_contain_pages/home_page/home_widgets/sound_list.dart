@@ -1,8 +1,10 @@
 import 'package:audio_stories/main_page/widgets/menu/popup_menu_sound_container.dart';
 import 'package:audio_stories/main_page/widgets/uncategorized/sound_container.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../resources/app_color.dart';
+import '../../../../../resources/app_icons.dart';
 import '../../../../widgets/uncategorized/custom_player.dart';
 
 //ignore: must_be_immutable
@@ -15,7 +17,7 @@ class SoundsList extends StatefulWidget {
   }) : super(key: key);
 
   final List<Map<String, dynamic>> sounds;
-  final void Function() onDelete;
+  final void Function(int) onDelete;
   final String routName;
 
   @override
@@ -26,11 +28,6 @@ class SoundsListState extends State<SoundsList> {
   Widget? _player;
   double _bottom = 10.0;
   bool isPlay = false;
-
-  void _onDelete(int index) {
-    _player = null;
-    widget.sounds.removeAt(index);
-  }
 
   void _play(int index) {
     if (!widget.sounds[index]['current']) {
@@ -81,16 +78,31 @@ class SoundsListState extends State<SoundsList> {
       children: [
         Padding(
           padding: EdgeInsets.only(bottom: _bottom),
-          child: widget.sounds.isEmpty
+          child: widget.sounds.isEmpty ||
+                  FirebaseAuth.instance.currentUser == null
               ? Center(
-                  child: Text(
-                    'Как только ты запишешь аудио,'
-                    '\nони появится здесь.',
-                    style: TextStyle(
-                      fontSize: 23.0,
-                      color: Colors.grey,
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      right: 10.0,
+                      top: 25.0,
                     ),
-                    textAlign: TextAlign.center,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text(
+                          'Как только ты запишешь'
+                          '\nаудио, она появится здесь.',
+                          style: TextStyle(
+                            fontSize: 22.0,
+                            color: Colors.grey,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Image(
+                          image: Image.asset(AppIcons.arrow).image,
+                        ),
+                      ],
+                    ),
                   ),
                 )
               : ListView.builder(
@@ -115,8 +127,8 @@ class SoundsListState extends State<SoundsList> {
                               id: widget.sounds[index]['id'],
                               url: widget.sounds[index]['url'],
                               onDelete: () {
-                                _onDelete(index);
-                                widget.onDelete();
+                                _player = null;
+                                widget.onDelete(index);
                               },
                               page: widget.routName,
                               onRename: (title) {

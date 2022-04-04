@@ -28,7 +28,7 @@ class _CompilationSearchPageState extends State<CompilationSearchPage> {
   Set<int> search = {};
   List<String> listId = [];
 
-  void _createLists(AsyncSnapshot snapshot) {
+  Future<void> _createLists(AsyncSnapshot snapshot) async {
     if (sounds.isEmpty) {
       for (int i = 0; i < snapshot.data.docs.length; i++) {
         sounds.add(
