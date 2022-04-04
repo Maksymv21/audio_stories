@@ -253,8 +253,13 @@ class _HomePageState extends State<HomePage> {
                       sounds: sounds,
                       routName: HomePage.routName,
                       onDelete: (i) {
-                        setState(() {
-                          sounds.removeAt(i);
+                        Future.delayed(
+                            const Duration(
+                              milliseconds: 1500,
+                            ), () {
+                          setState(() {
+                            sounds = [];
+                          });
                         });
                       },
                     ),
