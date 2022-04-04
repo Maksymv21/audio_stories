@@ -49,9 +49,9 @@ class _CompilationPageState extends State<CompilationPage> {
     }
   }
 
-  void _addIn(
+  Future<void> _addIn(
     AddInCompilation state,
-  ) {
+  ) async {
     for (int i = 0; i < compilations.length; i++) {
       if (compilations[i]['chek']) {
         for (int j = 0; j < state.listId.length; j++) {
@@ -59,7 +59,7 @@ class _CompilationPageState extends State<CompilationPage> {
             compilations[i]['listId'].add(state.listId[j]);
           }
         }
-        Database.createOrUpdateCompilation(
+        await Database.createOrUpdateCompilation(
           {
             'id': compilations[i]['id'],
             'sounds': compilations[i]['listId'],
@@ -165,11 +165,7 @@ class _CompilationPageState extends State<CompilationPage> {
             ),
             onPressed: () {
               if (_chek(compilations)) {
-                _addIn(state);
-                Future.delayed(
-                    const Duration(
-                      milliseconds: 50,
-                    ), () {
+                _addIn(state).then((value) {
                   setState(() {});
                 });
               } else {

@@ -9,7 +9,6 @@ import '../../../../resources/app_icons.dart';
 import '../../../../utils/database.dart';
 import '../../../../widgets/background.dart';
 import '../../../main_page.dart';
-import '../../../widgets/menu/popup_menu_pick_few.dart';
 import '../../../widgets/uncategorized/sound_list_play_all.dart';
 import '../compilation_current_page/compilation_current_page.dart';
 import '../compilation_page/compilation_bloc/compilation_bloc.dart';
@@ -306,14 +305,74 @@ class _PopupMenuState extends State<_PopupMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return PopupMenuPickFew(
-      onSelected: (value) async {
+    return PopupMenuButton(
+      shape: ShapeBorder.lerp(
+        const RoundedRectangleBorder(),
+        const CircleBorder(),
+        0.2,
+      ),
+      onSelected: (value) {
         if (value == 0) widget.cancel();
         if (value == 1) _addInCompilation();
         if (value == 2) _share();
         if (value == 3) _download();
         if (value == 4) _delete();
       },
+      itemBuilder: (_) => const [
+        PopupMenuItem(
+          value: 0,
+          child: Text(
+            'Отменить выбор',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 1,
+          child: Text(
+            'Добавить в подборку',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 2,
+          child: Text(
+            'Поделиться',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 3,
+          child: Text(
+            'Скачать все',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+        PopupMenuItem(
+          value: 4,
+          child: Text(
+            'Удалить все',
+            style: TextStyle(
+              fontSize: 14.0,
+            ),
+          ),
+        ),
+      ],
+      child: const Text(
+        '...',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 48,
+          letterSpacing: 3.0,
+        ),
+      ),
     );
   }
 

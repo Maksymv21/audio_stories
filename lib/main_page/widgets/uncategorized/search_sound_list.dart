@@ -139,6 +139,10 @@ class _SearchSoundListState extends State<SearchSoundList> {
                                           }
                                           widget.sounds.removeAt(i);
                                         },
+                                        onRename: (title) {
+                                          widget.sounds[index]['title'] = title;
+                                          setState(() {});
+                                        },
                                       )
                                     : CustomCheckBox(
                                         color: Colors.black87,

@@ -2,25 +2,16 @@ import 'dart:async';
 
 import 'package:audio_stories/main_page/widgets/menu/pick_few_popup.dart';
 import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
-import 'package:audio_stories/repositories/global_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../blocs/bloc_icon_color/bloc_index.dart';
-import '../../../../blocs/bloc_icon_color/bloc_index_event.dart';
-import '../../../../utils/database.dart';
-import '../../../main_page.dart';
 import '../../../widgets/buttons/button_menu.dart';
 import '../../../widgets/menu/popup_menu_pick_few.dart';
 import '../../../widgets/uncategorized/sound_list_play_all.dart';
-import '../../compilation_pages/compilation_page/compilation_bloc/compilation_bloc.dart';
-import '../../compilation_pages/compilation_page/compilation_bloc/compilation_event.dart';
-import '../../compilation_pages/compilation_page/compilation_page.dart';
+
 
 class AudioPage extends StatefulWidget {
   static const routName = '/audio';
@@ -104,7 +95,7 @@ class _AudioPageState extends State<AudioPage> {
         Align(
           alignment: const AlignmentDirectional(0.95, -0.96),
           child: _pickFew
-              ? _PopupMenuPickFew(
+              ? PopupMenuPickFew(
                   sounds: sounds,
                   cancel: () {
                     setState(() {
@@ -226,135 +217,6 @@ class _AudioPageState extends State<AudioPage> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _PopupMenuPickFew extends StatefulWidget {
-  const _PopupMenuPickFew({
-    Key? key,
-    required this.sounds,
-    required this.cancel,
-    required this.set,
-  }) : super(key: key);
-
-  final List<Map<String, dynamic>> sounds;
-  final void Function() cancel;
-  final void Function() set;
-
-  @override
-  State<_PopupMenuPickFew> createState() => _PopupMenuPickFewState();
-}
-
-class _PopupMenuPickFewState extends State<_PopupMenuPickFew> {
-  void _addInCompilation(BuildContext context) {
-    if (!_chek()) {
-      _choiseSnackBar(context);
-    } else {
-      List currentId = [];
-      for (int i = 0; i < widget.sounds.length; i++) {
-        if (widget.sounds[i]['chek']) {
-          currentId.add(widget.sounds[i]['id']);
-        }
-      }
-      MainPage.globalKey.currentState!
-          .pushReplacementNamed(CompilationPage.routName);
-      context.read<CompilationBloc>().add(
-            ToAddInCompilation(
-              listId: currentId,
-            ),
-          );
-      context.read<BlocIndex>().add(ColorCategory());
-    }
-  }
-
-  void _share(BuildContext context) {
-    if (!_chek()) {
-      _choiseSnackBar(context);
-    } else {
-      List<String> url = [];
-      List<String> title = [];
-      for (int i = 0; i < widget.sounds.length; i++) {
-        if (widget.sounds[i]['chek']) {
-          url.add(widget.sounds[i]['url']);
-          title.add(widget.sounds[i]['title']);
-        }
-      }
-      GlobalRepo.share(url, title);
-    }
-  }
-
-  void _download(BuildContext context) {
-    if (!_chek()) {
-      _choiseSnackBar(context);
-    } else {
-      for (int i = 0; i < widget.sounds.length; i++) {
-        if (widget.sounds[i]['chek']) {
-          GlobalRepo.download(
-            widget.sounds[i]['url'],
-            widget.sounds[i]['title'],
-          ).then(
-            (value) => {
-              GlobalRepo.showSnackBar(
-                context: context,
-                title: 'Файл сохранен.'
-                    '\nDownload/${widget.sounds[i]['title']}.aac',
-              ),
-            },
-          );
-        }
-      }
-    }
-  }
-
-  void _delete(BuildContext context) {
-    if (!_chek()) {
-      _choiseSnackBar(context);
-    } else {
-      for (int i = widget.sounds.length - 1; i >= 0; i = i - 1) {
-        if (widget.sounds[i]['chek']) {
-          Database.createOrUpdateSound(
-            {
-              'deleted': true,
-              'dateDeleted': Timestamp.now(),
-              'id': widget.sounds[i]['id'],
-            },
-          );
-        }
-      }
-      widget.set();
-    }
-  }
-
-  bool _chek() {
-    bool chek = false;
-    for (var map in widget.sounds) {
-      if (map.containsKey('chek')) {
-        if (map['chek']) {
-          chek = true;
-        }
-      }
-    }
-    return chek;
-  }
-
-  void _choiseSnackBar(BuildContext context) {
-    GlobalRepo.showSnackBar(
-      context: context,
-      title: 'Перед этим нужно сделать выбор',
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuPickFew(
-      onSelected: (value) async {
-        if (value == 0) widget.cancel();
-        if (value == 1) _addInCompilation(context);
-        if (value == 2) _share(context);
-        if (value == 3) _download(context);
-        if (value == 4) _delete(context);
-      },
     );
   }
 }
