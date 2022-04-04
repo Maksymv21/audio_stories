@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:audio_stories/main_page/pages/uncategorized_pages/record_page/repository/record_repository.dart';
+import 'package:audio_stories/main_page/widgets/uncategorized/sound_stream.dart';
 import 'package:audio_stories/repositories/global_repository.dart';
-import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/background.dart';
@@ -34,36 +34,47 @@ class RecordPage extends StatefulWidget {
 
 class _RecordPageState extends State<RecordPage> {
   final RecordRepository _recorder = RecordRepository();
-  final ScrollController _scrollController = ScrollController();
+  NoiseMeter _noiseReading = NoiseMeter();
   StreamSubscription? _recorderSubscription;
-  Timer? _timerAmplitude;
+  StreamSubscription? _playerSubscription;
+  StreamSubscription? _recordSub;
+  int _length = -1;
+
   String _recorderTxt = '00:00:00';
   String _playTxt = '00:00';
   String _playTxtChange = '00:00';
-  double _time = 0.0;
+  String _title = 'Аудиозапись';
+
   bool _isRecorded = false;
   bool _isPlay = false;
   bool _isPause = false;
   bool _onChanged = false;
   bool _loading = false;
-  double val = 0.0;
+
+  double _val = 0.0;
+  double _time = 0.0;
+  double _sliderCurrentPosition = 0.0;
+  double _maxDuration = 1.0;
+  double _db = 0.0;
 
   @override
   void initState() {
+    _setInitialData();
     super.initState();
+  }
+
+  void _setInitialData() {
     _recorder.openSession().then((value) {
       _recorder.record(() {
         setState(() {});
       });
     });
-    openTheRecorder();
-    //startTimer();
-    noise();
-    _getAmplitude();
+    _openTheRecorder();
+    _noise();
     _isPlay = true;
   }
 
-  Future openTheRecorder() async {
+  Future _openTheRecorder() async {
     _recorderSubscription = _recorder.onProgress!.listen((e) {
       DateTime date = DateTime.fromMillisecondsSinceEpoch(
           e.duration.inMilliseconds,
@@ -80,45 +91,35 @@ class _RecordPageState extends State<RecordPage> {
   void dispose() {
     _recorder.close();
     _recorderSubscription?.cancel();
-    recordSub?.cancel();
+    _recordSub?.cancel();
     _playerSubscription?.cancel();
-    _timerAmplitude!.cancel();
-    _scrollController.dispose();
     super.dispose();
   }
 
-  void refreshTimer(double value) {
+  void _refreshTimer(double value) {
     DateTime date =
         DateTime.fromMillisecondsSinceEpoch(value.toInt(), isUtc: true);
     String txt = DateFormat('mm:ss', 'en_GB').format(date);
     _playTxtChange = txt.substring(0, 5);
   }
 
-  NoiseMeter noiseReading = NoiseMeter();
-  StreamSubscription? recordSub;
-  double db = 0.0;
-
-  void noise() {
-    recordSub = noiseReading.noiseStream.listen((e) {
+  void _noise() {
+    _recordSub = _noiseReading.noiseStream.listen((e) {
       setState(() {
-        db = e.maxDecibel;
+        _db = e.maxDecibel;
       });
     });
   }
 
-  StreamSubscription? _playerSubscription;
-  double sliderCurrentPosition = 0.0;
-  double maxDuration = 1.0;
-
-  void valuePlayer() {
+  void _valuePlayer() {
     _playerSubscription = _recorder.onProgressP!.listen((e) {
-      maxDuration = e.duration.inMilliseconds.toDouble();
-      if (maxDuration <= 0) maxDuration = 0.0;
+      _maxDuration = e.duration.inMilliseconds.toDouble();
+      if (_maxDuration <= 0) _maxDuration = 0.0;
 
-      sliderCurrentPosition =
-          min(e.position.inMilliseconds.toDouble(), maxDuration);
-      if (sliderCurrentPosition < 0.0) {
-        sliderCurrentPosition = 0.0;
+      _sliderCurrentPosition =
+          min(e.position.inMilliseconds.toDouble(), _maxDuration);
+      if (_sliderCurrentPosition < 0.0) {
+        _sliderCurrentPosition = 0.0;
       }
       DateTime date = DateTime.fromMillisecondsSinceEpoch(
           e.position.inMilliseconds,
@@ -128,6 +129,43 @@ class _RecordPageState extends State<RecordPage> {
         _playTxt = txt.substring(0, 5);
       });
     });
+  }
+
+  Future<void> _create(AsyncSnapshot snapshot) async {
+    if (_length == -1) {
+      _title = 'Аудиозапись ${snapshot.data.docs.length + 1}';
+      _length = snapshot.data.docs.length;
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        setState(() {});
+      });
+    }
+  }
+
+  Future<void> _back15() async {
+    _sliderCurrentPosition = _sliderCurrentPosition - 15000.0;
+    if (_sliderCurrentPosition < 0.0) {
+      _sliderCurrentPosition = 0.0;
+    }
+    _refreshTimer(_sliderCurrentPosition);
+    await _seek(_sliderCurrentPosition.toInt());
+    setState(() {});
+  }
+
+  void _playButton() {
+    if (_isPlay) _isPause ? _resumePlay() : _pausePlay();
+    if (!_isPlay) _play();
+    _refreshTimer(_sliderCurrentPosition);
+    setState(() {});
+  }
+
+  Future<void> _forward15() async {
+    _sliderCurrentPosition += 15000.0;
+    if (_sliderCurrentPosition > _maxDuration) {
+      _sliderCurrentPosition = _maxDuration - 300;
+    }
+    _refreshTimer(_sliderCurrentPosition);
+    await _seek(_sliderCurrentPosition.toInt());
+    setState(() {});
   }
 
   @override
@@ -143,7 +181,9 @@ class _RecordPageState extends State<RecordPage> {
       builder: (context, state) => Stack(
         children: [
           Center(
-            child: _amplitudeRecords(),
+            child: _AmplitudeRecords(
+              db: _db,
+            ),
           ),
           Column(
             children: [
@@ -233,221 +273,181 @@ class _RecordPageState extends State<RecordPage> {
       ),
     );
 
-    Widget childPlay = StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(LocalDB.uid)
-            .collection('sounds')
-            .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
-            final String title =
-                'Аудиозапись ${snapshot.data?.docs.length + 1}';
-            return Column(
+    Widget childPlay = SoundStream(
+      create: _create,
+      child: Column(
+        children: [
+          Expanded(
+            flex: 3,
+            child: Row(
               children: [
-                Expanded(
-                  flex: 3,
-                  child: Row(
-                    children: [
-                      const SizedBox(
-                        width: 10.0,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _recorder.share();
-                        },
-                        icon: Image.asset(
-                          AppIcons.upload,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _recorder
-                              .download(
-                                title,
-                              )
-                              .then(
-                                (value) => GlobalRepo.showSnackBar(
-                                  context: context,
-                                  title: 'Файл сохранен.'
-                                      '\nDownload/$title.aac',
-                                ),
-                              );
-                        },
-                        icon: Image.asset(
-                          AppIcons.download,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          MainPage.globalKey.currentState!
-                              .pushReplacementNamed(HomePage.routName);
-                          context.read<BlocIndex>().add(
-                                ColorHome(),
-                              );
-                        },
-                        icon: Image.asset(
-                          AppIcons.delete,
-                        ),
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () {
-                          if (FirebaseAuth.instance.currentUser == null) {
-                            GlobalRepo.showSnackBar(
-                              context: context,
-                              title:
-                                  'Для сохранения аудио нужно зарегистрироваться',
-                            );
-                          } else {
-                            _save(
-                              context,
-                              snapshot.data?.docs.length,
-                            );
-                          }
-                        },
-                        child: const Text(
-                          'Сохранить',
-                          style: TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
+                const SizedBox(
+                  width: 10.0,
+                ),
+                IconButton(
+                  onPressed: () {
+                    _recorder.share();
+                  },
+                  icon: Image.asset(
+                    AppIcons.upload,
                   ),
                 ),
-                const Spacer(
-                  flex: 4,
+                IconButton(
+                  onPressed: () {
+                    _recorder
+                        .download(
+                          _title,
+                        )
+                        .then(
+                          (value) => GlobalRepo.showSnackBar(
+                            context: context,
+                            title: 'Файл сохранен.'
+                                '\nDownload/$_title.aac',
+                          ),
+                        );
+                  },
+                  icon: Image.asset(
+                    AppIcons.download,
+                  ),
                 ),
-                Expanded(
-                  flex: 3,
-                  child: Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 24.0,
-                    ),
+                IconButton(
+                  onPressed: () {
+                    MainPage.globalKey.currentState!
+                        .pushReplacementNamed(HomePage.routName);
+                    context.read<BlocIndex>().add(
+                          ColorHome(),
+                        );
+                  },
+                  icon: Image.asset(
+                    AppIcons.delete,
                   ),
                 ),
                 const Spacer(),
-                Expanded(
-                  flex: 7,
-                  child: Column(
-                    children: [
-                      Transform.scale(
-                        scaleY: 0.8,
-                        child: SfSlider(
-                          value: _onChanged ? val : sliderCurrentPosition,
-                          min: 0.0,
-                          max: maxDuration,
-                          thumbShape: ThumbShape(
-                            color: Colors.black,
-                          ),
-                          activeColor: Colors.black,
-                          inactiveColor: Colors.black,
-                          onChanged: (value) {
-                            if (_isPause) {
-                              sliderCurrentPosition = value;
-                            } else {
-                              val = value;
-                            }
-                            refreshTimer(value);
-                            _onChanged = true;
-                          },
-                          onChangeEnd: (value) async {
-                            await seek(value.toInt());
-                            val = sliderCurrentPosition;
-                            _onChanged = false;
-                          },
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 10.0,
-                          right: 8.0,
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              _onChanged || _isPause
-                                  ? _playTxtChange
-                                  : _playTxt,
-                            ),
-                            Text(
-                              _recorderTxt.substring(3, 8),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                TextButton(
+                  onPressed: () {
+                    if (FirebaseAuth.instance.currentUser == null) {
+                      GlobalRepo.showSnackBar(
+                        context: context,
+                        title: 'Для сохранения аудио нужно зарегистрироваться',
+                      );
+                    } else {
+                      _save(
+                        context,
+                        _length,
+                      );
+                    }
+                  },
+                  child: const Text(
+                    'Сохранить',
+                    style: TextStyle(
+                      color: Colors.black,
+                    ),
                   ),
                 ),
-                Expanded(
-                  flex: 7,
+              ],
+            ),
+          ),
+          const Spacer(
+            flex: 4,
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              _title,
+              style: const TextStyle(
+                fontSize: 24.0,
+              ),
+            ),
+          ),
+          const Spacer(),
+          Expanded(
+            flex: 7,
+            child: Column(
+              children: [
+                Transform.scale(
+                  scaleY: 0.8,
+                  child: SfSlider(
+                    value: _onChanged ? _val : _sliderCurrentPosition,
+                    min: 0.0,
+                    max: _maxDuration,
+                    thumbShape: ThumbShape(
+                      color: Colors.black,
+                    ),
+                    activeColor: Colors.black,
+                    inactiveColor: Colors.black,
+                    onChanged: (value) {
+                      if (_isPause) {
+                        _sliderCurrentPosition = value;
+                      } else {
+                        _val = value;
+                      }
+                      _refreshTimer(value);
+                      _onChanged = true;
+                    },
+                    onChangeEnd: (value) async {
+                      await _seek(value.toInt());
+                      _val = _sliderCurrentPosition;
+                      _onChanged = false;
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10.0,
+                    right: 8.0,
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      IconButton(
-                        onPressed: () async {
-                          sliderCurrentPosition =
-                              sliderCurrentPosition - 15000.0;
-                          if (sliderCurrentPosition < 0.0) {
-                            sliderCurrentPosition = 0.0;
-                          }
-                          refreshTimer(sliderCurrentPosition);
-                          await seek(sliderCurrentPosition.toInt());
-                          setState(() {});
-                        },
-                        icon: Image.asset(
-                          AppIcons.back15,
-                        ),
+                      Text(
+                        _onChanged || _isPause ? _playTxtChange : _playTxt,
                       ),
-                      const SizedBox(
-                        width: 50.0,
-                      ),
-                      GestureDetector(
-                        child: ClipRRect(
-                          child: Image.asset(
-                            icon,
-                          ),
-                        ),
-                        onTap: () {
-                          if (_isPlay) _isPause ? _resumePlay() : _pausePlay();
-                          if (!_isPlay) _play();
-                          refreshTimer(sliderCurrentPosition);
-                          setState(() {});
-                        },
-                      ),
-                      const SizedBox(
-                        width: 50.0,
-                      ),
-                      IconButton(
-                        onPressed: () async {
-                          sliderCurrentPosition += 15000.0;
-                          if (sliderCurrentPosition > maxDuration) {
-                            sliderCurrentPosition = maxDuration - 300;
-                          }
-                          refreshTimer(sliderCurrentPosition);
-                          await seek(sliderCurrentPosition.toInt());
-                          setState(() {});
-                        },
-                        icon: Image.asset(
-                          AppIcons.forward15,
-                        ),
+                      Text(
+                        _recorderTxt.substring(3, 8),
                       ),
                     ],
                   ),
                 ),
               ],
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: AppColor.active,
-              ),
-            );
-          }
-        });
+            ),
+          ),
+          Expanded(
+            flex: 7,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () => _back15(),
+                  icon: Image.asset(
+                    AppIcons.back15,
+                  ),
+                ),
+                const SizedBox(
+                  width: 50.0,
+                ),
+                GestureDetector(
+                  child: ClipRRect(
+                    child: Image.asset(
+                      icon,
+                    ),
+                  ),
+                  onTap: () => _playButton(),
+                ),
+                const SizedBox(
+                  width: 50.0,
+                ),
+                IconButton(
+                  onPressed: () => _forward15(),
+                  icon: Image.asset(
+                    AppIcons.forward15,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
 
     return Stack(
       children: [
@@ -502,69 +502,11 @@ class _RecordPageState extends State<RecordPage> {
     );
   }
 
-  final List _listAmplitude = [];
-
-  Widget _amplitudeRecords() {
-    List _list = _listAmplitude.reversed.toList();
-    return SizedBox(
-      width: double.infinity,
-      height: 120,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        reverse: true,
-        controller: _scrollController,
-        itemCount: _list.length,
-        itemBuilder: (BuildContext context, int index) {
-          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 50),
-                height: _list[index] * 3,
-                width: 2,
-                color: Colors.black,
-              ),
-              SizedBox(
-                width: 7,
-                height: 2.5,
-                child: Container(
-                  color: Colors.black,
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  void _getAmplitude() {
-    _timerAmplitude = Timer.periodic(
-      const Duration(milliseconds: 80),
-      (_) {
-        double _dcb = db / 3;
-        if (_dcb < 10) {
-          _dcb = 1;
-        }
-
-        if (_listAmplitude.length > 38) {
-          _listAmplitude.removeAt(0);
-        }
-
-        _listAmplitude.add(_dcb);
-        setState(() {});
-      },
-    );
-  }
-
   void _stopRecord() {
     _recorder.stopRecord(() {
       setState(() {});
     });
-    recordSub?.cancel();
-
-    _timerAmplitude!.cancel();
+    _recordSub?.cancel();
 
     _isRecorded = true;
     _isPlay = false;
@@ -574,9 +516,9 @@ class _RecordPageState extends State<RecordPage> {
     await _recorder.play(() {
       setState(() {});
       _isPlay = false;
-      sliderCurrentPosition = maxDuration;
+      _sliderCurrentPosition = _maxDuration;
     });
-    valuePlayer();
+    _valuePlayer();
     setState(() {});
     _isPlay = true;
   }
@@ -595,7 +537,7 @@ class _RecordPageState extends State<RecordPage> {
     _isPause = false;
   }
 
-  Future<void> seek(int ms) async {
+  Future<void> _seek(int ms) async {
     await _recorder.seek(ms);
     setState(() {});
   }
@@ -628,13 +570,104 @@ class _RecordPageState extends State<RecordPage> {
       memory!,
       MainPage.globalKey.currentContext!,
     )
-        .then((value) {
-      context.read<BlocIndex>().add(
-            ColorHome(),
+        .then(
+      (value) {
+        context.read<BlocIndex>().add(
+              ColorHome(),
+            );
+        MainPage.globalKey.currentState!.pushReplacementNamed(
+          HomePage.routName,
+        );
+      },
+    );
+  }
+}
+
+class _AmplitudeRecords extends StatefulWidget {
+  const _AmplitudeRecords({
+    Key? key,
+    required this.db,
+  }) : super(key: key);
+  final double db;
+
+  @override
+  State<_AmplitudeRecords> createState() => _AmplitudeRecordsState();
+}
+
+class _AmplitudeRecordsState extends State<_AmplitudeRecords> {
+  final ScrollController _scrollController = ScrollController();
+  Timer? _timerAmplitude;
+  final List _listAmplitude = [];
+
+  @override
+  void initState() {
+    _setInitialData();
+    super.initState();
+  }
+
+  void _setInitialData() {
+    _getAmplitude();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _timerAmplitude!.cancel();
+    super.dispose();
+  }
+
+  void _getAmplitude() {
+    _timerAmplitude = Timer.periodic(
+      const Duration(milliseconds: 80),
+      (_) {
+        double _dcb = widget.db / 3;
+        if (_dcb < 10) {
+          _dcb = 1;
+        }
+
+        if (_listAmplitude.length > 38) {
+          _listAmplitude.removeAt(0);
+        }
+
+        _listAmplitude.add(_dcb);
+        setState(() {});
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    List _list = _listAmplitude.reversed.toList();
+    return SizedBox(
+      width: double.infinity,
+      height: 120,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        reverse: true,
+        controller: _scrollController,
+        itemCount: _list.length,
+        itemBuilder: (BuildContext context, int index) {
+          _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 50),
+                height: _list[index] * 3,
+                width: 2,
+                color: Colors.black,
+              ),
+              SizedBox(
+                width: 7,
+                height: 2.5,
+                child: Container(
+                  color: Colors.black,
+                ),
+              ),
+            ],
           );
-      MainPage.globalKey.currentState!.pushReplacementNamed(
-        HomePage.routName,
-      );
-    });
+        },
+      ),
+    );
   }
 }
