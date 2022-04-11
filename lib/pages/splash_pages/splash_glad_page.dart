@@ -1,14 +1,13 @@
 import 'dart:async';
 
+import 'package:audio_stories/pages/main_page.dart';
 import 'package:audio_stories/resources/app_icons.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/utils/local_db.dart';
-import 'package:audio_stories/widgets/background.dart';
-import 'package:audio_stories/widgets/welcome_container.dart';
+import 'package:audio_stories/widgets/uncategorized/background.dart';
+import 'package:audio_stories/widgets/uncategorized/welcome_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../../main_page/main_page.dart';
 
 class SplashGladPage extends StatefulWidget {
   static const routName = '/glad';

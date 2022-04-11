@@ -1,7 +1,7 @@
 import 'package:audio_stories/main.dart';
 import 'package:audio_stories/resources/app_images.dart';
-import 'package:audio_stories/widgets/background.dart';
-import 'package:audio_stories/widgets/continue_button.dart';
+import 'package:audio_stories/widgets/buttons/continue_button.dart';
+import 'package:audio_stories/widgets/uncategorized/background.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../main.dart';
-import '../../main_page/main_page.dart';
+import '../main_page.dart';
 import 'auth_bloc/bloc_auth.dart';
 import 'auth_bloc/bloc_auth_event.dart';
 import 'auth_bloc/bloc_auth_state.dart';

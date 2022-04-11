@@ -1,8 +1,8 @@
 import 'package:audio_stories/resources/app_images.dart';
-import 'package:audio_stories/widgets/background.dart';
-import 'package:audio_stories/widgets/continue_button.dart';
-import 'package:audio_stories/widgets/number_form.dart';
-import 'package:audio_stories/widgets/welcome_container.dart';
+import 'package:audio_stories/widgets/buttons/continue_button.dart';
+import 'package:audio_stories/widgets/uncategorized/background.dart';
+import 'package:audio_stories/widgets/uncategorized/number_form.dart';
+import 'package:audio_stories/widgets/uncategorized/welcome_container.dart';
 import 'package:flutter/material.dart';
 
 class RegistrationPage extends StatelessWidget {
