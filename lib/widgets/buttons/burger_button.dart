@@ -17,7 +17,7 @@ class BurgerButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 0.0),
       child: SizedBox(
-        height: 43.0,
+        height: MediaQuery.of(context).size.height*0.06,
         child: Theme(
           data: ThemeData(
             fontFamily: 'TTNorms',

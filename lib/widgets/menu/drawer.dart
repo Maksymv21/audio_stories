@@ -196,7 +196,7 @@ class BurgerMenu extends StatelessWidget {
           ),
           const Spacer(),
           Expanded(
-            flex: 2,
+            flex: 3,
             child: BurgerButton(
               icon: AppIcons.edit,
               title: 'Написать в '

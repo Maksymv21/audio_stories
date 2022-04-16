@@ -151,8 +151,8 @@ class EditProfilePage extends StatelessWidget {
                           flex: 4,
                         ),
                         Container(
-                          width: 228.0,
-                          height: 228.0,
+                          width: MediaQuery.of(context).size.height * 0.29,
+                          height: MediaQuery.of(context).size.height * 0.29,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(24.0),
                             image: DecorationImage(
@@ -215,7 +215,7 @@ class EditProfilePage extends StatelessWidget {
                           flex: 3,
                         ),
                         Expanded(
-                          flex: 3,
+                          flex: 4,
                           child: TextButton(
                             onPressed: () => _save(
                               context,
@@ -231,7 +231,7 @@ class EditProfilePage extends StatelessWidget {
                           ),
                         ),
                         const Spacer(
-                          flex: 5,
+                          flex: 4,
                         ),
                       ],
                     ),

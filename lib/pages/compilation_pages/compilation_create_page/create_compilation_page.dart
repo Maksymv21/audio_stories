@@ -98,6 +98,7 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
             children: [
               const Spacer(),
               Expanded(
+                flex: 2,
                 child: TextButton(
                     style: const ButtonStyle(
                       splashFactory: NoSplash.splashFactory,
@@ -192,171 +193,176 @@ class _CreateCompilationPageState extends State<CreateCompilationPage> {
               ),
             ),
             Center(
-              child: Column(
-                children: [
-                  const Spacer(),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      _titlePage,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 36.0,
-                        letterSpacing: 3,
-                      ),
-                    ),
-                  ),
-                  const Spacer(),
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.only(
-                        left: _width * 0.05,
-                      ),
-                      child: TextFormField(
-                        controller: _titleController,
+              child: Padding(
+                padding: EdgeInsets.only(top: _height * 0.05),
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        _titlePage,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 25.0,
-                          letterSpacing: 1.0,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 36.0,
+                          letterSpacing: 3,
                         ),
-                        decoration: const InputDecoration(
-                          hintText: 'Название',
-                          hintStyle: TextStyle(
+                      ),
+                    ),
+                    const Spacer(
+                      flex: 2,
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          left: _width * 0.05,
+                        ),
+                        child: TextFormField(
+                          controller: _titleController,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 25.0,
                             letterSpacing: 1.0,
                           ),
-                          border: InputBorder.none,
+                          decoration: const InputDecoration(
+                            hintText: 'Название',
+                            hintStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 25.0,
+                              letterSpacing: 1.0,
+                            ),
+                            border: InputBorder.none,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      bottom: 10.0,
-                    ),
-                    child: Container(
-                      width: _width * 0.9,
-                      height: _height * 0.3,
-                      decoration: _image == null
-                          ? _url == null
-                              ? BoxDecoration(
-                                  color: const Color(0xffF6F6F6),
-                                  borderRadius: BorderRadius.circular(
-                                    15.0,
-                                  ),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: 5.0,
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        bottom: 10.0,
+                      ),
+                      child: Container(
+                        width: _width * 0.9,
+                        height: _height * 0.3,
+                        decoration: _image == null
+                            ? _url == null
+                                ? BoxDecoration(
+                                    color: const Color(0xffF6F6F6),
+                                    borderRadius: BorderRadius.circular(
+                                      15.0,
                                     ),
-                                  ],
-                                )
-                              : BoxDecoration(
-                                  borderRadius: BorderRadius.circular(
-                                    15.0,
-                                  ),
-                                  image: DecorationImage(
-                                    colorFilter:
-                                        const ColorFilter.srgbToLinearGamma(),
-                                    image: Image.network(_url!).image,
-                                    fit: BoxFit.cover,
-                                  ),
-                                  boxShadow: const [
-                                    BoxShadow(
-                                      color: Colors.grey,
-                                      blurRadius: 5.0,
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 5.0,
+                                      ),
+                                    ],
+                                  )
+                                : BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                      15.0,
                                     ),
-                                  ],
-                                )
-                          : BoxDecoration(
-                              borderRadius: BorderRadius.circular(15.0),
-                              image: DecorationImage(
-                                colorFilter:
-                                    const ColorFilter.srgbToLinearGamma(),
-                                image: Image.file(_image!).image,
-                                fit: BoxFit.cover,
-                              ),
-                              boxShadow: const [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 5.0,
+                                    image: DecorationImage(
+                                      colorFilter:
+                                          const ColorFilter.srgbToLinearGamma(),
+                                      image: Image.network(_url!).image,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 5.0,
+                                      ),
+                                    ],
+                                  )
+                            : BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                image: DecorationImage(
+                                  colorFilter:
+                                      const ColorFilter.srgbToLinearGamma(),
+                                  image: Image.file(_image!).image,
+                                  fit: BoxFit.cover,
                                 ),
-                              ],
-                            ),
-                      child: IconButton(
-                        icon: Image.asset(
-                          AppIcons.camera,
-                          color: Colors.black,
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.grey,
+                                    blurRadius: 5.0,
+                                  ),
+                                ],
+                              ),
+                        child: IconButton(
+                          icon: Image.asset(
+                            AppIcons.camera,
+                            color: Colors.black,
+                          ),
+                          onPressed: () {
+                            pickImage();
+                            setState(() {});
+                          },
                         ),
-                        onPressed: () {
-                          pickImage();
-                          setState(() {});
-                        },
                       ),
                     ),
-                  ),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: _width * 0.085,
-                          ),
-                          child: const Text(
-                            'Введите описание...',
-                            style: TextStyle(
-                              fontSize: 15.0,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(
+                              left: _width * 0.085,
+                            ),
+                            child: const Text(
+                              'Введите описание...',
+                              style: TextStyle(
+                                fontSize: 15.0,
+                              ),
                             ),
                           ),
+                          SizedBox(
+                            width: _width * 0.3,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: ListTile(
+                        title: Card(
+                          child: EditableText(
+                            backgroundCursorColor: Colors.white,
+                            textAlign: TextAlign.start,
+                            focusNode: FocusNode(),
+                            controller: _textController,
+                            maxLines: 5,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 16.0,
+                            ),
+                            keyboardType: TextInputType.multiline,
+                            cursorColor: Colors.blue,
+                          ),
                         ),
+                      ),
+                    ),
+                    Row(
+                      children: [
                         SizedBox(
-                          width: _width * 0.3,
+                          width: _width * 0.8,
+                        ),
+                        TextButton(
+                          onPressed: () => _ready(state),
+                          child: const Text(
+                            'Готово',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 15.0,
+                              letterSpacing: 0.7,
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: ListTile(
-                      title: Card(
-                        child: EditableText(
-                          backgroundCursorColor: Colors.white,
-                          textAlign: TextAlign.start,
-                          focusNode: FocusNode(),
-                          controller: _textController,
-                          maxLines: 5,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 16.0,
-                          ),
-                          keyboardType: TextInputType.multiline,
-                          cursorColor: Colors.blue,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: _width * 0.8,
-                      ),
-                      TextButton(
-                        onPressed: () => _ready(state),
-                        child: const Text(
-                          'Готово',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 15.0,
-                            letterSpacing: 0.7,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  _list,
-                ],
+                    _list,
+                  ],
+                ),
               ),
             ),
             Visibility(

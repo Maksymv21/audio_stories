@@ -140,127 +140,127 @@ class _CurrentCompilationPageState extends State<CurrentCompilationPage> {
         ),
         SoundStream(
           create: _createLists,
-          child: Column(
-            children: [
-              const Spacer(
-                flex: 2,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: _width * 0.05,
-                  bottom: _height * 0.01,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      widget.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25.0,
-                        letterSpacing: 1.0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              ImageContainer(
-                width: _width,
-                height: _height,
-                url: widget.url,
-                date: widget.date,
-                length: sounds.isEmpty ? widget.listId.length : sounds.length,
-                child: _PlayAllButton(
-                  isPlay: _isPlay,
-                  play: (i) {
-                    if (sounds.isNotEmpty) {
-                      for (int i = 0; i < sounds.length; i++) {
-                        sounds[i]['current'] = false;
-                      }
-                      _key.currentState!.playAll(i);
-                      _isPlay = true;
-                      setState(() {});
-                    }
-                  },
-                  stop: () {
-                    _key.currentState!.stop();
-                    _isPlay = false;
-                    setState(() {});
-                  },
-                ),
-              ),
-              Expanded(
-                flex: _readMore ? 3 : 1,
-                child: Padding(
+          child: Padding(
+            padding: EdgeInsets.only(top: _height * 0.16),
+            child: Column(
+              children: [
+                Padding(
                   padding: EdgeInsets.only(
-                    left: _width * 0.07,
-                    right: _width * 0.07,
-                    bottom: 0.0,
+                    left: _width * 0.05,
+                    bottom: _height * 0.01,
                   ),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Flexible(
-                        child: _readMore
-                            ? ListView(
-                                padding: const EdgeInsets.only(
-                                  top: 0.0,
-                                  bottom: 10.0,
-                                ),
-                                children: [
-                                  Text(
-                                    widget.text,
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                widget.text,
-                              ),
+                      Text(
+                        widget.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                          letterSpacing: 1.0,
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              _readMore
-                  ? const SizedBox()
-                  : Expanded(
-                      child: TextButton(
-                        child: const Text(
-                          'Подробнее',
-                          style: TextStyle(
-                            color: Colors.grey,
-                          ),
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _readMore = true;
-                          });
-                        },
-                      ),
-                    ),
-              Expanded(
-                flex: _readMore ? 3 : 4,
-                child: SoundsListPlayAll(
-                  key: _key,
-                  sounds: sounds,
-                  routName: CurrentCompilationPage.routName,
-                  isPopup: true,
-                  compilationId: widget.id,
-                  play: (i) {
-                    if (!_isPlay) {
-                      _key.currentState!.play(i);
-                    }
-                  },
-                  stop: () {
-                    _key.currentState!.stop();
-                    _isPlay = false;
-                    setState(() {});
-                  },
-                  repeat: false,
-                  onDelete: () {
-                    setState(() {});
-                  },
+                ImageContainer(
+                  width: _width,
+                  height: _height,
+                  url: widget.url,
+                  date: widget.date,
+                  length: sounds.isEmpty ? widget.listId.length : sounds.length,
+                  child: _PlayAllButton(
+                    isPlay: _isPlay,
+                    play: (i) {
+                      if (sounds.isNotEmpty) {
+                        for (int i = 0; i < sounds.length; i++) {
+                          sounds[i]['current'] = false;
+                        }
+                        _key.currentState!.playAll(i);
+                        _isPlay = true;
+                        setState(() {});
+                      }
+                    },
+                    stop: () {
+                      _key.currentState!.stop();
+                      _isPlay = false;
+                      setState(() {});
+                    },
+                  ),
                 ),
-              ),
-            ],
+                Expanded(
+                  flex: _readMore ? 3 : 1,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      left: _width * 0.07,
+                      right: _width * 0.07,
+                      bottom: 0.0,
+                    ),
+                    child: Column(
+                      children: [
+                        Flexible(
+                          child: _readMore
+                              ? ListView(
+                                  padding: const EdgeInsets.only(
+                                    top: 0.0,
+                                    bottom: 10.0,
+                                  ),
+                                  children: [
+                                    Text(
+                                      widget.text,
+                                    ),
+                                  ],
+                                )
+                              : Text(
+                                  widget.text,
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                _readMore
+                    ? const SizedBox()
+                    : Expanded(
+                        child: TextButton(
+                          child: const Text(
+                            'Подробнее',
+                            style: TextStyle(
+                              color: Colors.grey,
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _readMore = true;
+                            });
+                          },
+                        ),
+                      ),
+                Expanded(
+                  flex: _readMore ? 3 : 4,
+                  child: SoundsListPlayAll(
+                    key: _key,
+                    sounds: sounds,
+                    routName: CurrentCompilationPage.routName,
+                    isPopup: true,
+                    compilationId: widget.id,
+                    play: (i) {
+                      if (!_isPlay) {
+                        _key.currentState!.play(i);
+                      }
+                    },
+                    stop: () {
+                      _key.currentState!.stop();
+                      _isPlay = false;
+                      setState(() {});
+                    },
+                    repeat: false,
+                    onDelete: () {
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

@@ -128,50 +128,50 @@ class _PickFewCompilationPageState extends State<PickFewCompilationPage> {
           ),
         ),
         SoundStream(
-          child: Column(
-            children: [
-              const Spacer(
-                flex: 2,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: _width * 0.05,
-                  bottom: _height * 0.01,
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      widget.title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 25.0,
-                        letterSpacing: 1.0,
+          child: Padding(
+            padding: EdgeInsets.only(top: _height * 0.16),
+            child: Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(
+                    left: _width * 0.05,
+                    bottom: _height * 0.01,
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        widget.title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 25.0,
+                          letterSpacing: 1.0,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              ImageContainer(
-                width: _width,
-                height: _height,
-                url: widget.url,
-                date: widget.date,
-                length: widget.sounds.length,
-              ),
-              Expanded(
-                flex: 6,
-                child: SoundsListPlayAll(
-                  sounds: widget.sounds,
-                  routName: PickFewCompilationPage.routName,
-                  isPopup: false,
-                  compilationId: widget.id,
-                  repeat: false,
-                  onDelete: () {
-                    setState(() {});
-                  },
+                ImageContainer(
+                  width: _width,
+                  height: _height,
+                  url: widget.url,
+                  date: widget.date,
+                  length: widget.sounds.length,
                 ),
-              ),
-            ],
+                Expanded(
+                  flex: 6,
+                  child: SoundsListPlayAll(
+                    sounds: widget.sounds,
+                    routName: PickFewCompilationPage.routName,
+                    isPopup: false,
+                    compilationId: widget.id,
+                    repeat: false,
+                    onDelete: () {
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

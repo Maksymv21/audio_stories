@@ -65,7 +65,7 @@ class ProfilePage extends StatelessWidget {
                       flex: 3,
                     ),
                     const Expanded(
-                      flex: 5,
+                      flex: 6,
                       child: Text(
                         'Профиль',
                         style: TextStyle(
@@ -77,7 +77,7 @@ class ProfilePage extends StatelessWidget {
                       ),
                     ),
                     const Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: Text(
                         'Твоя частичка',
                         style: TextStyle(
@@ -121,7 +121,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     const Spacer(),
                     Expanded(
-                      flex: 6,
+                      flex: 7,
                       child: PhysicalModel(
                         color: Colors.white,
                         elevation: 6.0,
@@ -142,7 +142,7 @@ class ProfilePage extends StatelessWidget {
                     ),
                     const Spacer(),
                     Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: TextButton(
                         onPressed: () {
                           MainPage.globalKey.currentState!
@@ -161,7 +161,7 @@ class ProfilePage extends StatelessWidget {
                       flex: 3,
                     ),
                     Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: TextButton(
                         onPressed: () {},
                         child: const Text(
@@ -194,7 +194,7 @@ class ProfilePage extends StatelessWidget {
                       flex: 2,
                     ),
                     Expanded(
-                      flex: 4,
+                      flex: 5,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
