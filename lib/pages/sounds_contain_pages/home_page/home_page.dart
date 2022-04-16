@@ -366,7 +366,7 @@ class _FirstContainer extends StatelessWidget {
             flex: 2,
           ),
           const Expanded(
-            flex: 4,
+            flex: 5,
             child: Text(
               'Здесь будет'
               '\nтвой набор '

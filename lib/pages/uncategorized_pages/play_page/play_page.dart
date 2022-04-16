@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:audio_stories/main_page/repositories/player_repository.dart';
 import 'package:audio_stories/pages/main_page.dart';
+import 'package:audio_stories/repositories/player_repository.dart';
 import 'package:audio_stories/resources/app_color.dart';
 import 'package:audio_stories/resources/app_images.dart';
 import 'package:audio_stories/widgets/uncategorized/background.dart';

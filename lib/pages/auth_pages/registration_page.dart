@@ -32,75 +32,83 @@ class RegistrationPage extends StatelessWidget {
     }
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: Column(
-        children: [
-          Background(
-            height: 300.0,
-            image: AppImages.up,
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    RegistrationPageText.header,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 48.0,
-                      letterSpacing: 3.0,
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: Column(
+          children: [
+            Background(
+              height: 300.0,
+              image: AppImages.up,
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      RegistrationPageText.header,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 48.0,
+                        letterSpacing: 3.0,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          Expanded(
-            flex: 3,
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
+            Expanded(
+              flex: 4,
+              child: Text(
+                text,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontFamily: 'TTNormsL',
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const Spacer(),
+            Expanded(
+              flex: 4,
+              child: NumberForm(
+                controller: controller,
+              ),
+            ),
+            const Spacer(
+              flex: 3,
+            ),
+            Expanded(
+              flex: 4,
+              child: ContinueButton(
+                onPressed: onPressed,
+              ),
+            ),
+            const Spacer(),
+            Expanded(
+              flex: 4,
+              child: widget,
+            ),
+            const Spacer(),
+            Expanded(
+              flex: 6,
+              child: WelcomeContainer(
+                text: _text,
+                width: 280.0,
                 fontSize: 16.0,
-                fontFamily: 'TTNormsL',
-                fontWeight: FontWeight.w600,
               ),
             ),
-          ),
-          const Spacer(),
-          Expanded(
-            flex: 3,
-            child: NumberForm(
-              controller: controller,
+            const Spacer(
+              flex: 3,
             ),
-          ),
-          const Spacer(
-            flex: 3,
-          ),
-          Expanded(
-            flex: 3,
-            child: ContinueButton(
-              onPressed: onPressed,
-            ),
-          ),
-          const Spacer(),
-          Expanded(
-            flex: 3,
-            child: widget,
-          ),
-          const Spacer(),
-          Expanded(
-            flex: 5,
-            child: WelcomeContainer(
-              text: _text,
-              width: 280.0,
-              fontSize: 16.0,
-            ),
-          ),
-          const Spacer(
-            flex: 3,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

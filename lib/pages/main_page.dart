@@ -57,10 +57,18 @@ class _MainPageState extends State<MainPage> {
       child: CustomWillPopScope(
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Navigator(
-            key: MainPage.globalKey,
-            initialRoute: MainPage.routName,
-            onGenerateRoute: AppRouter.generateRoute,
+          body: GestureDetector(
+            onTap: () {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child: Navigator(
+              key: MainPage.globalKey,
+              initialRoute: MainPage.routName,
+              onGenerateRoute: AppRouter.generateRoute,
+            ),
           ),
           bottomNavigationBar: const MyNavigationBar(),
           drawer: const BurgerMenu(),

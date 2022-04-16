@@ -91,8 +91,8 @@ class ProfilePage extends StatelessWidget {
                       flex: 3,
                     ),
                     Container(
-                      width: 230.0,
-                      height: 230.0,
+                      width: MediaQuery.of(context).size.height * 0.29,
+                      height: MediaQuery.of(context).size.height * 0.29,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(24.0),
                         image: DecorationImage(
