@@ -161,7 +161,10 @@ class _RecordPageState extends State<RecordPage> {
   Future<void> _forward15() async {
     _sliderCurrentPosition += 15000.0;
     if (_sliderCurrentPosition > _maxDuration) {
-      _sliderCurrentPosition = _maxDuration - 300;
+      _sliderCurrentPosition = _maxDuration - 10;
+      if (_sliderCurrentPosition < 0) {
+        _sliderCurrentPosition = 0;
+      };
     }
     _refreshTimer(_sliderCurrentPosition);
     await _seek(_sliderCurrentPosition.toInt());
@@ -294,17 +297,10 @@ class _RecordPageState extends State<RecordPage> {
                 ),
                 IconButton(
                   onPressed: () {
-                    _recorder
-                        .download(
-                          _title,
-                        )
-                        .then(
-                          (value) => GlobalRepo.showSnackBar(
-                            context: context,
-                            title: 'Файл сохранен.'
-                                '\nDownload/$_title.aac',
-                          ),
-                        );
+                    _recorder.download(
+                      _title,
+                      context,
+                    );
                   },
                   icon: Image.asset(
                     AppIcons.download,

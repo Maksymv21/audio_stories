@@ -39,6 +39,12 @@ class RegistrationPage extends StatelessWidget {
             currentFocus.unfocus();
           }
         },
+        onPanUpdate: (details) {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
         child: Column(
           children: [
             Background(

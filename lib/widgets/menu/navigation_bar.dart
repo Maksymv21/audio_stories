@@ -4,6 +4,7 @@ import 'package:audio_stories/resources/app_icons.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../main.dart';
 import '../../../blocs/bloc_icon_color/bloc_index.dart';
@@ -34,6 +35,20 @@ class MyNavigationBar extends StatelessWidget {
     context.read<BlocIndex>().add(
           event,
         );
+  }
+
+  void _toRecord(BuildContext context) {
+    Permission.microphone.isGranted.then((value) async {
+      if (value) {
+        _toPage(
+          context,
+          RecordPage.routName,
+          ColorRecord(),
+        );
+      } else {
+        await Permission.microphone.request();
+      }
+    });
   }
 
   @override
@@ -107,13 +122,7 @@ class MyNavigationBar extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    if (index != 2) {
-                      _toPage(
-                        context,
-                        RecordPage.routName,
-                        ColorRecord(),
-                      );
-                    }
+                    if (index != 2) _toRecord(context);
                   },
                   child: index == 2 || index == 6
                       ? Padding(

@@ -86,7 +86,7 @@ class RecordRepository {
     Share.shareFiles([_path!]);
   }
 
-  Future<void> download(String name) async {
+  Future<void> download(String name, BuildContext context) async {
     File sound = await File(_path!).create();
 
     FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
@@ -101,7 +101,7 @@ class RecordRepository {
     await reference.putFile(sound);
     String downloadUrl = await reference.getDownloadURL();
 
-    await GlobalRepo.download(downloadUrl, name);
+    await GlobalRepo.download(downloadUrl, name, context);
 
     reference.delete();
   }

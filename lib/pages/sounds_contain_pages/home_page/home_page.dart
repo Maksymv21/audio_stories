@@ -9,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../blocs/bloc_icon_color/bloc_index.dart';
 import '../../../../blocs/bloc_icon_color/bloc_index_event.dart';
@@ -35,18 +34,6 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, dynamic>> compilations = [];
   List<Map<String, dynamic>> sounds = [];
   bool update = false;
-
-  @override
-  void initState() {
-    _setInitialData();
-    super.initState();
-  }
-
-  Future<void> _setInitialData() async {
-    await Permission.storage.request();
-    await Permission.manageExternalStorage.request();
-    await Permission.microphone.request();
-  }
 
   Future<void> _createCompilations(AsyncSnapshot snapshot) async {
     compilations = [];

@@ -129,13 +129,7 @@ class PopupMenuSoundContainer extends StatelessWidget {
         if (value == 2) GlobalRepo.share([url], [title]);
 
         if (value == 3) {
-          GlobalRepo.download(url, title).then(
-            (value) => GlobalRepo.showSnackBar(
-              context: context,
-              title: 'Файл сохранен.'
-                  '\nDownload/$title.aac',
-            ),
-          );
+          GlobalRepo.download(url, title, context);
         }
 
         if (value == 4) _delete(context);

@@ -64,6 +64,12 @@ class _MainPageState extends State<MainPage> {
                 currentFocus.unfocus();
               }
             },
+            onPanUpdate: (details) {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
             child: Navigator(
               key: MainPage.globalKey,
               initialRoute: MainPage.routName,

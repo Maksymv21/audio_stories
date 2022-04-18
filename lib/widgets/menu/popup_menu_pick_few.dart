@@ -37,10 +37,10 @@ class PopupMenuPickFew extends StatelessWidget {
       MainPage.globalKey.currentState!
           .pushReplacementNamed(CompilationPage.routName);
       context.read<CompilationBloc>().add(
-        ToAddInCompilation(
-          listId: currentId,
-        ),
-      );
+            ToAddInCompilation(
+              listId: currentId,
+            ),
+          );
       context.read<BlocIndex>().add(ColorCategory());
     }
   }
@@ -70,14 +70,7 @@ class PopupMenuPickFew extends StatelessWidget {
           GlobalRepo.download(
             sounds[i]['url'],
             sounds[i]['title'],
-          ).then(
-                (value) => {
-              GlobalRepo.showSnackBar(
-                context: context,
-                title: 'Файл сохранен.'
-                    '\nDownload/${sounds[i]['title']}.aac',
-              ),
-            },
+            context,
           );
         }
       }
@@ -131,12 +124,12 @@ class PopupMenuPickFew extends StatelessWidget {
         0.2,
       ),
       onSelected: (value) {
-      if (value == 0) cancel();
-      if (value == 1) _addInCompilation(context);
-      if (value == 2) _share(context);
-      if (value == 3) _download(context);
-      if (value == 4) _delete(context);
-    },
+        if (value == 0) cancel();
+        if (value == 1) _addInCompilation(context);
+        if (value == 2) _share(context);
+        if (value == 3) _download(context);
+        if (value == 4) _delete(context);
+      },
       itemBuilder: (_) => const [
         PopupMenuItem(
           value: 0,

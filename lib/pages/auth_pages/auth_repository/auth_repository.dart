@@ -26,7 +26,7 @@ class PhoneAuthRepository {
       codeSent: onCodeSent,
       codeAutoRetrievalTimeout: onCodeAutoRetrievalTimeout,
       timeout: const Duration(
-        seconds: 20,
+        seconds: 35,
       ),
     );
   }

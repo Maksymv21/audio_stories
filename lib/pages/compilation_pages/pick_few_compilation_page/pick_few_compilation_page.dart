@@ -245,14 +245,7 @@ class _PopupMenuState extends State<_PopupMenu> {
           GlobalRepo.download(
             widget.sounds[i]['url'],
             widget.sounds[i]['title'],
-          ).then(
-            (value) => {
-              GlobalRepo.showSnackBar(
-                context: context,
-                title: 'Файл сохранен.'
-                    '\nDownload/${widget.sounds[i]['title']}.aac',
-              ),
-            },
+            context
           );
         }
       }
