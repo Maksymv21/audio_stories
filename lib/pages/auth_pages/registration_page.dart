@@ -21,6 +21,13 @@ class RegistrationPage extends StatelessWidget {
     required this.height,
   }) : super(key: key);
 
+  void _hide(BuildContext context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String _text = RegistrationPageText.footerRegistration;
@@ -33,18 +40,8 @@ class RegistrationPage extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: GestureDetector(
-        onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
-        onPanUpdate: (details) {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
-        },
+        onTap: () => _hide(context),
+        onPanUpdate: (details) => _hide(context),
         child: Column(
           children: [
             Background(

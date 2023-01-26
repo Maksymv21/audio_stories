@@ -40,6 +40,13 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  void _hide(BuildContext context) {
+    FocusScopeNode currentFocus = FocusScope.of(context);
+    if (!currentFocus.hasPrimaryFocus) {
+      currentFocus.unfocus();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -58,18 +65,8 @@ class _MainPageState extends State<MainPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: GestureDetector(
-            onTap: () {
-              FocusScopeNode currentFocus = FocusScope.of(context);
-              if (!currentFocus.hasPrimaryFocus) {
-                currentFocus.unfocus();
-              }
-            },
-            onPanUpdate: (details) {
-              FocusScopeNode currentFocus = FocusScope.of(context);
-              if (!currentFocus.hasPrimaryFocus) {
-                currentFocus.unfocus();
-              }
-            },
+            onTap: () => _hide(context),
+            onPanUpdate: (details) => _hide(context),
             child: Navigator(
               key: MainPage.globalKey,
               initialRoute: MainPage.routName,
